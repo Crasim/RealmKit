@@ -1,0 +1,27 @@
+# Performance and debug logs
+perf.log
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# PHP dependencies
+vendor/
+
+# Node dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Local database and server configuration
+/realmkit.db
+/realmkit.db-*
+/clippy/config.json
