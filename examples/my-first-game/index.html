@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My First RealmKit Game</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #1a1a2e; overflow: hidden; }
+        #gameCanvas { display: block; background: #0a0a1a; }
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #e8d8b8;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="loading">Loading...</div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+    <script src="../config/engine.js"></script>
+    
+    <!-- Core -->
+    <script src="../src/js/core/TerrainGenerator.js"></script>
+    <script src="../src/js/core/Tileset.js"></script>
+    <script src="../src/js/core/TileMap.js"></script>
+    <script src="../src/js/core/GameLoop.js"></script>
+    <script src="../src/js/core/Viewport.js"></script>
+    <script src="../src/js/core/AssetCache.js"></script>
+    <script src="../src/js/core/AssetLoader.js"></script>
+    <script src="../src/js/core/InputHandler.js"></script>
+    <script src="../src/js/core/Engine.js"></script>
+    
+    <!-- Entity -->
+    <script src="../src/js/entity/Entity.js"></script>
+    <script src="../src/js/entity/Player.js"></script>
+    <script src="../src/js/entity/NPC.js"></script>
+    <script src="../src/js/entity/EntityManager.js"></script>
+    <script src="../src/js/entity/LootDrop.js"></script>
+    
+    <!-- Systems -->
+    <script src="../src/js/fx/ParticleSystem.js"></script>
+    <script src="../src/js/fx/FadeTransition.js"></script>
+    <script src="../src/js/fx/WeatherSystem.js"></script>
+    <script src="../src/js/systems/AudioSystem.js"></script>
+    <script src="../src/js/systems/CombatSystem.js"></script>
+    <script src="../src/js/systems/StatusEffectManager.js"></script>
+    <script src="../src/js/systems/ExperienceManager.js"></script>
+    <script src="../src/js/systems/HUDSystem.js"></script>
+    <script src="../src/js/systems/ProjectileSystem.js"></script>
+    
+    <!-- Utils -->
+    <script src="../src/js/utils/Quadtree.js"></script>
+    <script src="../src/js/utils/Pathfinding.js"></script>
+    <script src="../src/js/utils/SaveManager.js"></script>
+    <script src="../src/js/utils/CanvasCache.js"></script>
+    <script src="../src/js/data/MonsterTemplates.js"></script>
+    
+    <!-- UI -->
+    <script src="../src/js/ui/DevPanel.js"></script>
+    
+    <script>
+        // Hide loading when ready
+        window.addEventListener('load', function() {
+            document.getElementById('loading').style.display = 'none';
+        });
+        
+        // Create and start engine
+        var engine = new RealmKit.Engine();
+        engine.start();
+        
+        // Custom: Add a welcome message
+        console.log('=== My First RealmKit Game ===');
+        console.log('Controls:');
+        console.log('  WASD/Arrows - Move');
+        console.log('  F2 - Toggle debug panel');
+        console.log('  M - Toggle NPC auto-walk');
+    </script>
+</body>
+</html>

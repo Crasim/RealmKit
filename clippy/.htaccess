@@ -1,0 +1,17 @@
+# Clippy API adapter — hardening
+
+# Don't list directory contents.
+Options -Indexes
+
+# Deny direct access to config files. The .json variant would otherwise be
+# served as plain text by Apache (API keys leak!) — critical to lock down.
+# The .php variant is here for legacy installs still using config.php; PHP
+# normally interprets it, but defence-in-depth.
+<FilesMatch "^config(\..*)?\.(json|php)$">
+    Require all denied
+</FilesMatch>
+
+# Deny access to this .htaccess itself.
+<Files ".htaccess">
+    Require all denied
+</Files>

@@ -1,0 +1,2 @@
+# Provider files are require()d from chat.php; never expose them directly.
+Require all denied

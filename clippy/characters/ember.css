@@ -1,0 +1,791 @@
+﻿/* Character pack: Ember */
+.clippy-avatar-host[data-character="ember"][data-character-state="idle-a"] .ember-char {
+  animation: ember-idle-a 4.8s ease-in-out infinite;
+  overflow: visible;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="idle-b"] .ember-char {
+  animation: ember-idle-b 5.2s ease-in-out infinite;
+  overflow: visible;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-a"] .ember-char {
+  animation: ember-think-a 1.65s ease-in-out infinite;
+  overflow: visible;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-char {
+  animation: ember-think-b 1.42s ease-in-out infinite;
+  overflow: visible;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-char {
+  animation: ember-permission 1.9s ease-in-out infinite;
+  overflow: visible;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="acting"] .ember-char {
+  animation: ember-acting .92s ease-in-out infinite;
+  overflow: visible;
+}
+.clippy-avatar-wrap:hover .clippy-avatar-host[data-character="ember"][data-character-mode="idle"] .ember-char {
+  animation: ember-hover 1s cubic-bezier(.34, 1.56, .64, 1);
+  overflow: visible;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="intro"] .ember-char,
+.clippy-avatar-host[data-character="ember"][data-character-mode="outro"] .ember-char {
+  overflow: visible;
+}
+.clippy-root.dragging .ember-halo,
+.clippy-root.dragging .ember-flame-outer,
+.clippy-root.dragging .ember-flame-inner,
+.clippy-root.dragging .ember-core,
+.clippy-root.dragging .ember-shift-halo,
+.clippy-root.dragging .ember-shift-outer,
+.clippy-root.dragging .ember-shift-inner,
+.clippy-root.dragging .ember-shift-core,
+.clippy-root.dragging .ember-spark-ring,
+.clippy-root.dragging .ember-spark,
+.clippy-root.dragging .ember-permission-seal,
+.clippy-root.dragging .ember-permission-glow,
+.clippy-root.dragging .ember-permission-ray,
+.clippy-root.dragging .ember-eye-slot,
+.clippy-root.dragging .ember-eye-blink,
+.clippy-root.dragging .ember-mouth {
+  animation: none !important;
+}
+@keyframes ember-idle-a {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  18%     { transform: translateY(-4px) rotate(3deg) scale(1.02, .985); }
+  38%     { transform: translateY(-7px) rotate(-5deg) scale(.985, 1.03); }
+  62%     { transform: translateY(-2px) rotate(5deg) scale(1.015, .99); }
+  82%     { transform: translateY(-5px) rotate(-3deg) scale(.995, 1.02); }
+}
+@keyframes ember-idle-b {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  14%     { transform: translateY(-3px) rotate(7deg) scale(1.03, .97); }
+  34%     { transform: translateY(-8px) rotate(-4deg) scale(.98, 1.04); }
+  58%     { transform: translateY(-1px) rotate(-7deg) scale(1.01, .99); }
+  76%     { transform: translateY(-6px) rotate(4deg) scale(.99, 1.025); }
+}
+@keyframes ember-hover {
+  0%   { transform: translateY(0) rotate(-1deg) scale(1); }
+  42%  { transform: translateY(-7px) rotate(8deg) scale(1.03, .975); }
+  70%  { transform: translateY(-2px) rotate(-4deg) scale(.995, 1.015); }
+  100% { transform: translateY(0) rotate(-1deg) scale(1); }
+}
+@keyframes ember-intro-flame {
+  0%   { opacity: 0; transform: scale(.04, .06); }
+  24%  { opacity: .96; transform: scale(.18, .26); }
+  58%  { opacity: 1; transform: scale(.84, .92); }
+  78%  { opacity: 1; transform: scale(1.08, 1.12); }
+  100% { opacity: 1; transform: scale(1, 1); }
+}
+@keyframes ember-outro-flame {
+  0%   { opacity: 1; transform: translateY(0) scale(1, 1); }
+  34%  { opacity: .95; transform: translateY(4px) scale(.74, .8); }
+  68%  { opacity: .64; transform: translateY(14px) scale(.24, .32); }
+  100% { opacity: 0; transform: translateY(24px) scale(.03, .05); }
+}
+@keyframes ember-think-a {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  26%     { transform: translateY(-4px) rotate(2.5deg) scale(.994, 1.02); }
+  54%     { transform: translateY(-1.5px) rotate(3.5deg) scale(1.012, .992); }
+  78%     { transform: translateY(-3px) rotate(-1.5deg) scale(.998, 1.008); }
+}
+@keyframes ember-think-b {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  18%     { transform: translateY(-3px) rotate(-3.5deg) scale(.994, 1.02); }
+  42%     { transform: translateY(-5px) rotate(4deg) scale(1.018, .982); }
+  67%     { transform: translateY(-1.5px) rotate(-4.5deg) scale(1, 1.008); }
+  86%     { transform: translateY(-3.5px) rotate(1deg) scale(.996, 1.012); }
+}
+@keyframes ember-permission {
+  0%,100% { transform: translateY(-1px) rotate(-2deg) scale(1); }
+  24%     { transform: translateY(-2.5px) rotate(2.8deg) scale(1.01, .992); }
+  50%     { transform: translateY(-1.2px) rotate(-2.2deg) scale(.998, 1.01); }
+  76%     { transform: translateY(-3px) rotate(2.4deg) scale(1.012, .994); }
+}
+@keyframes ember-acting {
+  0%,100% { transform: translateY(0) rotate(-1deg) scale(1); }
+  16%     { transform: translateY(-8px) rotate(-8deg) scale(1.03, .97); }
+  40%     { transform: translateY(-2px) rotate(7deg) scale(.99, 1.025); }
+  68%     { transform: translateY(-7px) rotate(10deg) scale(1.04, .965); }
+}
+.clippy-avatar-host[data-character="ember"] .ember-halo,
+.clippy-avatar-host[data-character="ember"] .ember-flame-outer,
+.clippy-avatar-host[data-character="ember"] .ember-flame-inner,
+.clippy-avatar-host[data-character="ember"] .ember-core,
+.clippy-avatar-host[data-character="ember"] .ember-shift-halo,
+.clippy-avatar-host[data-character="ember"] .ember-shift-outer,
+.clippy-avatar-host[data-character="ember"] .ember-shift-inner,
+.clippy-avatar-host[data-character="ember"] .ember-shift-core,
+.clippy-avatar-host[data-character="ember"] .ember-spark-ring,
+.clippy-avatar-host[data-character="ember"] .ember-spark,
+.clippy-avatar-host[data-character="ember"] .ember-permission-seal,
+.clippy-avatar-host[data-character="ember"] .ember-permission-glow,
+.clippy-avatar-host[data-character="ember"] .ember-permission-ray,
+.clippy-avatar-host[data-character="ember"] .ember-eye-slot,
+.clippy-avatar-host[data-character="ember"] .ember-eye-blink,
+.clippy-avatar-host[data-character="ember"] .ember-mouth {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.clippy-avatar-host[data-character="ember"] .ember-halo,
+.clippy-avatar-host[data-character="ember"] .ember-flame-outer,
+.clippy-avatar-host[data-character="ember"] .ember-flame-inner,
+.clippy-avatar-host[data-character="ember"] .ember-core {
+  transition: filter .3s ease, opacity .3s ease;
+}
+.clippy-avatar-host[data-character="ember"] .ember-brow {
+  stroke: rgba(90, 34, 10, .92);
+  stroke-width: 1.55;
+  opacity: .54;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity .22s ease, transform .28s ease;
+}
+.clippy-avatar-host[data-character="ember"] .ember-brow-left {
+  transform: translateY(.6px) rotate(-4deg);
+  animation: ember-brow-idle-left 4.8s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-brow-right {
+  transform: translateY(.5px) rotate(4deg);
+  animation: ember-brow-idle-right 4.8s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-flame-stack,
+.clippy-avatar-host[data-character="ember"] .ember-smoke {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+.clippy-avatar-host[data-character="ember"] .ember-heat {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 1;
+  transition: opacity .42s ease .06s;
+}
+.clippy-avatar-host[data-character="ember"] .ember-heat-shift {
+  opacity: 0;
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.clippy-avatar-host[data-character="ember"] .ember-heat-shift-white {
+  transition: opacity .42s ease .16s;
+}
+.clippy-avatar-host[data-character="ember"] .ember-heat-shift-blue {
+  transition: opacity .32s ease;
+}
+.clippy-avatar-host[data-character="ember"] .ember-shift-halo-white { fill: url(#ember-halo-white-grad); }
+.clippy-avatar-host[data-character="ember"] .ember-shift-halo-blue { fill: url(#ember-halo-blue-grad); }
+.clippy-avatar-host[data-character="ember"] .ember-shift-halo {
+  animation: ember-halo 2.7s ease-in-out infinite;
+  filter: none;
+}
+.clippy-avatar-host[data-character="ember"] .ember-shift-outer-white {
+  fill: url(#ember-flame-outer-white-grad);
+  filter: drop-shadow(0 0 8px rgba(255, 231, 171, .18));
+}
+.clippy-avatar-host[data-character="ember"] .ember-shift-outer-blue {
+  fill: url(#ember-flame-outer-blue-grad);
+  filter: drop-shadow(0 0 10px rgba(141, 213, 255, .22));
+}
+.clippy-avatar-host[data-character="ember"] .ember-shift-outer {
+  animation: ember-flame-outer 1.65s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-shift-inner-white { fill: url(#ember-flame-inner-white-grad); }
+.clippy-avatar-host[data-character="ember"] .ember-shift-inner-blue { fill: url(#ember-flame-inner-blue-grad); }
+.clippy-avatar-host[data-character="ember"] .ember-shift-inner {
+  animation: ember-flame-inner 1.35s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-shift-core-white { fill: url(#ember-core-white-grad); }
+.clippy-avatar-host[data-character="ember"] .ember-shift-core-blue { fill: url(#ember-core-blue-grad); }
+.clippy-avatar-host[data-character="ember"] .ember-shift-core {
+  animation: ember-core 1.08s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-ground-shadow {
+  opacity: .9;
+}
+.clippy-avatar-host[data-character="ember"] .ember-halo {
+  opacity: .72;
+  animation: ember-halo 2.7s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-holder-shadow {
+  fill: rgba(71, 28, 10, .22);
+}
+.clippy-avatar-host[data-character="ember"] .ember-holder {
+  fill: url(#ember-holder-grad);
+  stroke: #6d4118;
+  stroke-width: 1.2;
+}
+.clippy-avatar-host[data-character="ember"] .ember-holder-rim {
+  fill: rgba(255, 224, 174, .28);
+  stroke: rgba(255, 239, 210, .45);
+  stroke-width: .9;
+}
+.clippy-avatar-host[data-character="ember"] .ember-wax {
+  fill: url(#ember-wax-grad);
+  stroke: #d8c1a4;
+  stroke-width: .9;
+}
+.clippy-avatar-host[data-character="ember"] .ember-wax-drip {
+  fill: rgba(255, 248, 239, .5);
+}
+.clippy-avatar-host[data-character="ember"] .ember-wick {
+  fill: #4e2b12;
+  opacity: .92;
+}
+.clippy-avatar-host[data-character="ember"] .ember-flame-outer {
+  fill: url(#ember-flame-outer-grad);
+  filter: drop-shadow(0 0 10px rgba(255, 151, 54, .35));
+  animation: ember-flame-outer 1.65s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-flame-inner {
+  fill: url(#ember-flame-inner-grad);
+  animation: ember-flame-inner 1.35s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-core {
+  fill: url(#ember-core-grad);
+  opacity: .92;
+  animation: ember-core 1.08s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-eye-slot {
+  animation: ember-eye-drift 4.2s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-eye-slot-right {
+  animation-delay: -.9s;
+}
+.clippy-avatar-host[data-character="ember"] .ember-eye-blink {
+  animation: ember-blink 5.1s infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-eye-blink-right {
+  animation-delay: -.28s;
+}
+.clippy-avatar-host[data-character="ember"] .ember-eye {
+  fill: #2b1306;
+}
+.clippy-avatar-host[data-character="ember"] .ember-eye-shine {
+  fill: rgba(255, 255, 255, .98);
+}
+.clippy-avatar-host[data-character="ember"] .ember-mouth {
+  stroke: #7a2608;
+  stroke-width: 2;
+  animation: ember-mouth 4.8s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-smoke {
+  opacity: 0;
+  pointer-events: none;
+}
+.clippy-avatar-host[data-character="ember"] .ember-smoke-wisp {
+  fill: none;
+  stroke: rgba(130, 141, 154, .76);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="intro"] .ember-heat-shift {
+  opacity: 0 !important;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="intro"] .ember-smoke,
+.clippy-avatar-host[data-character="ember"][data-character-mode="intro"] .ember-smoke-wisp {
+  opacity: 0 !important;
+  animation: none !important;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="intro"] .ember-flame-stack {
+  animation: ember-intro-flame 1.22s cubic-bezier(.24, .9, .28, 1.16) 1 both;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="outro"] .ember-flame-stack {
+  animation: ember-outro-flame 1.02s cubic-bezier(.28, .04, .28, .98) 1 both;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="outro"] .ember-smoke {
+  animation: ember-smoke-rise 1.08s ease-out 1 both;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="outro"] .ember-smoke-wisp-a {
+  animation: ember-smoke-wisp-a 1.08s ease-out 1 both;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="outro"] .ember-smoke-wisp-b {
+  animation: ember-smoke-wisp-b 1.02s ease-out .08s 1 both;
+}
+.clippy-avatar-host[data-character="ember"] .ember-spark-ring {
+  opacity: 0;
+  transform: scale(.84);
+  transition: opacity .18s ease;
+}
+.clippy-avatar-host[data-character="ember"] .ember-spark {
+  fill: #ffd76a;
+  filter: drop-shadow(0 0 5px rgba(255, 214, 103, .55));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-spark-ring {
+  opacity: 1;
+  animation: ember-spark-ring 1.6s linear infinite;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-spark {
+  animation: ember-spark-pulse 1.6s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-spark-ring {
+  animation-name: ember-spark-ring-idea;
+  animation-duration: 1.15s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-spark {
+  animation-name: ember-spark-burst;
+  animation-duration: 1.15s;
+}
+.clippy-avatar-host[data-character="ember"] .ember-spark-b { animation-delay: .18s; }
+.clippy-avatar-host[data-character="ember"] .ember-spark-c { animation-delay: .32s; }
+.clippy-avatar-host[data-character="ember"] .ember-spark-d { animation-delay: .46s; }
+.clippy-avatar-host[data-character="ember"] .ember-spark-e { animation-delay: .58s; }
+.clippy-avatar-host[data-character="ember"] .ember-permission-seal {
+  opacity: 0;
+  transform: translateY(2px) scale(.84);
+  transition: opacity .18s ease;
+}
+.clippy-avatar-host[data-character="ember"] .ember-permission-glow {
+  fill: #9fd6ff;
+  opacity: 0;
+}
+.clippy-avatar-host[data-character="ember"] .ember-permission-badge {
+  fill: #f3fbff;
+  stroke: #8cb8e5;
+  stroke-width: 1.05;
+}
+.clippy-avatar-host[data-character="ember"] .ember-permission-question {
+  stroke: #4d658f;
+  stroke-width: 1.7;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.clippy-avatar-host[data-character="ember"] .ember-permission-dot {
+  stroke: #4d658f;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+}
+.clippy-avatar-host[data-character="ember"] .ember-permission-ray {
+  stroke: #9ddfff;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-permission-seal {
+  opacity: 1;
+  animation: ember-permission-seal 1.42s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-permission-glow {
+  animation: ember-permission-glow 1.42s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-permission-ray {
+  animation: ember-permission-ray 1.42s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="ember"] .ember-permission-ray-b { animation-delay: .1s; }
+.clippy-avatar-host[data-character="ember"] .ember-permission-ray-c { animation-delay: .2s; }
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-halo,
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-flame-outer,
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-flame-inner,
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-core,
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-brow,
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-eye-slot,
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-mouth {
+  animation-duration: 1.5s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-halo {
+  animation: none;
+  opacity: 0;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-shift-halo {
+  animation-name: ember-halo-think;
+  animation-duration: 1.22s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-shift-halo-white {
+  filter: drop-shadow(0 0 10px rgba(245, 249, 255, .2));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-shift-halo-blue {
+  filter: drop-shadow(0 0 18px rgba(143, 215, 255, .56));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-flame-outer {
+  animation-name: ember-flame-outer-think;
+  filter: drop-shadow(0 0 6px rgba(255, 197, 132, .06));
+  animation-duration: 1.06s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-shift-outer {
+  animation-name: ember-flame-outer-think;
+  animation-duration: 1.06s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-shift-outer-white {
+  filter: drop-shadow(0 0 8px rgba(245, 249, 255, .18));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-shift-outer-blue {
+  filter: drop-shadow(0 0 15px rgba(145, 214, 255, .48));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-flame-inner {
+  animation-name: ember-flame-inner-think;
+  animation-duration: .94s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-shift-inner {
+  animation-name: ember-flame-inner-think;
+  animation-duration: .94s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-core {
+  animation-name: ember-core-think;
+  animation-duration: .82s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-shift-core {
+  animation-name: ember-core-think;
+  animation-duration: .82s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-heat {
+  opacity: 0;
+  transition: opacity .56s ease .08s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-heat-shift-white {
+  opacity: .9;
+  transition: opacity .44s ease;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-heat-shift-blue {
+  opacity: .78;
+  transition: opacity .58s ease .2s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-brow {
+  opacity: .88;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-brow-left {
+  animation-name: ember-brow-think-left;
+  animation-duration: 1.5s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-brow-right {
+  animation-name: ember-brow-think-right;
+  animation-duration: 1.5s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-halo {
+  animation: none;
+  opacity: 0;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-shift-halo {
+  animation-name: ember-halo-think-idea;
+  animation-duration: .98s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-shift-halo-white {
+  filter: drop-shadow(0 0 10px rgba(247, 250, 255, .18));
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-shift-halo-blue {
+  filter: drop-shadow(0 0 20px rgba(144, 216, 255, .62));
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-flame-outer {
+  animation-name: ember-flame-outer-think-idea;
+  filter: drop-shadow(0 0 6px rgba(255, 204, 146, .05));
+  animation-duration: .9s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-shift-outer {
+  animation-name: ember-flame-outer-think-idea;
+  animation-duration: .9s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-shift-outer-white {
+  filter: drop-shadow(0 0 8px rgba(247, 250, 255, .16));
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-shift-outer-blue {
+  filter: drop-shadow(0 0 17px rgba(146, 216, 255, .56));
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-flame-inner {
+  animation-name: ember-flame-inner-think-idea;
+  animation-duration: .8s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-shift-inner {
+  animation-name: ember-flame-inner-think-idea;
+  animation-duration: .8s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-core {
+  animation-name: ember-core-think-idea;
+  animation-duration: .7s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-shift-core {
+  animation-name: ember-core-think-idea;
+  animation-duration: .7s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-heat {
+  opacity: 0;
+  transition: opacity .6s ease .08s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-heat-shift-white {
+  opacity: .96;
+  transition: opacity .42s ease;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-heat-shift-blue {
+  opacity: .9;
+  transition: opacity .62s ease .22s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-brow {
+  opacity: .96;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-brow-left {
+  animation-name: ember-brow-think-idea-left;
+  animation-duration: 1.15s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-state="thinking-b"] .ember-brow-right {
+  animation-name: ember-brow-think-idea-right;
+  animation-duration: 1.15s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-eye-slot,
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-mouth,
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-brow {
+  animation-duration: 2.1s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-halo {
+  animation: none;
+  opacity: .18;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-shift-halo {
+  animation-name: ember-halo;
+  animation-duration: 1.26s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-shift-halo-white {
+  filter: drop-shadow(0 0 8px rgba(245, 249, 255, .16));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-shift-halo-blue {
+  filter: drop-shadow(0 0 9px rgba(150, 210, 255, .14));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-flame-outer {
+  animation-duration: 1.08s;
+  filter: drop-shadow(0 0 7px rgba(255, 186, 102, .18));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-shift-outer {
+  animation-name: ember-flame-outer;
+  animation-duration: 1.08s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-shift-outer-white {
+  filter: drop-shadow(0 0 7px rgba(245, 249, 255, .14));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-shift-outer-blue {
+  filter: drop-shadow(0 0 8px rgba(151, 210, 255, .12));
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-flame-inner {
+  animation-duration: .96s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-shift-inner {
+  animation-name: ember-flame-inner;
+  animation-duration: .96s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-core {
+  animation-duration: .84s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-shift-core {
+  animation-name: ember-core;
+  animation-duration: .84s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-heat {
+  opacity: .5;
+  transition: opacity .44s ease .08s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-heat-shift-white {
+  opacity: .36;
+  transition: opacity .4s ease .06s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-heat-shift-blue {
+  opacity: .08;
+  transition: opacity .48s ease .14s;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-brow {
+  opacity: .72;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-brow-left {
+  animation-name: ember-brow-permission-left;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-brow-right {
+  animation-name: ember-brow-permission-right;
+}
+.clippy-avatar-host[data-character="ember"][data-character-mode="acting"] .ember-halo,
+.clippy-avatar-host[data-character="ember"][data-character-mode="acting"] .ember-flame-outer,
+.clippy-avatar-host[data-character="ember"][data-character-mode="acting"] .ember-flame-inner,
+.clippy-avatar-host[data-character="ember"][data-character-mode="acting"] .ember-core,
+.clippy-avatar-host[data-character="ember"][data-character-mode="acting"] .ember-eye-slot,
+.clippy-avatar-host[data-character="ember"][data-character-mode="acting"] .ember-mouth {
+  animation-duration: .95s;
+}
+@keyframes ember-halo {
+  0%,100% { opacity: .6; transform: scale(.96); }
+  35%     { opacity: .82; transform: scale(1.04); }
+  70%     { opacity: .68; transform: scale(1.08); }
+}
+@keyframes ember-halo-think {
+  0%,100% { opacity: .62; transform: scale(.94); }
+  20%     { opacity: .95; transform: scale(1.07); }
+  48%     { opacity: .72; transform: scale(1.18); }
+  72%     { opacity: .9; transform: scale(1.1); }
+}
+@keyframes ember-halo-think-idea {
+  0%,100% { opacity: .66; transform: scale(.96); }
+  18%     { opacity: 1; transform: scale(1.1); }
+  42%     { opacity: .78; transform: scale(1.24); }
+  68%     { opacity: .96; transform: scale(1.14); }
+}
+@keyframes ember-flame-outer {
+  0%,100% { transform: translateY(0) scale(1, 1) rotate(-3deg); }
+  22%     { transform: translateY(-2px) scale(1.04, .96) rotate(3deg); }
+  55%     { transform: translateY(-4px) scale(.97, 1.08) rotate(-5deg); }
+  80%     { transform: translateY(-1px) scale(1.03, .98) rotate(2deg); }
+}
+@keyframes ember-smoke-rise {
+  0%,18% { opacity: 0; transform: translateY(0) scale(.82); }
+  42%    { opacity: .74; transform: translateY(-4px) scale(1); }
+  100%   { opacity: 0; transform: translateY(-18px) scale(1.18); }
+}
+@keyframes ember-smoke-wisp-a {
+  0%,16% { opacity: 0; transform: translate(0, 0) scale(.84); }
+  38%    { opacity: .66; transform: translate(-1px, -6px) scale(1); }
+  100%   { opacity: 0; transform: translate(-5px, -20px) scale(1.14); }
+}
+@keyframes ember-smoke-wisp-b {
+  0%,18% { opacity: 0; transform: translate(0, 0) scale(.82); }
+  40%    { opacity: .58; transform: translate(1px, -5px) scale(.98); }
+  100%   { opacity: 0; transform: translate(6px, -18px) scale(1.12); }
+}
+@keyframes ember-flame-outer-think {
+  0%,100% { transform: translateY(0) scale(1, 1) rotate(-3deg); }
+  18%     { transform: translateY(-2px) scale(1.08, .94) rotate(3deg); }
+  48%     { transform: translateY(-5px) scale(.96, 1.12) rotate(-5deg); }
+  76%     { transform: translateY(-1px) scale(1.06, .97) rotate(2deg); }
+}
+@keyframes ember-flame-outer-think-idea {
+  0%,100% { transform: translateY(0) scale(1.01, 1) rotate(-4deg); }
+  16%     { transform: translateY(-3px) scale(1.12, .92) rotate(4deg); }
+  44%     { transform: translateY(-6px) scale(.95, 1.16) rotate(-6deg); }
+  72%     { transform: translateY(-2px) scale(1.09, .96) rotate(3deg); }
+}
+@keyframes ember-flame-inner {
+  0%,100% { transform: translateY(0) scale(1, 1) rotate(2deg); }
+  28%     { transform: translateY(-2px) scale(1.03, .95) rotate(-3deg); }
+  60%     { transform: translateY(-3px) scale(.96, 1.08) rotate(4deg); }
+  82%     { transform: translateY(-1px) scale(1.02, .99) rotate(-1deg); }
+}
+@keyframes ember-flame-inner-think {
+  0%,100% { transform: translateY(0) scale(1, 1) rotate(2deg); opacity: 1; }
+  24%     { transform: translateY(-2px) scale(1.06, .93) rotate(-4deg); opacity: 1; }
+  56%     { transform: translateY(-4px) scale(.95, 1.11) rotate(5deg); opacity: .9; }
+  78%     { transform: translateY(-1px) scale(1.05, .97) rotate(-2deg); opacity: 1; }
+}
+@keyframes ember-flame-inner-think-idea {
+  0%,100% { transform: translateY(0) scale(1.01, 1) rotate(2deg); opacity: 1; }
+  20%     { transform: translateY(-3px) scale(1.08, .92) rotate(-5deg); opacity: 1; }
+  48%     { transform: translateY(-5px) scale(.94, 1.14) rotate(5deg); opacity: .9; }
+  74%     { transform: translateY(-1px) scale(1.06, .96) rotate(-2deg); opacity: 1; }
+}
+@keyframes ember-core {
+  0%,100% { opacity: .88; transform: translateY(0) scale(1); }
+  25%     { opacity: 1; transform: translateY(-1px) scale(1.06); }
+  62%     { opacity: .8; transform: translateY(-2px) scale(.95, 1.08); }
+}
+@keyframes ember-core-think {
+  0%,100% { opacity: .9; transform: translateY(0) scale(1); }
+  22%     { opacity: 1; transform: translateY(-1px) scale(1.14); }
+  46%     { opacity: .82; transform: translateY(-2px) scale(.94, 1.12); }
+  72%     { opacity: 1; transform: translateY(-1px) scale(1.18); }
+}
+@keyframes ember-core-think-idea {
+  0%,100% { opacity: .92; transform: translateY(0) scale(1.02); }
+  18%     { opacity: 1; transform: translateY(-1px) scale(1.18); }
+  44%     { opacity: .84; transform: translateY(-3px) scale(.93, 1.16); }
+  68%     { opacity: 1; transform: translateY(-1px) scale(1.22); }
+}
+@keyframes ember-brow-idle-left {
+  0%,100% { transform: translateY(.6px) rotate(-4deg); }
+  34%     { transform: translateY(.15px) rotate(-5deg); }
+  68%     { transform: translateY(.45px) rotate(-3deg); }
+}
+@keyframes ember-brow-idle-right {
+  0%,100% { transform: translateY(.5px) rotate(4deg); }
+  34%     { transform: translateY(.1px) rotate(5deg); }
+  68%     { transform: translateY(.38px) rotate(3deg); }
+}
+@keyframes ember-brow-think-left {
+  0%,100% { transform: translateY(.45px) rotate(-7deg); }
+  32%     { transform: translateY(-.3px) rotate(-10deg); }
+  66%     { transform: translateY(.05px) rotate(-6deg); }
+}
+@keyframes ember-brow-think-right {
+  0%,100% { transform: translateY(.38px) rotate(7deg); }
+  32%     { transform: translateY(-.32px) rotate(10deg); }
+  66%     { transform: translateY(0) rotate(6deg); }
+}
+@keyframes ember-brow-think-idea-left {
+  0%,100% { transform: translateY(.28px) rotate(-9deg); }
+  26%     { transform: translateY(-.55px) rotate(-12deg); }
+  58%     { transform: translateY(-.1px) rotate(-7deg); }
+}
+@keyframes ember-brow-think-idea-right {
+  0%,100% { transform: translateY(.24px) rotate(9deg); }
+  26%     { transform: translateY(-.58px) rotate(12deg); }
+  58%     { transform: translateY(-.08px) rotate(7deg); }
+}
+@keyframes ember-brow-permission-left {
+  0%,100% { transform: translateY(.48px) rotate(-5deg); }
+  28%     { transform: translateY(-.12px) rotate(-7deg); }
+  62%     { transform: translateY(.18px) rotate(-4deg); }
+}
+@keyframes ember-brow-permission-right {
+  0%,100% { transform: translateY(.42px) rotate(5deg); }
+  28%     { transform: translateY(-.14px) rotate(7deg); }
+  62%     { transform: translateY(.14px) rotate(4deg); }
+}
+@keyframes ember-eye-drift {
+  0%,100% { transform: translate(0, 0); }
+  20%     { transform: translate(-0.35px, -1px); }
+  42%     { transform: translate(0.28px, 0.25px); }
+  66%     { transform: translate(0.38px, -0.7px); }
+}
+@keyframes ember-blink {
+  0%, 91%, 100% { transform: scaleY(1); }
+  93%           { transform: scaleY(.14); }
+  95%           { transform: scaleY(1); }
+  97%           { transform: scaleY(.08); }
+  99%           { transform: scaleY(1); }
+}
+@keyframes ember-mouth {
+  0%,100% { transform: translateY(0) scaleX(1); }
+  34%     { transform: translateY(.4px) scaleX(1.06); }
+  68%     { transform: translateY(-.35px) scaleX(.96); }
+}
+@keyframes ember-spark-ring {
+  0%      { transform: rotate(0deg) scale(.84); }
+  100%    { transform: rotate(360deg) scale(.95); }
+}
+@keyframes ember-spark-ring-idea {
+  0%      { transform: rotate(0deg) scale(.88); }
+  100%    { transform: rotate(360deg) scale(1.04); }
+}
+@keyframes ember-spark-pulse {
+  0%,100% { opacity: .3; transform: scale(.72); }
+  26%     { opacity: 1; transform: scale(1.08); }
+  62%     { opacity: .45; transform: scale(.9); }
+}
+@keyframes ember-spark-burst {
+  0%,100% { opacity: .28; transform: scale(.7); }
+  20%     { opacity: 1; transform: scale(1.25); }
+  52%     { opacity: .52; transform: scale(1); }
+}
+@keyframes ember-permission-seal {
+  0%,100% { transform: translateY(-1px) scale(1) rotate(-4deg); }
+  24%     { transform: translateY(-3px) scale(1.05) rotate(4deg); }
+  58%     { transform: translateY(-2px) scale(1.01) rotate(-2deg); }
+  82%     { transform: translateY(-4px) scale(1.06) rotate(3deg); }
+}
+@keyframes ember-permission-glow {
+  0%,100% { opacity: .08; transform: scale(.82); }
+  30%     { opacity: .32; transform: scale(1.06); }
+  64%     { opacity: .16; transform: scale(1.2); }
+}
+@keyframes ember-permission-ray {
+  0%,100% { opacity: 0; transform: scale(.74); }
+  22%     { opacity: .95; transform: scale(1.06); }
+  58%     { opacity: .24; transform: scale(1.16); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clippy-avatar-host[data-character="ember"] .ember-char { animation-duration: 7s !important; }
+  .clippy-avatar-host[data-character="ember"] .ember-halo,
+  .clippy-avatar-host[data-character="ember"] .ember-flame-outer,
+  .clippy-avatar-host[data-character="ember"] .ember-flame-inner,
+  .clippy-avatar-host[data-character="ember"] .ember-core,
+  .clippy-avatar-host[data-character="ember"] .ember-eye-slot,
+  .clippy-avatar-host[data-character="ember"] .ember-eye-blink,
+  .clippy-avatar-host[data-character="ember"] .ember-mouth { animation-duration: 6.5s !important; }
+  .clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-spark-ring,
+  .clippy-avatar-host[data-character="ember"][data-character-mode="thinking"] .ember-spark,
+  .clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-permission-seal,
+  .clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-permission-glow,
+  .clippy-avatar-host[data-character="ember"][data-character-mode="permission"] .ember-permission-ray { animation-duration: 2.2s !important; }
+}
+

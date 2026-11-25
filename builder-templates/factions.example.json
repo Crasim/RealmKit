@@ -1,0 +1,30 @@
+[
+  {
+    "_id": "factions_abc1_001",
+    "name": "Kingdom of Aldenmoor",
+    "color": "#c8a840",
+    "alignment": "lawful",
+    "description": "The ruling monarchy of the northern reaches. Disciplined, proud, and increasingly desperate as the old magic fades."
+  },
+  {
+    "_id": "factions_abc1_002",
+    "name": "The Ironveil Syndicate",
+    "color": "#8060a0",
+    "alignment": "chaotic",
+    "description": "A ruthless merchant guild that has quietly purchased half the continent's debt. Loyalty is a commodity — everything has a price."
+  },
+  {
+    "_id": "factions_abc1_003",
+    "name": "The Wandering Circle",
+    "color": "#40a870",
+    "alignment": "neutral",
+    "description": "Nomadic druids and lorekeepers who owe allegiance to no crown. They remember what the world was before the first kingdoms rose."
+  },
+  {
+    "_id": "factions_abc1_004",
+    "name": "Ashborne Remnants",
+    "color": "#e04040",
+    "alignment": "evil",
+    "description": "Survivors of a razed city who have embraced shadow magic in their pursuit of revenge. Their cause was just once; few still believe that."
+  }
+]

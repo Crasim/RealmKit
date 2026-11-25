@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RealmKit Engine - Phase 1.1</title>
+    <link rel="stylesheet" href="src/css/realmkit-ui.css?v=20260324j">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #1a1a2e;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            color: #eee;
+        }
+        
+        #game-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        #game-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: #16213e;
+        }
+        
+        /* UI/HUD Layer - rendered on top of everything */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        #info-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 11px;
+            color: #888;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 6px;
+            text-align: center;
+            pointer-events: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        body.is-studio-embed #info-bar,
+        body.is-studio-embed #rgui-root,
+        body.is-studio-embed #rs-root {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Game Canvas Layer -->
+        <canvas id="game-canvas"></canvas>
+        
+        <!-- UI/HUD Layer -->
+        <div id="ui-layer">
+            <div id="info-bar">RealmKit v0.2.0 | Initializing...</div>
+        </div>
+    </div>
+    
+    <!-- Configuration -->
+    <script src="config/engine.js"></script>
+    
+    <!-- Core Engine -->
+    <script src="src/js/core/GameLoop.js"></script>
+    <script src="src/js/core/ActionQueue.js"></script>
+    <script src="src/js/core/Viewport.js"></script>
+    <script src="src/js/core/AssetCache.js"></script>
+    <script src="src/js/core/AssetLoader.js"></script>
+    <script src="src/js/core/ProceduralSprite.js"></script>
+    <script src="src/js/data/Keymap.js?v=20260324b"></script>
+    <script src="src/js/core/InputHandler.js?v=20260324c"></script>
+    <script src="src/js/core/MobileTouchHandler.js"></script>
+    <script src="src/js/core/Camera.js"></script>
+    <script src="src/js/core/PerlinNoise.js"></script>
+    <script src="src/js/core/TerrainGenerator.js"></script>
+    <script src="src/js/core/Tileset.js"></script>
+    <script src="src/js/core/TileMap.js"></script>
+    <script src="src/js/data/MapData.js"></script>
+    <script src="src/js/fx/ParticleSystem.js"></script>
+    <script src="src/js/fx/ProjectileSystem.js"></script>
+    <script src="src/js/fx/FadeTransition.js"></script>
+    <script src="src/js/fx/WeatherSystem.js"></script>
+    <script src="src/js/utils/Quadtree.js"></script>
+    <script src="src/js/utils/ObjectPool.js"></script>
+    <script src="src/js/utils/TimeOfDay.js"></script>
+    <script src="src/js/utils/NPCSchedule.js"></script>
+    <script src="src/js/utils/Pathfinding.js"></script>
+    <script src="src/js/utils/PathRequestManager.js?v=20260323a"></script>
+    <script src="src/js/utils/SaveManager.js"></script>
+    <script src="src/js/utils/CanvasCache.js"></script>
+    <script src="src/js/utils/PreloadManager.js"></script>
+    <script src="src/js/utils/HotReload.js"></script>
+    <script src="src/js/db/StoryDatabase.js"></script>
+    <script src="src/js/db/SaveDatabase.js"></script>
+    <script src="src/js/data/DefaultStory.js"></script>
+    <script src="src/js/data/MonsterTemplates.js"></script>
+    <script src="src/js/data/ItemDefinitions.js?v=20260323c"></script>
+    <script src="src/js/network/WebSocketClient.js"></script>
+    <script src="src/js/network/MultiplayerManager.js"></script>
+    <script src="src/js/systems/AudioSystem.js"></script>
+    <script src="src/js/systems/CombatSystem.js?v=20260323c"></script>
+    <script src="src/js/systems/StatusEffectManager.js"></script>
+    <script src="src/js/systems/ThreatManager.js"></script>
+    <script src="src/js/systems/ExperienceManager.js"></script>
+    <script src="src/js/systems/HUDSystem.js?v=20260324b"></script>
+    <script src="src/js/systems/InventoryManager.js?v=20260323c"></script>
+    <script src="src/js/systems/EquipmentManager.js?v=20260323c"></script>
+    <script src="src/js/systems/DialogueSystem.js"></script>
+    <script src="src/js/systems/AchievementSystem.js"></script>
+    <script src="src/js/systems/QuestSystem.js"></script>
+    <script src="src/js/systems/NPCSpawner.js"></script>
+    <script src="src/js/systems/MonsterSpawner.js"></script>
+    <script src="src/js/systems/TriggerSystem.js"></script>
+    <script src="src/js/systems/ZoneTransition.js?v=20260323c"></script>
+    <script src="src/js/test/TestHarness.js"></script>
+    <script src="src/js/item/Weapon.js"></script>
+    <script src="src/js/item/Consumable.js"></script>
+    <!-- New template-based unit system -->
+    <script src="src/js/data/UnitDefinitions.js?v=20260327a"></script>
+    <script src="src/js/data/SpriteManifests.js?v=20260327a"></script>
+    <script src="src/js/systems/InputController.js?v=20260324d"></script>
+    <script src="src/js/systems/AISystem.js?v=20260324a"></script>
+    <!-- Entity system (backward compatible) -->
+    <script src="src/js/entity/Entity.js"></script>
+    <script src="src/js/entity/AnimationStateMachine.js"></script>
+    <script src="src/js/entity/Player.js"></script>
+    <script src="src/js/entity/NPC.js"></script>
+    <script src="src/js/entity/EntityManager.js"></script>
+    <script src="src/js/entity/LootDrop.js"></script>
+    <script src="src/js/entity/PartyManager.js"></script>
+    <!-- EntityFactory defines Factions/FactionRelations/EntityTemplates - load after entity classes -->
+    <script src="src/js/data/EntityFactory.js"></script>
+    <script src="src/js/renderer/CanvasRenderer.js"></script>
+    <script src="src/js/renderer/SpriteRenderer.js"></script>
+    <script src="src/js/ui/DevPanel.js?v=20260323a"></script>
+    <script src="src/js/ui/MapGenPanel.js?v=20260323a"></script>
+    <script src="src/js/ui/FeatureTestPanel.js?v=20260323a"></script>
+    <script src="src/js/ui/EffectBarSystem.js?v=20260323a"></script>
+    <script src="src/js/ui/StoryLauncher.js?v=20260323a"></script>
+    <script src="src/js/ui/StoryBuilder.js?v=20260323a"></script>
+    <script src="src/js/ui/RealmSidebar.js?v=20260328b"></script>
+    <script src="src/js/ui/StoryBuilderSidebar.js?v=20260323a"></script>
+    <script src="src/js/ui/RealmGameUI.js?v=20260324j"></script>
+    <script src="src/js/ui/QuestTracker.js?v=20260323c"></script>
+    <script src="src/js/ui/MapEditor.js?v=20260329b"></script>
+    <script src="src/js/ui/WorldEditor.js?v=20260329a"></script>
+    <script src="src/js/systems/LocationSystem.js?v=20260323a"></script>
+    <script src="src/js/core/Engine.js?v=20260329b"></script>
+    
+    <!-- Bootstrap -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('[RealmKit] DOM Content Loaded');
+            console.log('[RealmKit] Starting engine initialization');
+            
+            try {
+                var engine = new RealmKit.Engine();
+                
+                var urlParams = new URLSearchParams(window.location.search);
+                var mode = urlParams.get('mode');
+                var tool = urlParams.get('tool');
+                var builderTab = urlParams.get('builderTab');
+                var studioMode = urlParams.get('studio') === '1';
+                var currentTool = tool || 'map-painter';
+
+                if (studioMode) {
+                    document.body.classList.add('is-studio-embed');
+                }
+
+                function applyStudioEmbedChrome() {
+                    if (!studioMode) return;
+                    var info = document.getElementById('info-bar');
+                    if (info) info.style.display = 'none';
+                    var gameUi = document.getElementById('rgui-root');
+                    if (gameUi) gameUi.style.display = 'none';
+                    var sidebar = document.getElementById('rs-root');
+                    if (sidebar) sidebar.style.display = 'none';
+                }
+
+                function launchTool(requestedTool, options) {
+                    options = options || {};
+                    currentTool = requestedTool || currentTool;
+                    try {
+                        if (requestedTool === 'map-painter' && engine.mapEditor) {
+                            if (engine.worldEditor && engine.worldEditor.visible && engine.worldEditor.hide) engine.worldEditor.hide();
+                            engine.mapEditor.show();
+                            if (!engine.mapEditor.editMode && engine.mapEditor.toggleEditMode) engine.mapEditor.toggleEditMode();
+                            if (engine.mapEditor.setLayer) engine.mapEditor.setLayer(options.layer || 'terrain');
+                            applyStudioEmbedChrome();
+                            return true;
+                        }
+                        if (requestedTool === 'map-collision' && engine.mapEditor) {
+                            if (engine.worldEditor && engine.worldEditor.visible && engine.worldEditor.hide) engine.worldEditor.hide();
+                            engine.mapEditor.show();
+                            if (!engine.mapEditor.editMode && engine.mapEditor.toggleEditMode) engine.mapEditor.toggleEditMode();
+                            if (engine.mapEditor.setLayer) engine.mapEditor.setLayer(options.layer || 'collision');
+                            applyStudioEmbedChrome();
+                            return true;
+                        }
+                        if (requestedTool === 'map-units' && engine.mapEditor) {
+                            if (engine.worldEditor && engine.worldEditor.visible && engine.worldEditor.hide) engine.worldEditor.hide();
+                            engine.mapEditor.show();
+                            if (!engine.mapEditor.editMode && engine.mapEditor.toggleEditMode) engine.mapEditor.toggleEditMode();
+                            if (engine.mapEditor.setLayer) engine.mapEditor.setLayer(options.layer || 'entities');
+                            applyStudioEmbedChrome();
+                            return true;
+                        }
+                        if (requestedTool === 'world-zone' && engine.worldEditor) {
+                            if (engine.mapEditor && engine.mapEditor.visible && engine.mapEditor.hide) engine.mapEditor.hide();
+                            engine.worldEditor.show();
+                            if (!engine.worldEditor.editMode && engine.worldEditor.toggleEditMode) engine.worldEditor.toggleEditMode();
+                            if (engine.worldEditor.setLayer) engine.worldEditor.setLayer(options.layer || 'zone');
+                            applyStudioEmbedChrome();
+                            return true;
+                        }
+                        if (requestedTool === 'world-trigger' && engine.worldEditor) {
+                            if (engine.mapEditor && engine.mapEditor.visible && engine.mapEditor.hide) engine.mapEditor.hide();
+                            engine.worldEditor.show();
+                            if (!engine.worldEditor.editMode && engine.worldEditor.toggleEditMode) engine.worldEditor.toggleEditMode();
+                            if (engine.worldEditor.setLayer) engine.worldEditor.setLayer(options.layer || 'trigger');
+                            applyStudioEmbedChrome();
+                            return true;
+                        }
+                        if (requestedTool === 'world-spawner' && engine.worldEditor) {
+                            if (engine.mapEditor && engine.mapEditor.visible && engine.mapEditor.hide) engine.mapEditor.hide();
+                            engine.worldEditor.show();
+                            if (!engine.worldEditor.editMode && engine.worldEditor.toggleEditMode) engine.worldEditor.toggleEditMode();
+                            if (engine.worldEditor.setLayer) engine.worldEditor.setLayer(options.layer || 'spawner');
+                            applyStudioEmbedChrome();
+                            return true;
+                        }
+                        if (requestedTool === 'builder' && engine.storyBuilder && engine.storyBuilder.show) {
+                            if (studioMode) {
+                                window.open('index.html?tool=builder&builderTab=' + encodeURIComponent(options.builderTab || builderTab || 'maps'), '_blank');
+                                return true;
+                            }
+                            engine.storyBuilder.show();
+                            if ((options.builderTab || builderTab) && RealmKit._sidebar && RealmKit._sidebar._switchBuilderTab) {
+                                RealmKit._sidebar._switchBuilderTab(options.builderTab || builderTab);
+                            }
+                            return true;
+                        }
+                    } catch (toolError) {
+                        console.error('[RealmKit] Tool launch error:', toolError);
+                    }
+                    return false;
+                }
+
+                function bindStudioBridge() {
+                    if (!studioMode) return;
+                    window.engine = engine;
+                    window.realmStudioBridge = {
+                        launchTool: function(requestedTool, options) {
+                            return launchTool(requestedTool, options || {});
+                        },
+                        getState: function() {
+                            return {
+                                tool: currentTool,
+                                mapEditorVisible: !!(engine.mapEditor && engine.mapEditor.visible),
+                                worldEditorVisible: !!(engine.worldEditor && engine.worldEditor.visible)
+                            };
+                        }
+                    };
+                    window.addEventListener('message', function(event) {
+                        var data = event.data;
+                        if (!data || data.type !== 'realm-studio-command' || data.command !== 'launch-tool') return;
+                        launchTool(data.tool, data);
+                    });
+                    applyStudioEmbedChrome();
+                }
+
+                function openRequestedTool() {
+                    if (!tool) return;
+                    window.setTimeout(function() {
+                        launchTool(tool, { builderTab: builderTab });
+                    }, 700);
+                }
+                
+                // Launcher mode: ?mode=launcher or ?mode=story or ?mode=select
+                // Demo mode (default): no mode param or ?mode=demo or ?mode=VisualDev
+                // VisualDev: auto-refresh OFF for manual dev work
+                var showLauncher = mode === 'launcher' || mode === 'story' || mode === 'select';
+                
+                if (showLauncher && typeof RealmKit.StoryLauncher === 'function') {
+                    console.log('[RealmKit] Showing StoryLauncher (mode=' + mode + ')');
+                    var launcher = new RealmKit.StoryLauncher({
+                        container: document.body,
+                        engine: engine
+                    });
+                    
+                    launcher.on('select', function(storyId) {
+                        console.log('[StoryLauncher] Selected story:', storyId);
+                        engine.loadStory(storyId).then(function() {
+                            engine.start();
+                            bindStudioBridge();
+                            openRequestedTool();
+                        }).catch(function(e) {
+                            console.warn('[StoryLauncher] Failed to load story, using default:', e);
+                            engine.loadDefaultStory();
+                            engine.start();
+                            bindStudioBridge();
+                            openRequestedTool();
+                        });
+                    });
+                    
+                    launcher.on('offline', function() {
+                        console.log('[StoryLauncher] Offline mode - loading default story');
+                        engine.loadDefaultStory();
+                        engine.start();
+                        bindStudioBridge();
+                        openRequestedTool();
+                    });
+                    
+                    launcher.show();
+                } else {
+                    console.log('[RealmKit] Demo mode - loading default story directly');
+                    engine.loadDefaultStory();
+                    engine.start();
+                    bindStudioBridge();
+                    openRequestedTool();
+                }
+
+                // Instantiate the Map Gen Panel (F3)
+                if (typeof RealmKit.MapGenPanel === 'function') {
+                    var mapGenPanel = new RealmKit.MapGenPanel(engine);
+                    console.log('[RealmKit] MapGenPanel ready — press F3 to open');
+                }
+
+                // Expose for debugging only when debug mode is on
+                if (studioMode || (RealmKit.Config && RealmKit.Config.debug && RealmKit.Config.debug.enabled)) {
+                    window.engine = engine;
+                    window.AssetCache = RealmKit.AssetCache;
+                    console.log('[RealmKit] Debug: engine and AssetCache exposed to window');
+                }
+            } catch (error) {
+                console.error('[RealmKit] Initialization error:', error);
+                console.error('[RealmKit] Stack:', error.stack);
+                
+                var infoElement = document.getElementById('info-bar');
+                if (infoElement) {
+                    infoElement.innerHTML = 'ERROR: ' + error.message;
+                    infoElement.style.color = '#ff4444';
+                }
+            }
+        });
+    </script>
+    
+    <!-- Clippy AI Assistant Integration -->
+    <script type="module">
+        import { mountClippy } from "./clippy/clippy-widget.js";
+        
+        mountClippy({
+            character: "ember",
+            autoOpen: false,
+            knowledgeFiles: [
+                "./docs/overview.md"
+            ]
+        });
+    </script>
+</body>
+</html>

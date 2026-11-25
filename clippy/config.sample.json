@@ -1,0 +1,40 @@
+{
+  "_comment_1": "Clippy backend config — JSON template. Copy to config.json and edit.",
+  "_comment_2": "config.json is denied by .htaccess so it is safe to put API keys here.",
+  "_comment_3": "Pure JSON (no comments). Keys starting with _ are ignored by the adapter and can hold human notes like the ones above.",
+
+  "_about_allowed_origins": "Leave [] for same-origin-only. Add exact origins like 'https://docs.example.com' if Clippy is embedded on a different origin than this adapter. ['*'] is allowed but dev-only.",
+  "allowed_origins": [],
+
+  "_about_default_provider": "Which provider handles a request when no model-based route matches.",
+  "default_provider": "ollama",
+
+  "_about_providers": "Per-provider settings. Each provider also lists the models the browser may pick in its dropdown. Only the 'label' and 'models' subset is served to the browser by models.php; secrets (api_key, base_url, timeout) never leave the server.",
+  "providers": {
+
+    "ollama": {
+      "label": "Ollama (local)",
+      "base_url": "http://127.0.0.1:11434",
+      "timeout": 600,
+      "models": [
+        { "id": "gemma4:e4b",  "label": "Gemma 4 e4b" },
+        { "id": "llama3.2:3b", "label": "Llama 3.2 3B" }
+      ]
+    }
+  },
+
+  "_about_anthropic_example": "Scaffolding — remove the leading underscore and move this block into 'providers' when you're ready to wire Anthropic up. Needs a matching providers/anthropic.php.",
+  "_anthropic": {
+    "label":    "Anthropic",
+    "base_url": "https://api.anthropic.com",
+    "api_key":  "sk-ant-REPLACE_ME",
+    "version":  "2023-06-01",
+    "timeout":  120,
+    "models": [
+      { "id": "claude-sonnet-4-5", "label": "Claude Sonnet 4.5" }
+    ]
+  },
+
+  "_about_routes": "Optional model-based routing. Maps PCRE patterns (as strings) against the request's model field to a provider name. Empty today.",
+  "routes": []
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "tiles_abc7_001",
+    "name": "Overworld Terrain",
+    "path": "assets/tilesets/overworld.png",
+    "tileWidth": 32,
+    "tileHeight": 32,
+    "cols": 8
+  },
+  {
+    "_id": "tiles_abc7_002",
+    "name": "Dungeon Walls",
+    "path": "assets/tilesets/dungeon.png",
+    "tileWidth": 32,
+    "tileHeight": 32,
+    "cols": 8
+  },
+  {
+    "_id": "tiles_abc7_003",
+    "name": "Interior Floors",
+    "path": "assets/tilesets/interior.png",
+    "tileWidth": 16,
+    "tileHeight": 16,
+    "cols": 16
+  }
+]

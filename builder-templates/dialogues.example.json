@@ -1,0 +1,59 @@
+[
+  {
+    "_id": "dialog_abc4_001",
+    "id": "intro_seraphina_01",
+    "speaker": "Seraphina Voss",
+    "portrait": "portraits/seraphina",
+    "lines": [
+      "The road to Aldenmoor is closed — has been for three days.",
+      "Whatever you're selling, the gate captain isn't buying.",
+      "Unless... you're here about the missing scouts?"
+    ],
+    "choices": [
+      { "text": "Tell me about the missing scouts.", "next": "intro_seraphina_02" },
+      { "text": "Just passing through.", "next": "intro_seraphina_03" },
+      { "text": "I work alone.", "next": null }
+    ]
+  },
+  {
+    "_id": "dialog_abc4_002",
+    "id": "intro_seraphina_02",
+    "speaker": "Seraphina Voss",
+    "portrait": "portraits/seraphina",
+    "lines": [
+      "Twelve soldiers. Sent to the Thornwood three nights ago.",
+      "Not one has returned. The captain wants answers — quietly.",
+      "You look capable. And expendable. Interested?"
+    ],
+    "choices": [
+      { "text": "What's in it for me?", "next": "intro_seraphina_04" },
+      { "text": "I'll do it.", "next": "quest_start_scouts" }
+    ]
+  },
+  {
+    "_id": "dialog_abc4_003",
+    "id": "innkeeper_greeting",
+    "speaker": "Bren the Innkeeper",
+    "portrait": "portraits/bren",
+    "lines": [
+      "Warm bed, hot stew, cold ale. What's it gonna be, traveler?"
+    ],
+    "choices": [
+      { "text": "I'll take a room.", "next": "inn_room_01" },
+      { "text": "Heard any rumors lately?", "next": "inn_rumors_01" },
+      { "text": "Nothing, thanks.", "next": null }
+    ]
+  },
+  {
+    "_id": "dialog_abc4_004",
+    "id": "aldric_encounter",
+    "speaker": "Aldric the Burnt",
+    "portrait": "portraits/aldric",
+    "lines": [
+      "You shouldn't be here.",
+      "Neither should I.",
+      "...but here we are."
+    ],
+    "choices": []
+  }
+]

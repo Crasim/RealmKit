@@ -1,0 +1,408 @@
+﻿/* =========================================================
+   Clippy (web) â€” styles
+   ========================================================= */
+
+:root {
+  --clippy-accent: #ffd54a;
+  --clippy-bubble-bg: #fffbe6;
+  --clippy-bubble-border: #d9bf55;
+  --clippy-ink: #222;
+  --clippy-muted: #777;
+  --clippy-danger: #c0392b;
+  --clippy-ok: #2e7d32;
+}
+
+/* ---------- Floating container ---------- */
+.clippy-root {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2147483000;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  color: var(--clippy-ink);
+  /* NB: user-select is scoped to the character itself (see below) â€” the
+     speech bubble needs to be copy-able so you can grab conversation text. */
+}
+/* Make sure conversation text is always selectable even if a parent page
+   has user-select:none set globally. */
+.clippy-bubble, .clippy-log, .clippy-msg, .clippy-input {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ---------- Character ---------- */
+.clippy-avatar-wrap {
+  position: relative;
+  display: inline-block;
+}
+.clippy-avatar-host {
+  position: relative;
+  display: block;
+  /* Keep the soft shadow on a non-animated wrapper instead of the SVG root.
+     Animating + filtering the same SVG often makes browsers cache it as a
+     raster layer, which looks blurry/pixelated when the page is zoomed. */
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,.25));
+}
+.clippy-char {
+  width: 96px;
+  height: 120px;
+  cursor: grab;
+  transform-origin: 50% 90%;
+  transform-box: fill-box;
+  shape-rendering: geometricPrecision;
+  touch-action: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ---------- Speech bubble ---------- */
+.clippy-bubble {
+  position: absolute;
+  right: 110px;
+  bottom: 20px;
+  width: 340px;
+  /* Viewport-aware caps: never overflow the user's screen regardless of
+     where the character has been dragged. The JS repositionBubble() helper
+     tightens these further based on available space around the character. */
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 40px);
+  background: var(--clippy-bubble-bg);
+  border: 1.5px solid var(--clippy-bubble-border);
+  border-radius: 14px;
+  padding: 10px 12px 8px;
+  box-shadow: 0 10px 20px rgba(0,0,0,.18);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.98);
+  transition: opacity .15s, transform .15s;
+}
+/* When the bubble has been flipped to open on the RIGHT of the character
+   (because there's no room on the left), the small tail arrow baked into
+   ::after would point the wrong way. Simpler than redrawing it: hide it
+   when flipped. The bubble's proximity is enough of a visual link.
+   Positioning is driven by inline styles set by repositionBubble() in JS â€”
+   we only clear the CSS default of `right: 110px` so the inline `left`
+   can take effect. */
+.clippy-bubble.flipped { right: auto; }
+.clippy-bubble.flipped::after { display: none; }
+.clippy-bubble.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+.clippy-bubble::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  bottom: 24px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 12px solid var(--clippy-bubble-bg);
+  filter: drop-shadow(1px 0 0 var(--clippy-bubble-border));
+}
+
+.clippy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  border-bottom: 1px dashed var(--clippy-bubble-border);
+  padding-bottom: 6px;
+}
+.clippy-title { font-weight: 700; font-size: 13px; }
+.clippy-subtitle { color: var(--clippy-muted); font-size: 11px; }
+.clippy-btns { display: flex; gap: 4px; }
+.clippy-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--clippy-ink);
+}
+.clippy-btn:hover { background: rgba(0,0,0,.06); border-color: rgba(0,0,0,.1); }
+
+/* ---------- Transcript ---------- */
+.clippy-log {
+  overflow-y: auto;
+  max-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 2px;
+}
+.clippy-msg {
+  padding: 6px 8px;
+  border-radius: 8px;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.clippy-msg.user       { background: #eef6ff; align-self: flex-end; max-width: 85%; }
+.clippy-msg.assistant  { background: #fff; border: 1px solid #eee; max-width: 95%; }
+.clippy-msg.tool       { background: #f4f0ff; border-left: 3px solid #7c4dff; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+.clippy-msg.error      { background: #fdecea; border-left: 3px solid var(--clippy-danger); color: #642422; font-size: 12px; }
+.clippy-msg.system     { background: #f2f2f2; color: #555; font-size: 12px; font-style: italic; }
+
+/* ---------- Inline offer card (source navigation) ---------- */
+/* Rendered deterministically by the runtime when a search_site / find_text
+   call turns up a confident match on another page. The model does NOT emit
+   this; it's just a structured "would you like me to open it?" prompt with
+   explicit Yes / No buttons, so the user's intent is captured without
+   another model turn. See renderSourceOfferCard() in clippy.js. */
+.clippy-offer-card {
+  background: #fff;
+  border: 1px solid #e5ddcf;
+  border-left: 3px solid #a25a1b;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 95%;
+}
+.clippy-offer-card__lead {
+  font-size: 12px;
+  color: var(--clippy-muted, #656052);
+  line-height: 1.35;
+}
+.clippy-offer-card__lead strong { color: var(--clippy-ink, #201f1a); }
+.clippy-offer-card__title {
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--clippy-ink, #201f1a);
+}
+.clippy-offer-card__meta {
+  font-size: 12px;
+  color: var(--clippy-muted, #656052);
+  line-height: 1.4;
+  word-break: break-word;
+}
+.clippy-offer-card__meta strong { color: var(--clippy-ink, #201f1a); }
+.clippy-offer-card__actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.clippy-offer-card__btn {
+  font: inherit;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #d8cfba;
+  background: #fdfbf5;
+  color: var(--clippy-ink, #201f1a);
+}
+.clippy-offer-card__btn:hover { background: #f6efdc; }
+.clippy-offer-card__btn.primary {
+  background: #a25a1b;
+  border-color: #8a4a12;
+  color: #fffdf4;
+}
+.clippy-offer-card__btn.primary:hover { background: #8a4a12; }
+.clippy-offer-card.resolved {
+  opacity: 0.72;
+  border-left-color: #cfc6b5;
+}
+.clippy-offer-card.resolved .clippy-offer-card__btn { display: none; }
+.clippy-offer-card__resolved-note {
+  font-size: 12px;
+  color: var(--clippy-muted, #656052);
+  font-style: italic;
+}
+
+/* ---------- Input ---------- */
+.clippy-input-row {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+}
+.clippy-input {
+  flex: 1;
+  resize: none;
+  min-height: 30px;
+  max-height: 120px;
+  padding: 6px 8px;
+  border: 1px solid var(--clippy-bubble-border);
+  border-radius: 6px;
+  font: inherit;
+}
+.clippy-send {
+  background: var(--clippy-accent);
+  color: #222;
+  border: 1px solid #c8a828;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.clippy-send:disabled { opacity: .6; cursor: progress; }
+
+/* ---------- Settings panel ---------- */
+.clippy-settings {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  /* Settings can get tall once the system prompt and perms are visible.
+     Let the panel itself scroll instead of pushing the chat log and input
+     row out past the bubble edge. */
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.clippy-settings.open { display: flex; }
+/* When settings is open, take over the whole bubble body: hide the chat
+   log and the input row. Uses later-sibling selectors (.clippy-settings
+   appears before .clippy-log and .clippy-input-row in the bubble markup).
+   Saves the user from having to scroll past old chat to reach settings. */
+.clippy-settings.open ~ .clippy-log,
+.clippy-settings.open ~ .clippy-input-row { display: none; }
+.clippy-settings label { display: flex; flex-direction: column; gap: 2px; }
+.clippy-settings input[type=text],
+.clippy-settings select,
+.clippy-settings textarea {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font: inherit;
+}
+.clippy-settings textarea { min-height: 60px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; }
+.clippy-perms { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.clippy-perm-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 92px;
+  align-items: center;
+  gap: 8px;
+}
+.clippy-perm-row span { font-size: 12px; }
+.clippy-perm-row select { margin: 0; }
+.clippy-perm-help { font-size: 11px; color: #666; }
+.clippy-section-title { font-weight: 700; color: #333; margin-top: 4px; }
+.clippy-settings-group {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fcfcfd;
+}
+.clippy-settings-group[open] {
+  background: #fff;
+}
+.clippy-settings-summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+  color: #333;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.clippy-settings-summary::-webkit-details-marker {
+  display: none;
+}
+.clippy-settings-summary::before {
+  content: "▸";
+  font-size: 11px;
+  color: #666;
+  flex: 0 0 auto;
+}
+.clippy-settings-group[open] > .clippy-settings-summary::before {
+  content: "▾";
+}
+.clippy-settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 10px 10px;
+}
+
+/* ---------- Confirm overlay ---------- */
+.clippy-confirm {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.92);
+  border-radius: 14px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+.clippy-confirm.open { display: flex; }
+.clippy-confirm pre {
+  margin: 0;
+  flex: 1;
+  overflow: auto;
+  background: #1e1e1e;
+  color: #eee;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  max-height: 280px;
+}
+.clippy-confirm-row { display: flex; gap: 6px; justify-content: flex-end; }
+.clippy-confirm-row .approve { background: var(--clippy-ok); color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+.clippy-confirm-row .deny    { background: #eee; border: 1px solid #ccc; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+.clippy-confirm-row .always  { background: #f8d76a; border: 1px solid #c8a828; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+
+.clippy-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.clippy-debug-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.clippy-debug-out {
+  display: block;
+  background: #12161d;
+  color: #dce6f3;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: pre-wrap;
+  max-height: 220px;
+  overflow: auto;
+  margin: 0;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+/* ---------- Status chip ---------- */
+.clippy-status {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--clippy-accent);
+  border: 1px solid #c8a828;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 1.2;
+  padding: 2px 8px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,.16);
+}
+

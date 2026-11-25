@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clippy FAQ Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f8f7f3;
+      --panel: #fffdf8;
+      --ink: #201f1a;
+      --muted: #656052;
+      --accent: #a25a1b;
+      --border: #e5ddcf;
+      --highlight: #fff3c9;
+    }
+    html.dark {
+      --bg: #111217;
+      --panel: #1b1d24;
+      --ink: #f3f2ec;
+      --muted: #b0ab9e;
+      --accent: #efb36a;
+      --border: #313544;
+      --highlight: rgba(239, 179, 106, .14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    a { color: var(--accent); }
+    header {
+      padding: 24px 32px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    header h1 { margin: 0; font-size: 30px; }
+    header p { margin: 8px 0 0; color: var(--muted); max-width: 760px; }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 32px 140px;
+      display: grid;
+      gap: 20px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .card h2 { margin: 0 0 10px; font-size: 19px; }
+    .card p { margin: 0 0 10px; color: var(--muted); }
+    .nav-list,
+    .faq-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .nav-list a {
+      display: inline-block;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .faq-item {
+      scroll-margin-top: 28px;
+      background: linear-gradient(180deg, var(--panel), var(--highlight));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .faq-item h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .faq-item p {
+      margin: 0 0 8px;
+      color: var(--ink);
+    }
+    .faq-item .meta {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .faq-anchor {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+    .tips {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    footer {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1 id="faq-heading">Frequently Asked Questions</h1>
+  <p>
+    This page exists to test multi-page navigation. Ask Clippy to open this FAQ from the demo page,
+    find a specific answer, and scroll it into view once the page finishes loading.
+  </p>
+</header>
+
+<main>
+  <section class="card" id="faq-nav-card">
+    <h2>FAQ topics</h2>
+    <p>These links give Clippy multiple ways to land on the right answer once it gets here.</p>
+    <ul class="nav-list">
+      <li><a id="jump-refund" href="#refund-answer">Refund policy</a></li>
+      <li><a id="jump-export" href="#export-answer">Exporting project data</a></li>
+      <li><a id="jump-permissions" href="#permissions-answer">Permission prompts</a></li>
+      <li><a id="jump-mobile" href="#mobile-answer">Mobile tap handling</a></li>
+      <li><a id="back-home" href="./index.html">Back to the demo homepage</a></li>
+    </ul>
+  </section>
+
+  <section class="card" id="faq-list-card">
+    <h2>Answers</h2>
+    <ul class="faq-list">
+      <li class="faq-item" id="refund-answer">
+        <h3>How do refunds work?</h3>
+        <p>
+          Demo refunds are approved within two business days. Once approved, the original payment
+          method is credited automatically and a confirmation email is sent to the billing address on file.
+        </p>
+        <p class="meta">Keywords: refund, billing, repayment, money back</p>
+        <a class="faq-anchor" href="#refund-answer">Anchor link</a>
+      </li>
+
+      <li class="faq-item" id="export-answer">
+        <h3>Can I export my project data?</h3>
+        <p>
+          Yes. Open the project menu, choose <strong>Export</strong>, and select either JSON for raw data
+          or CSV for a spreadsheet-friendly export. Larger exports are prepared in the background and
+          delivered by email.
+        </p>
+        <p class="meta">Keywords: export, CSV, JSON, download</p>
+        <a class="faq-anchor" href="#export-answer">Anchor link</a>
+      </li>
+
+      <li class="faq-item" id="permissions-answer">
+        <h3>Why am I seeing permission prompts?</h3>
+        <p>
+          Permission prompts appear whenever the assistant wants to read the page, interact with the UI,
+          modify content, create elements, remove elements, or run stronger capabilities like JavaScript.
+          You can tune those categories from the settings panel.
+        </p>
+        <p class="meta">Keywords: permission, interact, modify, settings</p>
+        <a class="faq-anchor" href="#permissions-answer">Anchor link</a>
+      </li>
+
+      <li class="faq-item" id="mobile-answer">
+        <h3>Does the widget work on mobile?</h3>
+        <p>
+          Yes. A normal tap opens the widget, while a drag gesture moves it only after the touch passes
+          the drag threshold. This page is also useful for checking that the character does not drift or snap
+          while idle on smaller screens.
+        </p>
+        <p class="meta">Keywords: mobile, tap, drag, touch</p>
+        <a class="faq-anchor" href="#mobile-answer">Anchor link</a>
+      </li>
+    </ul>
+  </section>
+
+  <section class="card" id="faq-hint-card">
+    <h2>Suggested test prompts</h2>
+    <p class="tips">
+      Try: <em>"Go to the FAQ page and scroll me to the refund answer."</em><br>
+      Try: <em>"Navigate to the FAQ, find the permissions answer, and summarize it."</em><br>
+      Try: <em>"Open the FAQ and bring the mobile answer into view."</em>
+    </p>
+  </section>
+</main>
+
+<footer>Clippy FAQ Demo · multi-page navigation test</footer>
+
+<script type="module">
+  import { mountClippy } from "./clippy-widget.js";
+
+  mountClippy();
+</script>
+</body>
+</html>

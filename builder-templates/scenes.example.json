@@ -1,0 +1,66 @@
+[
+  {
+    "_id": "scenes_abc6_001",
+    "id": "scene_game_intro",
+    "name": "Opening Cinematic",
+    "trigger": {
+      "type": "once",
+      "condition": "game_start",
+      "once": true
+    },
+    "steps": [
+      { "type": "blackout", "duration": 1000 },
+      { "type": "text", "text": "Three years after the Battle of Coldmere...", "duration": 3000 },
+      { "type": "fadein", "duration": 800 },
+      { "type": "dialog", "id": "intro_seraphina_01" },
+      { "type": "flag", "key": "intro_seen", "value": true }
+    ]
+  },
+  {
+    "_id": "scenes_abc6_002",
+    "id": "scene_enter_thornwood",
+    "name": "Thornwood Entry",
+    "trigger": {
+      "type": "enter",
+      "zone": "zone_thornwood",
+      "once": true
+    },
+    "steps": [
+      { "type": "sound", "id": "sfx_thornwood_ambience", "loop": true },
+      { "type": "dialog", "id": "narration_thornwood_01" },
+      { "type": "flag", "key": "thornwood_entered", "value": true }
+    ]
+  },
+  {
+    "_id": "scenes_abc6_003",
+    "id": "scene_aldric_ambush",
+    "name": "Aldric Ambush",
+    "trigger": {
+      "type": "flag",
+      "condition": "thornwood_entered == true AND aldric_met == false"
+    },
+    "steps": [
+      { "type": "spawn", "unit": "chars_abc2_004", "x": 320, "y": 448 },
+      { "type": "wait", "ms": 600 },
+      { "type": "dialog", "id": "aldric_encounter" },
+      { "type": "combat", "enemy": "chars_abc2_004", "flee_allowed": false },
+      { "type": "flag", "key": "aldric_met", "value": true },
+      { "type": "quest_update", "quest_id": "quests_abc5_001", "objective": 1 }
+    ]
+  },
+  {
+    "_id": "scenes_abc6_004",
+    "id": "scene_victory",
+    "name": "Quest Complete — Scouts Found",
+    "trigger": {
+      "type": "flag",
+      "condition": "quest_scouts_complete == true"
+    },
+    "steps": [
+      { "type": "sound", "id": "sfx_fanfare" },
+      { "type": "dialog", "id": "seraphina_reward_01" },
+      { "type": "reward", "gold": 150, "xp": 300, "items": ["item_iron_shield"] },
+      { "type": "flag", "key": "quest_scouts_rewarded", "value": true }
+    ]
+  }
+]

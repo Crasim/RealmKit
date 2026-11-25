@@ -1,0 +1,74 @@
+[
+  {
+    "_id": "units_abc3_001",
+    "name": "Royal Footsoldier",
+    "type": "infantry",
+    "sprite": "units/aldenmoor_foot",
+    "faction_id": "factions_abc1_001",
+    "hp": 100,
+    "atk": 14,
+    "def": 16,
+    "spd": 10,
+    "cost": 50
+  },
+  {
+    "_id": "units_abc3_002",
+    "name": "Longbow Ranger",
+    "type": "archer",
+    "sprite": "units/aldenmoor_archer",
+    "faction_id": "factions_abc1_001",
+    "hp": 80,
+    "atk": 20,
+    "def": 8,
+    "spd": 12,
+    "cost": 75
+  },
+  {
+    "_id": "units_abc3_003",
+    "name": "Syndicate Enforcer",
+    "type": "infantry",
+    "sprite": "units/ironveil_enforcer",
+    "faction_id": "factions_abc1_002",
+    "hp": 90,
+    "atk": 18,
+    "def": 12,
+    "spd": 14,
+    "cost": 80
+  },
+  {
+    "_id": "units_abc3_004",
+    "name": "Shadow Hexer",
+    "type": "mage",
+    "sprite": "units/ashborne_hexer",
+    "faction_id": "factions_abc1_004",
+    "hp": 60,
+    "atk": 32,
+    "def": 6,
+    "spd": 10,
+    "cost": 120
+  },
+  {
+    "_id": "units_abc3_005",
+    "name": "Forest Warden",
+    "type": "hero",
+    "sprite": "units/circle_warden",
+    "faction_id": "factions_abc1_003",
+    "hp": 160,
+    "atk": 24,
+    "def": 20,
+    "spd": 18,
+    "cost": 200
+  },
+  {
+    "_id": "units_abc3_006",
+    "name": "Marsh Serpent",
+    "type": "monster",
+    "sprite": "units/monster_serpent",
+    "faction_id": "",
+    "hp": 200,
+    "atk": 28,
+    "def": 14,
+    "spd": 8,
+    "cost": 0
+  }
+]

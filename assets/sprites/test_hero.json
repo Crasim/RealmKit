@@ -1,0 +1,40 @@
+{
+  "name": "test_hero",
+  "type": "character",
+  "resolution": "16bit",
+  "image": "assets/sprites/test_hero.png",
+  "imageWidth": 320,
+  "imageHeight": 192,
+  "frameWidth": 32,
+  "frameHeight": 48,
+  "directions": ["down", "up", "left", "right", "diag_ne", "diag_nw", "diag_sw", "diag_se"],
+  "directionMirrors": {
+    "right": "left",
+    "diag_nw": "diag_ne",
+    "diag_se": "diag_sw"
+  },
+  "animations": {
+    "idle_down":    { "frames": [0, 1, 2, 3], "fps": 2, "loop": true },
+    "idle_up":      { "frames": [10, 11, 12, 13], "fps": 2, "loop": true },
+    "idle_left":    { "frames": [20, 21, 22, 23], "fps": 2, "loop": true },
+    "idle_right":   { "frames": [30, 31, 32, 33], "fps": 2, "loop": true },
+    "idle_diag_ne": { "frames": [40, 41, 42, 43], "fps": 2, "loop": true },
+    "idle_diag_nw": { "frames": [50, 51, 52, 53], "fps": 2, "loop": true },
+    "idle_diag_sw": { "frames": [60, 61, 62, 63], "fps": 2, "loop": true },
+    "idle_diag_se": { "frames": [70, 71, 72, 73], "fps": 2, "loop": true },
+    "walk_down":    { "frames": [0, 1, 2, 3, 4, 5, 6, 7], "fps": 8, "loop": true },
+    "walk_up":      { "frames": [10, 11, 12, 13, 14, 15, 16, 17], "fps": 8, "loop": true },
+    "walk_left":    { "frames": [20, 21, 22, 23, 24, 25, 26, 27], "fps": 8, "loop": true },
+    "walk_right":   { "frames": [30, 31, 32, 33, 34, 35, 36, 37], "fps": 8, "loop": true },
+    "walk_diag_ne": { "frames": [40, 41, 42, 43, 44, 45, 46, 47], "fps": 8, "loop": true },
+    "walk_diag_nw": { "frames": [50, 51, 52, 53, 54, 55, 56, 57], "fps": 8, "loop": true },
+    "walk_diag_sw": { "frames": [60, 61, 62, 63, 64, 65, 66, 67], "fps": 8, "loop": true },
+    "walk_diag_se": { "frames": [70, 71, 72, 73, 74, 75, 76, 77], "fps": 8, "loop": true }
+  },
+  "metadata": {
+    "author": "RealmKit",
+    "variant": "test",
+    "tags": ["test", "hero", "placeholder"]
+  },
+  "note": "Old 10-column format sprite sheet. 10 cols × 19 rows = 190 frames. Frame size 32×48px."
+}

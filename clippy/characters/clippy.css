@@ -1,0 +1,327 @@
+﻿/* Character pack: Clippy */
+.clippy-avatar-host[data-character="clippy"][data-character-state="idle-a"] .clippy-char {
+  animation: clippy-idle-a 4.9s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="idle-b"] .clippy-char {
+  animation: clippy-idle-b 5.4s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-a"] .clippy-char {
+  animation: clippy-think-a 1.15s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-char {
+  animation: clippy-think-b 1.35s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-char {
+  animation: clippy-permission 1.6s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="acting"] .clippy-char {
+  animation: clippy-acting 0.95s ease-in-out infinite;
+}
+.clippy-avatar-wrap:hover .clippy-avatar-host[data-character="clippy"][data-character-mode="idle"] .clippy-char {
+  animation: clippy-peek 0.9s cubic-bezier(.34, 1.56, .64, 1);
+}
+.clippy-root.dragging { transition: none; }
+.clippy-root.dragging .clippy-char { cursor: grabbing; animation: none !important; }
+.clippy-root.dragging .clippy-clip-highlight,
+.clippy-root.dragging .clippy-eye-slot,
+.clippy-root.dragging .clippy-eye-blink,
+.clippy-root.dragging .clippy-mouth { animation: none !important; }
+.clippy-root.dragging .clippy-bubble { transition: none; }
+
+@keyframes clippy-idle-a {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  10%     { transform: translateY(-3px) rotate(-7deg) scale(1.03, .97); }
+  22%     { transform: translateY(-8px) rotate(4deg) scale(.98, 1.04); }
+  36%     { transform: translateY(-1px) rotate(8deg) scale(1.015, .99); }
+  52%     { transform: translateY(-6px) rotate(-3deg) scale(.99, 1.025); }
+  68%     { transform: translateY(-2px) rotate(7deg) scale(1.02, .98); }
+  84%     { transform: translateY(-4px) rotate(-5deg) scale(.997, 1.01); }
+}
+@keyframes clippy-idle-b {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  14%     { transform: translateY(-2px) rotate(8deg) scale(1.04, .96); }
+  28%     { transform: translateY(-9px) rotate(-9deg) scale(.98, 1.05); }
+  44%     { transform: translateY(-2px) rotate(4deg) scale(1.015, .99); }
+  60%     { transform: translateY(-7px) rotate(10deg) scale(1.03, .97); }
+  78%     { transform: translateY(-1px) rotate(-6deg) scale(.99, 1.02); }
+  90%     { transform: translateY(-4px) rotate(2deg) scale(1); }
+}
+@keyframes clippy-peek {
+  0%   { transform: translateY(0) rotate(-1deg) scale(1); }
+  45%  { transform: translateY(-6px) rotate(-10deg) scale(1.025, .985); }
+  75%  { transform: translateY(-2px) rotate(3deg) scale(.995, 1.01); }
+  100% { transform: translateY(0) rotate(-1deg) scale(1); }
+}
+@keyframes clippy-think-a {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  30%     { transform: translateY(-7px) rotate(5deg) scale(.99, 1.02); }
+  58%     { transform: translateY(-2px) rotate(7deg) scale(1.02, .99); }
+  78%     { transform: translateY(-5px) rotate(-2deg) scale(.995, 1.01); }
+}
+@keyframes clippy-think-b {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  18%     { transform: translateY(-3px) rotate(10deg) scale(1.03, .97); }
+  38%     { transform: translateY(-8px) rotate(-8deg) scale(.98, 1.04); }
+  58%     { transform: translateY(-2px) rotate(-11deg) scale(1.015, .985); }
+  76%     { transform: translateY(-7px) rotate(6deg) scale(.99, 1.025); }
+  90%     { transform: translateY(-3px) rotate(-2deg) scale(1); }
+}
+@keyframes clippy-permission {
+  0%,100% { transform: translateY(-1px) rotate(-2deg) scale(1); }
+  25%     { transform: translateY(-4px) rotate(-8deg) scale(1.015, .99); }
+  50%     { transform: translateY(-2px) rotate(1deg) scale(1); }
+  75%     { transform: translateY(-4px) rotate(7deg) scale(1.015, .99); }
+}
+@keyframes clippy-acting {
+  0%,100% { transform: translateY(-1px) rotate(-1deg) scale(1); }
+  18%     { transform: translateY(-6px) rotate(-6deg) scale(1.025, .98); }
+  44%     { transform: translateY(-1px) rotate(4deg) scale(.99, 1.02); }
+  68%     { transform: translateY(-5px) rotate(7deg) scale(1.02, .985); }
+}
+
+/* Face animation */
+.clippy-avatar-host[data-character="clippy"] .clippy-clip-highlight,
+.clippy-avatar-host[data-character="clippy"] .clippy-think-bulb,
+.clippy-avatar-host[data-character="clippy"] .clippy-think-bulb-glow,
+.clippy-avatar-host[data-character="clippy"] .clippy-think-ray,
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt,
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt-glow,
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt-ray,
+.clippy-avatar-host[data-character="clippy"] .clippy-eye-slot,
+.clippy-avatar-host[data-character="clippy"] .clippy-eye-blink,
+.clippy-avatar-host[data-character="clippy"] .clippy-mouth {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-think-bulb {
+  opacity: 0;
+  transform: translateY(2px) scale(.82);
+  transition: opacity .18s ease;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-think-bulb-glow {
+  opacity: .08;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-think-bulb-body {
+  fill: #ffd54a;
+  stroke: #d8a315;
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-think-bulb-base {
+  fill: #8a94a6;
+  stroke: #60697a;
+  stroke-width: .8;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-think-bulb-filament {
+  stroke: #7a5710;
+  stroke-width: 1.1;
+  fill: none;
+  stroke-linecap: round;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-think-bulb-shine {
+  stroke: rgba(255,255,255,.8);
+  stroke-width: 1.2;
+  fill: none;
+  stroke-linecap: round;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-think-ray {
+  stroke: #f7c93b;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-think-bulb {
+  opacity: 1;
+  animation: clippy-think-bulb 1.45s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-think-bulb-glow {
+  animation: clippy-think-bulb-glow 1.45s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-think-ray {
+  animation: clippy-think-ray 1.45s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-think-bulb,
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-think-bulb-glow,
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-think-ray {
+  animation-duration: 1.2s;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-think-bulb {
+  animation-name: clippy-think-bulb-idea;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-think-bulb-glow {
+  animation-name: clippy-think-bulb-glow-idea;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-think-ray {
+  animation-name: clippy-think-ray-idea;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-think-ray-b { animation-delay: .12s; }
+.clippy-avatar-host[data-character="clippy"] .clippy-think-ray-c { animation-delay: .24s; }
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt {
+  opacity: 0;
+  transform: translateY(3px) scale(.84);
+  transition: opacity .18s ease;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt-glow {
+  opacity: 0;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt-body {
+  fill: #ffe082;
+  stroke: #c89a18;
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-question {
+  stroke: #6b4f12;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt-ray {
+  stroke: #f0bf3a;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-permission-prompt {
+  opacity: 1;
+  animation: clippy-permission-prompt 1.45s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-permission-prompt-glow {
+  animation: clippy-permission-prompt-glow 1.45s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-permission-prompt-ray {
+  animation: clippy-permission-prompt-ray 1.45s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt-ray-b { animation-delay: .1s; }
+.clippy-avatar-host[data-character="clippy"] .clippy-permission-prompt-ray-c { animation-delay: .2s; }
+.clippy-avatar-host[data-character="clippy"] .clippy-clip-highlight {
+  opacity: .65;
+  animation: clippy-shimmer 6s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"] .clippy-eye-slot {
+  animation: clippy-eye-bob 3.6s ease-in-out infinite;
+}
+.clippy-eye-slot-right { animation-delay: -.9s; }
+.clippy-avatar-host[data-character="clippy"] .clippy-eye-blink {
+  animation: clippy-blink 4.8s infinite;
+}
+.clippy-eye-blink-right { animation-delay: -.25s; }
+.clippy-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.clippy-eye-shine { opacity: .95; }
+.clippy-avatar-host[data-character="clippy"] .clippy-mouth {
+  animation: clippy-smile 4.6s ease-in-out infinite;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-eye-slot,
+.clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-mouth,
+.clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-clip-highlight {
+  animation-duration: 1.8s;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="idle-b"] .clippy-eye-slot {
+  animation-duration: 2.9s;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-eye-slot,
+.clippy-avatar-host[data-character="clippy"][data-character-state="thinking-b"] .clippy-mouth {
+  animation-duration: 1.35s;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-eye-slot,
+.clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-mouth {
+  animation-duration: 2.2s;
+}
+.clippy-avatar-host[data-character="clippy"][data-character-mode="acting"] .clippy-eye-slot,
+.clippy-avatar-host[data-character="clippy"][data-character-mode="acting"] .clippy-mouth,
+.clippy-avatar-host[data-character="clippy"][data-character-mode="acting"] .clippy-clip-highlight {
+  animation-duration: 1.2s;
+}
+@keyframes clippy-shimmer {
+  0%,100% { opacity: .55; }
+  50%     { opacity: .9; }
+}
+@keyframes clippy-think-bulb {
+  0%,100% { transform: translateY(-2px) scale(1) rotate(-4deg); }
+  18%     { transform: translateY(-3px) scale(1.04) rotate(4deg); }
+  55%     { transform: translateY(-4px) scale(1) rotate(-2deg); }
+  80%     { transform: translateY(-3px) scale(1.03) rotate(3deg); }
+}
+@keyframes clippy-think-bulb-idea {
+  0%,100% { transform: translateY(-2px) scale(1.02) rotate(-5deg); }
+  22%     { transform: translateY(-5px) scale(1.12) rotate(8deg); }
+  48%     { transform: translateY(-2px) scale(1.02) rotate(-6deg); }
+  76%     { transform: translateY(-4px) scale(1.08) rotate(4deg); }
+}
+@keyframes clippy-think-bulb-glow {
+  0%,100% { opacity: .12; transform: scale(.78); }
+  28%     { opacity: .36; transform: scale(1.05); }
+  55%     { opacity: .2; transform: scale(1.25); }
+  78%     { opacity: .3; transform: scale(1.1); }
+}
+@keyframes clippy-think-bulb-glow-idea {
+  0%,100% { opacity: .12; transform: scale(.88); }
+  18%     { opacity: .42; transform: scale(1.15); }
+  42%     { opacity: .18; transform: scale(1.35); }
+  70%     { opacity: .34; transform: scale(1.18); }
+}
+@keyframes clippy-think-ray {
+  0%,100% { opacity: 0; transform: scale(.7); }
+  25%     { opacity: .95; transform: scale(1); }
+  55%     { opacity: .3; transform: scale(1.12); }
+}
+@keyframes clippy-think-ray-idea {
+  0%,100% { opacity: 0; transform: scale(.7); }
+  18%     { opacity: 1; transform: scale(1.18); }
+  42%     { opacity: .36; transform: scale(1.32); }
+}
+@keyframes clippy-permission-prompt {
+  0%,100% { transform: translateY(-2px) scale(1) rotate(-4deg); }
+  24%     { transform: translateY(-4px) scale(1.05) rotate(5deg); }
+  58%     { transform: translateY(-2px) scale(1.01) rotate(-2deg); }
+  82%     { transform: translateY(-3px) scale(1.04) rotate(3deg); }
+}
+@keyframes clippy-permission-prompt-glow {
+  0%,100% { opacity: .1; transform: scale(.78); }
+  28%     { opacity: .32; transform: scale(1.05); }
+  60%     { opacity: .16; transform: scale(1.2); }
+}
+@keyframes clippy-permission-prompt-ray {
+  0%,100% { opacity: 0; transform: scale(.74); }
+  22%     { opacity: .95; transform: scale(1.08); }
+  56%     { opacity: .26; transform: scale(1.16); }
+}
+@keyframes clippy-eye-bob {
+  0%,100% { transform: translate(0, 0); }
+  18%     { transform: translate(-0.35px, -1.25px); }
+  36%     { transform: translate(0.25px, 0.35px); }
+  55%     { transform: translate(0.4px, -0.8px); }
+  72%     { transform: translate(-0.2px, 0.15px); }
+}
+@keyframes clippy-blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  92%           { transform: scaleY(0.14); }
+  94%           { transform: scaleY(1); }
+  96%           { transform: scaleY(0.08); }
+  98%           { transform: scaleY(1); }
+}
+@keyframes clippy-smile {
+  0%,100% { transform: translateY(0) scaleX(1); }
+  35%     { transform: translateY(0.5px) scaleX(1.04); }
+  65%     { transform: translateY(-0.4px) scaleX(0.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clippy-avatar-host[data-character="clippy"] .clippy-char { animation-duration: 7s !important; }
+  .clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-char { animation-duration: 2s !important; }
+  .clippy-avatar-host[data-character="clippy"][data-character-mode="acting"] .clippy-char { animation-duration: 1.6s !important; }
+  .clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-permission-prompt,
+  .clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-permission-prompt-glow,
+  .clippy-avatar-host[data-character="clippy"][data-character-mode="permission"] .clippy-permission-prompt-ray { animation-duration: 2.1s !important; }
+  .clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-think-bulb,
+  .clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-think-bulb-glow,
+  .clippy-avatar-host[data-character="clippy"][data-character-mode="thinking"] .clippy-think-ray { animation-duration: 2.1s !important; }
+  .clippy-avatar-host[data-character="clippy"] .clippy-clip-highlight { animation-duration: 9s !important; }
+  .clippy-avatar-host[data-character="clippy"] .clippy-eye-slot { animation-duration: 5.5s !important; }
+  .clippy-avatar-host[data-character="clippy"] .clippy-eye-blink { animation-duration: 6.5s !important; }
+  .clippy-avatar-host[data-character="clippy"] .clippy-mouth { animation-duration: 7s !important; }
+}
+

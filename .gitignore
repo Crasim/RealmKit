@@ -25,3 +25,7 @@ dist/
 /realmkit.db
 /realmkit.db-*
 /clippy/config.json
+
+# Dated local source copies
+*.backup_*.js
+*.snapshot_*.js

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RealmKit - Realm Studio</title>
+<link rel="stylesheet" href="src/css/realmkit-ui.css?v=20260324j">
+<link rel="stylesheet" href="src/css/realm-studio.css?v=20260331b">
+</head>
+<body>
+  <div id="studio-shell">
+    <aside id="studio-root" class="studio-root">
+      <div id="studio-main-panel" class="studio-main-panel">
+        <div id="studio-toggles">
+          <button id="studio-toggle" class="studio-toggle-tab" type="button" title="Toggle Realm Studio">
+            <span class="studio-toggle-arrow">▶</span>
+            <span class="studio-toggle-label">Realm Studio</span>
+          </button>
+        </div>
+
+        <div id="studio-header">
+          <span class="studio-diamond">◈</span>
+          <div class="studio-header-copy">
+            <div id="studio-title">RealmKit</div>
+            <div id="studio-subtitle">Realm Studio</div>
+          </div>
+          <span class="studio-diamond">◈</span>
+        </div>
+
+        <div id="studio-panes">
+          <div id="studio-browser" class="studio-pane is-active"></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="studio-main">
+      <section class="studio-viewport-shell">
+        <div class="studio-viewport-frame">
+          <div class="studio-frame-corner studio-corner-nw"></div>
+          <div class="studio-frame-corner studio-corner-ne"></div>
+          <div class="studio-frame-corner studio-corner-sw"></div>
+          <div class="studio-frame-corner studio-corner-se"></div>
+          <div id="studio-plaque" class="studio-plaque">Terrain Painter</div>
+          <div class="studio-surface-overlay">
+            <div class="studio-overlay-kicker">Live Surface</div>
+            <div id="studio-surface-note" class="studio-overlay-note">Blank live map surface for terrain, units, collision, zones, triggers, and spawner authoring.</div>
+          </div>
+          <iframe
+            id="studio-frame"
+            class="studio-frame"
+            src="index.html?studio=1&tool=map-painter"
+            title="RealmKit Map Painter"
+          ></iframe>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="src/js/db/StoryDatabase.js?v=20260331a"></script>
+  <script src="src/js/ui/RealmStudioShell.js?v=20260331b"></script>
+</body>
+</html>

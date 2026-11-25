@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RealmKit Builder — JSON Prompts &amp; Schema Reference</title>
+<style>
+  :root {
+    --bg:        #0e0a06;
+    --panel:     #1a1008;
+    --border:    #4a3020;
+    --border-lt: #7a5030;
+    --accent:    #c8a840;
+    --accent-lt: #e8c860;
+    --text:      #d8c890;
+    --muted:     #7a6850;
+    --green:     #70c870;
+    --teal:      #70c8b0;
+    --red:       #f08080;
+    --code-bg:   #0a0604;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px; line-height: 1.6;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(180deg, #2a1808 0%, #1a0e04 100%);
+    border-bottom: 3px solid var(--border);
+    padding: 18px 28px 16px;
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; gap: 16px;
+  }
+  header h1 {
+    font-family: 'Courier New', monospace; font-size: 15px;
+    color: var(--accent-lt); text-transform: uppercase; letter-spacing: 1px;
+  }
+  .hdr-badge {
+    font-size: 10px; color: var(--muted); background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border); border-radius: 3px; padding: 3px 8px;
+  }
+  .hdr-right { margin-left: auto; }
+  .hdr-right a {
+    font-size: 11px; color: var(--teal); text-decoration: none;
+    border: 1px solid #3a6050; background: #1a3028; padding: 4px 10px;
+  }
+  .hdr-right a:hover { background: #2a4038; }
+
+  /* ── Nav ── */
+  nav {
+    background: var(--panel); border-bottom: 2px solid var(--border);
+    padding: 0 28px; display: flex; gap: 0; overflow-x: auto;
+  }
+  nav a {
+    display: block; padding: 9px 14px; font-size: 11px;
+    color: var(--muted); text-decoration: none; white-space: nowrap;
+    border-bottom: 3px solid transparent; transition: color .15s;
+  }
+  nav a:hover { color: var(--text); }
+  nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Main ── */
+  main { max-width: 860px; margin: 0 auto; padding: 28px 28px 0; }
+
+  /* ── Intro box ── */
+  .intro {
+    background: rgba(200,168,64,0.07); border: 1px solid #6a4820;
+    padding: 14px 18px; margin-bottom: 28px; font-size: 13px;
+    line-height: 1.8;
+  }
+  .intro strong { color: var(--accent); }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 40px; padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+  .section-title {
+    font-family: 'Courier New', monospace; font-size: 13px;
+    color: var(--accent-lt); text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .file-link {
+    font-size: 10px; color: var(--teal); text-decoration: none;
+    border: 1px solid #3a6050; background: #1a3028;
+    padding: 2px 8px; font-family: monospace; text-transform: none;
+    letter-spacing: 0;
+  }
+  .section-title .file-link:hover { background: #2a4038; }
+
+  /* ── Schema table ── */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 12px; }
+  th { background: rgba(255,255,255,0.04); color: var(--muted); font-weight: 600;
+       text-align: left; padding: 6px 10px; border: 1px solid var(--border); }
+  td { padding: 5px 10px; border: 1px solid var(--border); vertical-align: top; }
+  td:first-child { font-family: monospace; color: var(--accent); white-space: nowrap; }
+  td:nth-child(2) { color: var(--teal); white-space: nowrap; }
+  .req { color: var(--green); font-size: 10px; font-weight: bold; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 2px;
+         font-family: monospace; font-size: 11px; color: #b8d0a8; }
+
+  /* ── Prompt block ── */
+  .prompt-label {
+    font-size: 11px; color: var(--muted); margin-bottom: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .prompt-label span { color: var(--accent); font-weight: 600; }
+  .copy-btn {
+    font-size: 10px; padding: 3px 10px; cursor: pointer;
+    background: #1a3820; border: 1px solid #3a6030; color: var(--green);
+    font-family: inherit; transition: background .15s;
+  }
+  .copy-btn:hover { background: #2a4830; }
+  .copy-btn.copied { background: #253825; color: #90e890; }
+  pre.prompt {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 14px; font-size: 11px; line-height: 1.7;
+    overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+    color: #c0d8b0; font-family: 'Courier New', monospace;
+    max-height: 340px; overflow-y: auto;
+  }
+  pre.prompt .placeholder { color: #8090a0; font-style: italic; }
+
+  /* ── Workflow ── */
+  .workflow-steps {
+    counter-reset: wf-step;
+    display: flex; flex-direction: column; gap: 8px;
+    margin-top: 12px;
+  }
+  .wf-step {
+    counter-increment: wf-step;
+    display: flex; align-items: baseline; gap: 10px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    padding: 8px 12px;
+  }
+  .wf-step::before {
+    content: counter(wf-step);
+    font-family: monospace; font-size: 11px; color: var(--accent);
+    min-width: 16px; font-weight: bold; flex-shrink: 0;
+  }
+  .wf-step .wf-name { color: var(--accent-lt); font-weight: 600; margin-right: 6px; }
+  .wf-step .wf-note { font-size: 12px; color: var(--muted); }
+
+  /* ── Step/trigger tables ── */
+  .mini-table { font-size: 11px; margin: 8px 0 14px; }
+  .mini-table th { font-size: 10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚔ RealmKit Builder — JSON Reference</h1>
+  <span class="hdr-badge">LLM Prompt Guide</span>
+  <div class="hdr-right">
+    <a href="../index.html">← Back to Game</a>
+  </div>
+</header>
+
+<nav id="sitenav">
+  <a href="#workflow">Workflow</a>
+  <a href="#stories">Stories</a>
+  <a href="#factions">Factions</a>
+  <a href="#characters">Characters</a>
+  <a href="#units">Units</a>
+  <a href="#dialogues">Dialogues</a>
+  <a href="#quests">Quests</a>
+  <a href="#scenes">Scenes</a>
+  <a href="#tilesets">Tilesets</a>
+</nav>
+
+<main>
+
+  <div class="intro">
+    <strong>How this works:</strong> Each section below contains the JSON schema and a ready-to-use LLM prompt.
+    Click <strong>Copy Prompt</strong>, paste it into any AI assistant (Claude, GPT, etc.),
+    describe what you want, then paste the returned JSON array into the matching
+    <strong>{ } JSON</strong> import field in the Builder sidebar.
+    Items with a matching <code>_id</code> update in place — everything else is appended.
+  </div>
+
+  <!-- ── WORKFLOW ── -->
+  <div class="section" id="workflow">
+    <div class="section-title">🗺 Recommended Build Order</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">
+      Build in this order so IDs are available when you need to cross-reference them.
+      After each step, copy the <code>_id</code> values and paste them into the next prompt.
+    </p>
+    <div class="workflow-steps">
+      <div class="wf-step"><span class="wf-name">Factions</span> <span class="wf-note">— foundation; everything else references faction _ids</span></div>
+      <div class="wf-step"><span class="wf-name">Characters</span> <span class="wf-note">— NPCs, heroes, quest givers; reference faction _ids</span></div>
+      <div class="wf-step"><span class="wf-name">Units</span> <span class="wf-note">— enemy/army templates; reference faction _ids</span></div>
+      <div class="wf-step"><span class="wf-name">Dialogues</span> <span class="wf-note">— conversations; note the <code>id</code> keys (not _id) for use in Scenes</span></div>
+      <div class="wf-step"><span class="wf-name">Quests</span> <span class="wf-note">— missions; reference character _ids as giver_id; note quest _ids for Scenes</span></div>
+      <div class="wf-step"><span class="wf-name">Scenes</span> <span class="wf-note">— cutscenes & triggers; wire in dialogue ids and quest _ids</span></div>
+      <div class="wf-step"><span class="wf-name">Tilesets</span> <span class="wf-note">— independent; or use 🎨 Pixel Painter and import from the Tiles tab directly</span></div>
+    </div>
+  </div>
+
+  <!-- ── STORIES ── -->
+  <div class="section" id="stories">
+    <div class="section-title">
+      📖 Stories
+      <a class="file-link" href="stories.example.json" target="_blank">stories.example.json ↗</a>
+    </div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+      <tr><td>_id</td><td>string</td><td>Auto-generated if omitted (<code>story_…</code>)</td></tr>
+      <tr><td>title</td><td>string</td><td><span class="req">REQUIRED</span></td></tr>
+      <tr><td>description</td><td>string</td><td>Short summary</td></tr>
+      <tr><td>tags</td><td>string</td><td>Comma-separated e.g. <code>"rpg, fantasy"</code></td></tr>
+      <tr><td>is_published</td><td>boolean</td><td><code>false</code> = draft</td></tr>
+    </table>
+    <div class="prompt-label"><span>LLM Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'prompt-stories')">Copy Prompt</button></div>
+    <pre class="prompt" id="prompt-stories">Generate a JSON array of RealmKit Story entries. Each entry must follow this exact schema:
+{
+  "_id": "story_&lt;unique_short_id&gt;",
+  "title": "string (required)",
+  "description": "short summary string",
+  "tags": "comma-separated string e.g. 'fantasy, war'",
+  "is_published": false
+}
+
+<span class="placeholder">[Describe the stories you want — setting, tone, number of entries, etc.]</span>
+
+Return only the raw JSON array, no explanation.</pre>
+  </div>
+
+  <!-- ── FACTIONS ── -->
+  <div class="section" id="factions">
+    <div class="section-title">
+      ⚔ Factions
+      <a class="file-link" href="factions.example.json" target="_blank">factions.example.json ↗</a>
+    </div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+      <tr><td>_id</td><td>string</td><td>Auto-generated if omitted</td></tr>
+      <tr><td>name</td><td>string</td><td><span class="req">REQUIRED</span></td></tr>
+      <tr><td>color</td><td>string</td><td>Hex color e.g. <code>"#c8a840"</code></td></tr>
+      <tr><td>alignment</td><td>string</td><td><code>neutral</code> <code>lawful</code> <code>chaotic</code> <code>good</code> <code>evil</code></td></tr>
+      <tr><td>description</td><td>string</td><td>Lore blurb</td></tr>
+    </table>
+    <div class="prompt-label"><span>LLM Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'prompt-factions')">Copy Prompt</button></div>
+    <pre class="prompt" id="prompt-factions">Generate a JSON array of RealmKit Faction entries. Each entry must follow this exact schema:
+{
+  "_id": "faction_&lt;unique_short_id&gt;",
+  "name": "string (required)",
+  "color": "#rrggbb hex color",
+  "alignment": "one of: neutral | lawful | chaotic | good | evil",
+  "description": "short lore blurb"
+}
+
+<span class="placeholder">[Describe the factions — setting, political landscape, number of factions, rivalries, etc.]</span>
+
+Return only the raw JSON array, no explanation.</pre>
+  </div>
+
+  <!-- ── CHARACTERS ── -->
+  <div class="section" id="characters">
+    <div class="section-title">
+      🧙 Characters
+      <a class="file-link" href="characters.example.json" target="_blank">characters.example.json ↗</a>
+    </div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+      <tr><td>_id</td><td>string</td><td>Auto-generated if omitted</td></tr>
+      <tr><td>name</td><td>string</td><td><span class="req">REQUIRED</span></td></tr>
+      <tr><td>class</td><td>string</td><td>e.g. <code>"Paladin"</code>, <code>"Rogue"</code></td></tr>
+      <tr><td>portrait</td><td>string</td><td>Sprite key or URL — leave empty, assign in Builder</td></tr>
+      <tr><td>faction_id</td><td>string</td><td><code>_id</code> of a Faction entry</td></tr>
+      <tr><td>hp / mp / atk / def / spd</td><td>number</td><td>Stats, suggested range 1–200</td></tr>
+    </table>
+    <div class="prompt-label"><span>LLM Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'prompt-characters')">Copy Prompt</button></div>
+    <pre class="prompt" id="prompt-characters">Generate a JSON array of RealmKit Character entries. Each entry must follow this exact schema:
+{
+  "_id": "chars_&lt;unique_short_id&gt;",
+  "name": "string (required)",
+  "class": "character class string",
+  "portrait": "",
+  "faction_id": "faction _id or empty string",
+  "hp": number,
+  "mp": number,
+  "atk": number,
+  "def": number,
+  "spd": number
+}
+
+Stats should be balanced in the 1–200 range. Leave portrait as an empty string.
+<span class="placeholder">Use faction_ids from this list: [paste your faction _ids here]
+
+Describe the characters — roles, archetypes, allegiances, number of entries, etc.</span>
+
+Return only the raw JSON array, no explanation.</pre>
+  </div>
+
+  <!-- ── UNITS ── -->
+  <div class="section" id="units">
+    <div class="section-title">
+      🗡 Unit Templates
+      <a class="file-link" href="units.example.json" target="_blank">units.example.json ↗</a>
+    </div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+      <tr><td>_id</td><td>string</td><td>Auto-generated if omitted</td></tr>
+      <tr><td>name</td><td>string</td><td><span class="req">REQUIRED</span></td></tr>
+      <tr><td>type</td><td>string</td><td><code>infantry</code> <code>archer</code> <code>cavalry</code> <code>mage</code> <code>hero</code> <code>monster</code> <code>npc</code></td></tr>
+      <tr><td>sprite</td><td>string</td><td>Sprite key or URL — leave empty, assign in Builder</td></tr>
+      <tr><td>faction_id</td><td>string</td><td><code>_id</code> of a Faction (blank = neutral/wild)</td></tr>
+      <tr><td>hp / atk / def / spd</td><td>number</td><td>Stats, suggested range 1–150</td></tr>
+      <tr><td>cost</td><td>number</td><td>Gold to recruit; 0 = not recruitable</td></tr>
+    </table>
+    <div class="prompt-label"><span>LLM Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'prompt-units')">Copy Prompt</button></div>
+    <pre class="prompt" id="prompt-units">Generate a JSON array of RealmKit Unit Template entries. Each entry must follow this exact schema:
+{
+  "_id": "units_&lt;unique_short_id&gt;",
+  "name": "string (required)",
+  "type": "one of: infantry | archer | cavalry | mage | hero | monster | npc",
+  "sprite": "",
+  "faction_id": "faction _id or empty string",
+  "hp": number,
+  "atk": number,
+  "def": number,
+  "spd": number,
+  "cost": number
+}
+
+Stats should be balanced in the 1–150 range. cost=0 means not recruitable (enemy/monster).
+Leave sprite as an empty string.
+<span class="placeholder">Use faction_ids from this list: [paste your faction _ids here]
+
+Describe the units — army composition, enemy types, special units, number of entries, etc.</span>
+
+Return only the raw JSON array, no explanation.</pre>
+  </div>
+
+  <!-- ── DIALOGUES ── -->
+  <div class="section" id="dialogues">
+    <div class="section-title">
+      💬 Dialogues
+      <a class="file-link" href="dialogues.example.json" target="_blank">dialogues.example.json ↗</a>
+    </div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+      <tr><td>_id</td><td>string</td><td>Auto-generated if omitted</td></tr>
+      <tr><td>id</td><td>string</td><td><span class="req">REQUIRED</span> — snake_case key used by Scenes e.g. <code>"intro_01"</code></td></tr>
+      <tr><td>speaker</td><td>string</td><td>Name shown in dialogue box</td></tr>
+      <tr><td>portrait</td><td>string</td><td>Sprite key — leave empty</td></tr>
+      <tr><td>lines</td><td>string[]</td><td>Each element = one text bubble</td></tr>
+      <tr><td>choices</td><td>object[]</td><td>Optional: <code>[{"text":"…","next":"dialog_id or null"}]</code></td></tr>
+    </table>
+    <div class="prompt-label"><span>LLM Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'prompt-dialogues')">Copy Prompt</button></div>
+    <pre class="prompt" id="prompt-dialogues">Generate a JSON array of RealmKit Dialogue entries. Each entry must follow this exact schema:
+{
+  "_id": "dialog_&lt;unique_short_id&gt;",
+  "id": "short_snake_case_key",
+  "speaker": "display name",
+  "portrait": "",
+  "lines": ["line one text", "line two text"],
+  "choices": [
+    { "text": "player choice text", "next": "dialog_id_or_null" }
+  ]
+}
+
+Rules:
+- "id" must be a short snake_case key like "intro_gate_01" — Scenes reference this value
+- "lines" is an array; each element is one separate text bubble
+- "choices" is optional; use [] for linear dialogue (no branching)
+- "next" in choices references another dialogue "id" or null to end
+- Leave portrait as an empty string
+
+<span class="placeholder">Describe the conversations — who speaks, what they say, any branching choices, tone, context, etc.</span>
+
+Return only the raw JSON array, no explanation.</pre>
+  </div>
+
+  <!-- ── QUESTS ── -->
+  <div class="section" id="quests">
+    <div class="section-title">
+      📜 Quests
+      <a class="file-link" href="quests.example.json" target="_blank">quests.example.json ↗</a>
+    </div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+      <tr><td>_id</td><td>string</td><td>Auto-generated if omitted</td></tr>
+      <tr><td>title</td><td>string</td><td><span class="req">REQUIRED</span></td></tr>
+      <tr><td>description</td><td>string</td><td>Full quest description</td></tr>
+      <tr><td>giver_id</td><td>string</td><td><code>_id</code> of the Character or Unit who gives it</td></tr>
+      <tr><td>objectives</td><td>object[]</td><td>Array of <code>{text, type, target, count}</code></td></tr>
+      <tr><td>objectives[].type</td><td>string</td><td><code>kill</code> <code>collect</code> <code>explore</code> <code>talk</code> <code>deliver</code> <code>investigate</code></td></tr>
+      <tr><td>rewards</td><td>object</td><td><code>{gold, xp, items: ["item_key"]}</code></td></tr>
+    </table>
+    <div class="prompt-label"><span>LLM Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'prompt-quests')">Copy Prompt</button></div>
+    <pre class="prompt" id="prompt-quests">Generate a JSON array of RealmKit Quest entries. Each entry must follow this exact schema:
+{
+  "_id": "quests_&lt;unique_short_id&gt;",
+  "title": "string (required)",
+  "description": "full quest description and context",
+  "giver_id": "character or unit _id, or empty string",
+  "objectives": [
+    {
+      "text": "what the player must do",
+      "type": "one of: kill | collect | explore | talk | deliver | investigate",
+      "target": "entity_id or zone_id or item_key",
+      "count": number
+    }
+  ],
+  "rewards": {
+    "gold": number,
+    "xp": number,
+    "items": ["item_key_string"]
+  }
+}
+
+<span class="placeholder">Use giver_ids from this character list: [paste your character _ids here]
+
+Describe the quests — themes, difficulty, narrative hooks, faction involvement, number of entries, etc.</span>
+
+Return only the raw JSON array, no explanation.</pre>
+  </div>
+
+  <!-- ── SCENES ── -->
+  <div class="section" id="scenes">
+    <div class="section-title">
+      🎬 Scenes
+      <a class="file-link" href="scenes.example.json" target="_blank">scenes.example.json ↗</a>
+    </div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+      <tr><td>_id</td><td>string</td><td>Auto-generated if omitted</td></tr>
+      <tr><td>id</td><td>string</td><td><span class="req">REQUIRED</span> — snake_case key for this scene</td></tr>
+      <tr><td>name</td><td>string</td><td>Human-readable label</td></tr>
+      <tr><td>trigger</td><td>object</td><td>When the scene fires (see table below)</td></tr>
+      <tr><td>steps</td><td>object[]</td><td>Ordered list of scene actions (see table below)</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--muted);margin:8px 0 4px;"><strong style="color:var(--text);">Trigger types</strong></p>
+    <table class="mini-table">
+      <tr><th>type</th><th>Fires when…</th><th>Extra field</th></tr>
+      <tr><td>once</td><td>Game loads for the first time</td><td><code>"condition": "game_start"</code></td></tr>
+      <tr><td>enter</td><td>Player enters a named zone</td><td><code>"zone": "zone_id"</code></td></tr>
+      <tr><td>flag</td><td>A game flag matches a condition</td><td><code>"condition": "flagKey == value"</code></td></tr>
+      <tr><td>interact</td><td>Player interacts with an entity</td><td><code>"target": "entity_id"</code></td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--muted);margin:8px 0 4px;"><strong style="color:var(--text);">Step types</strong></p>
+    <table class="mini-table">
+      <tr><th>type</th><th>Effect</th><th>Fields</th></tr>
+      <tr><td>dialog</td><td>Show dialogue</td><td><code>"id": "dialog_key"</code></td></tr>
+      <tr><td>blackout / fadein / fadeout</td><td>Screen transition</td><td>optional <code>"duration"</code> ms</td></tr>
+      <tr><td>text</td><td>Full-screen caption</td><td><code>"text"</code>, <code>"duration"</code></td></tr>
+      <tr><td>wait</td><td>Pause</td><td><code>"ms"</code></td></tr>
+      <tr><td>sound</td><td>Play sound</td><td><code>"id"</code>, optional <code>"loop"</code></td></tr>
+      <tr><td>flag</td><td>Set a game flag</td><td><code>"key"</code>, <code>"value"</code></td></tr>
+      <tr><td>spawn</td><td>Spawn a unit</td><td><code>"unit"</code> (char _id), <code>"x"</code>, <code>"y"</code></td></tr>
+      <tr><td>combat</td><td>Trigger a fight</td><td><code>"enemy"</code> (char _id), <code>"flee_allowed"</code></td></tr>
+      <tr><td>reward</td><td>Give items/gold/xp</td><td><code>"gold"</code>, <code>"xp"</code>, <code>"items"</code></td></tr>
+      <tr><td>quest_update</td><td>Advance quest objective</td><td><code>"quest_id"</code>, <code>"objective"</code> (0-based)</td></tr>
+    </table>
+    <div class="prompt-label"><span>LLM Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'prompt-scenes')">Copy Prompt</button></div>
+    <pre class="prompt" id="prompt-scenes">Generate a JSON array of RealmKit Scene entries. Each entry must follow this exact schema:
+{
+  "_id": "scene_&lt;unique_short_id&gt;",
+  "id": "short_snake_case_key",
+  "name": "human readable name",
+  "trigger": {
+    "type": "once | enter | flag | interact",
+    "condition": "game_start  ← use this for 'once' type",
+    "zone":      "zone_id     ← use this for 'enter' type",
+    "target":    "entity_id   ← use this for 'interact' type"
+  },
+  "steps": [
+    { "type": "fadeout",      "duration": 800 },
+    { "type": "dialog",       "id": "dialog_id_key" },
+    { "type": "fadein",       "duration": 600 },
+    { "type": "flag",         "key": "flag_name", "value": "true" },
+    { "type": "quest_update", "quest_id": "quests_xxx", "objective": 0 }
+  ]
+}
+
+Step types available: dialog, blackout, fadein, fadeout, text, wait, sound, flag, spawn, combat, reward, quest_update
+For dialog steps, use the dialogue "id" key (not _id).
+For quest_update, use the quest "_id" value.
+
+<span class="placeholder">Dialogue ids available: [paste your dialogue id keys here]
+Quest _ids available:  [paste your quest _id values here]
+
+Describe the scenes — cutscenes, zone entry events, NPC interactions, combat triggers, number of entries, etc.</span>
+
+Return only the raw JSON array, no explanation.</pre>
+  </div>
+
+  <!-- ── TILESETS ── -->
+  <div class="section" id="tilesets">
+    <div class="section-title">
+      🗺 Tilesets
+      <a class="file-link" href="tilesets.example.json" target="_blank">tilesets.example.json ↗</a>
+    </div>
+    <table>
+      <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+      <tr><td>_id</td><td>string</td><td>Auto-generated if omitted</td></tr>
+      <tr><td>name</td><td>string</td><td><span class="req">REQUIRED</span></td></tr>
+      <tr><td>path</td><td>string</td><td>Relative path to PNG e.g. <code>"assets/tilesets/overworld.png"</code></td></tr>
+      <tr><td>tileWidth</td><td>number</td><td>Width of one tile in pixels (default 32)</td></tr>
+      <tr><td>tileHeight</td><td>number</td><td>Height of one tile in pixels (default 32)</td></tr>
+      <tr><td>cols</td><td>number</td><td>Number of tile columns across the spritesheet</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--teal);margin:8px 0 14px;">
+      💡 Tip: Create tileset images in <a href="../sprite-builder.html" target="_blank" style="color:var(--teal);">🎨 Pixel Painter</a>.
+      Assets saved to the server appear automatically in the Builder's Tiles tab under "Import from Pixel Painter."
+    </p>
+    <div class="prompt-label"><span>LLM Prompt</span><button class="copy-btn" onclick="copyPrompt(this,'prompt-tilesets')">Copy Prompt</button></div>
+    <pre class="prompt" id="prompt-tilesets">Generate a JSON array of RealmKit Tileset entries. Each entry must follow this exact schema:
+{
+  "_id": "tiles_&lt;unique_short_id&gt;",
+  "name": "display name",
+  "path": "assets/tilesets/filename.png",
+  "tileWidth": 32,
+  "tileHeight": 32,
+  "cols": 8
+}
+
+tileWidth / tileHeight = size of one tile in pixels (typically 16, 32, or 64).
+cols = number of tile columns across the spritesheet width.
+
+<span class="placeholder">Describe the tilesets needed — biomes, art styles, tile sizes, etc.</span>
+
+Return only the raw JSON array, no explanation.</pre>
+  </div>
+
+</main>
+
+<script>
+// Highlight active nav item on scroll
+const sections = document.querySelectorAll('.section[id]');
+const navLinks  = document.querySelectorAll('nav a');
+function onScroll() {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) cur = s.id; });
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// Copy prompt to clipboard
+function copyPrompt(btn, preId) {
+  const pre = document.getElementById(preId);
+  if (!pre) return;
+  // Get text, stripping the <span class="placeholder"> tags but keeping their content
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy Prompt';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(function() {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() { btn.textContent = 'Copy Prompt'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>

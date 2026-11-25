@@ -1,0 +1,79 @@
+{
+  "bpm": 88,
+  "bars": 4,
+  "tracks": [
+    {
+      "id": 1,
+      "name": "Harp Melody",
+      "type": "melodic",
+      "instrument": "harp",
+      "volume": 0.76,
+      "muted": false,
+      "solo": false,
+      "color": "#d2b05a",
+      "notes": [
+        { "step": 0,  "pitch": 74, "duration": 4, "velocity": 0.74 },
+        { "step": 4,  "pitch": 76, "duration": 2, "velocity": 0.66 },
+        { "step": 6,  "pitch": 78, "duration": 2, "velocity": 0.68 },
+        { "step": 8,  "pitch": 81, "duration": 4, "velocity": 0.76 },
+        { "step": 12, "pitch": 78, "duration": 4, "velocity": 0.68 },
+        { "step": 16, "pitch": 79, "duration": 4, "velocity": 0.72 },
+        { "step": 20, "pitch": 78, "duration": 4, "velocity": 0.66 },
+        { "step": 24, "pitch": 76, "duration": 4, "velocity": 0.68 },
+        { "step": 28, "pitch": 74, "duration": 4, "velocity": 0.64 },
+        { "step": 32, "pitch": 78, "duration": 4, "velocity": 0.72 },
+        { "step": 36, "pitch": 81, "duration": 4, "velocity": 0.74 },
+        { "step": 40, "pitch": 83, "duration": 4, "velocity": 0.78 },
+        { "step": 44, "pitch": 81, "duration": 4, "velocity": 0.70 },
+        { "step": 48, "pitch": 76, "duration": 4, "velocity": 0.72 },
+        { "step": 52, "pitch": 74, "duration": 4, "velocity": 0.66 },
+        { "step": 56, "pitch": 73, "duration": 4, "velocity": 0.64 },
+        { "step": 60, "pitch": 74, "duration": 4, "velocity": 0.80 }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Soft Pad",
+      "type": "melodic",
+      "instrument": "pad",
+      "volume": 0.48,
+      "muted": false,
+      "solo": false,
+      "color": "#7db7df",
+      "notes": [
+        { "step": 0,  "pitch": 50, "duration": 16, "velocity": 0.50 },
+        { "step": 0,  "pitch": 54, "duration": 16, "velocity": 0.46 },
+        { "step": 0,  "pitch": 57, "duration": 16, "velocity": 0.42 },
+        { "step": 16, "pitch": 55, "duration": 16, "velocity": 0.50 },
+        { "step": 16, "pitch": 59, "duration": 16, "velocity": 0.46 },
+        { "step": 16, "pitch": 62, "duration": 16, "velocity": 0.42 },
+        { "step": 32, "pitch": 47, "duration": 16, "velocity": 0.50 },
+        { "step": 32, "pitch": 50, "duration": 16, "velocity": 0.46 },
+        { "step": 32, "pitch": 54, "duration": 16, "velocity": 0.42 },
+        { "step": 48, "pitch": 45, "duration": 16, "velocity": 0.50 },
+        { "step": 48, "pitch": 49, "duration": 16, "velocity": 0.46 },
+        { "step": 48, "pitch": 52, "duration": 16, "velocity": 0.42 }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Warm Bass",
+      "type": "melodic",
+      "instrument": "bass",
+      "volume": 0.66,
+      "muted": false,
+      "solo": false,
+      "color": "#62bc7f",
+      "notes": [
+        { "step": 0,  "pitch": 38, "duration": 8, "velocity": 0.70 },
+        { "step": 8,  "pitch": 45, "duration": 8, "velocity": 0.58 },
+        { "step": 16, "pitch": 43, "duration": 8, "velocity": 0.68 },
+        { "step": 24, "pitch": 50, "duration": 8, "velocity": 0.56 },
+        { "step": 32, "pitch": 35, "duration": 8, "velocity": 0.68 },
+        { "step": 40, "pitch": 42, "duration": 8, "velocity": 0.56 },
+        { "step": 48, "pitch": 33, "duration": 8, "velocity": 0.68 },
+        { "step": 56, "pitch": 40, "duration": 8, "velocity": 0.58 }
+      ]
+    }
+  ]
+}

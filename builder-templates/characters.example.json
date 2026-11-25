@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "chars_abc2_001",
+    "name": "Seraphina Voss",
+    "class": "Paladin",
+    "portrait": "portraits/seraphina",
+    "faction_id": "factions_abc1_001",
+    "hp": 180,
+    "mp": 80,
+    "atk": 22,
+    "def": 28,
+    "spd": 12
+  },
+  {
+    "_id": "chars_abc2_002",
+    "name": "Orin Ashblade",
+    "class": "Rogue",
+    "portrait": "portraits/orin",
+    "faction_id": "factions_abc1_002",
+    "hp": 110,
+    "mp": 40,
+    "atk": 34,
+    "def": 14,
+    "spd": 28
+  },
+  {
+    "_id": "chars_abc2_003",
+    "name": "Mara of the Root",
+    "class": "Druid",
+    "portrait": "portraits/mara",
+    "faction_id": "factions_abc1_003",
+    "hp": 130,
+    "mp": 160,
+    "atk": 14,
+    "def": 18,
+    "spd": 16
+  },
+  {
+    "_id": "chars_abc2_004",
+    "name": "Aldric the Burnt",
+    "class": "Warlock",
+    "portrait": "portraits/aldric",
+    "faction_id": "factions_abc1_004",
+    "hp": 95,
+    "mp": 200,
+    "atk": 40,
+    "def": 10,
+    "spd": 14
+  }
+]

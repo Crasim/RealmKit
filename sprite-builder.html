@@ -1,0 +1,4449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RealmKit — Sprite Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── RealmKit Wood + Pixel-Art palette ── */
+  --bg:           #0a0a12;   /* dark navy page bg — like launcher overlay */
+  --surface:      #1e1208;   /* dark wood inner surface */
+  --panel:        #2c1a0c;   /* content panel bg */
+  --wood:         #2a1408;   /* medium wood */
+  --wood-lt:      #3a2010;   /* lighter wood for hover/active */
+  --wood-shadow:  #1a0800;   /* deep shadow under buttons */
+  --border:       #5a3c20;   /* warm brown border */
+  --border-lt:    #8a6040;   /* lighter border for active states */
+  --accent:       #c8a840;   /* gold */
+  --accent-lt:    #e8c860;   /* light gold */
+  --danger:       #c84040;
+  --warn:         #e89030;
+  --text:         #e8d8c8;
+  --muted:        #907860;
+  --hover:        #3c2010;
+  --parchment:    #d4c4a0;   /* parchment inner tones */
+  --parchment-dk: #b8a880;   /* dark parchment / scrollbar track */
+
+  /* ── Section accent colours (frame grid + region overview) ── */
+  --sec-anim:    #3060c0;
+  --sec-ground1: #2e7030;
+  --sec-ground2: #7a5428;
+  --sec-rock:    #6a6a6a;
+  --sec-water:   #2878a8;
+  --sec-path:    #8a7030;
+  --sec-flora:   #307820;
+  --sec-obj:     #783898;
+  --sec-struct:  #703018;
+  --sec-other:   #404040;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 20%, #1a1a28 0%, transparent 45%),
+    radial-gradient(circle at 80% 80%, #1a1a28 0%, transparent 45%);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Header — wood frame cartridge label ── */
+header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 1rem;
+  height: 52px;
+  flex-shrink: 0;
+  position: relative;
+  /* Wood grain background */
+  background:
+    repeating-linear-gradient(90deg, transparent 0px, transparent 5px, rgba(80,50,20,0.25) 5px, rgba(80,50,20,0.25) 6px),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 12px, rgba(60,35,15,0.18) 12px, rgba(60,35,15,0.18) 18px),
+    linear-gradient(180deg, #4a2810 0%, #2a1408 50%, #1a0c04 100%);
+  /* 3-D wood edge */
+  border-bottom: 5px solid var(--wood-shadow);
+  box-shadow:
+    inset 0 3px 0 0 rgba(255,200,150,0.18),
+    inset 0 -2px 0 0 rgba(0,0,0,0.4),
+    0 0 0 2px #3a2008,
+    0 4px 0 2px rgba(0,0,0,0.35);
+  image-rendering: pixelated;
+  z-index: 10;
+}
+
+/* Diamond ornaments flanking the title */
+.hdr-diamond {
+  font-size: 0.65rem;
+  color: var(--accent);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+.hdr-line {
+  height: 3px; width: 50px; flex-shrink: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--border) 30%, var(--border-lt) 50%, var(--border) 70%, transparent 100%);
+}
+.hdr-line.right { transform: scaleX(-1); }
+
+header h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.9), 0 0 10px rgba(200,168,64,0.3);
+  white-space: nowrap;
+  letter-spacing: 3px;
+}
+.hdr-pipe {
+  color: var(--border);
+  font-size: 1rem;
+  opacity: 0.5;
+}
+.title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  color: var(--text);
+  opacity: 0.75;
+  letter-spacing: 2px;
+}
+.hdr-spacer { flex: 1; }
+.hdr-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.52rem;
+  font-family: 'Press Start 2P', monospace;
+  padding: 0.28rem 0.65rem;
+  background: linear-gradient(180deg, #3a3848 0%, #2a2838 50%, #1a1828 100%);
+  border: 2px solid #3a3848; border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 #0a0818, inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: all 0.05s;
+}
+.hdr-link:hover {
+  background: linear-gradient(180deg, #4a4858 0%, #3a3848 50%, #2a2838 100%);
+  color: var(--text);
+  border-color: #5a5868;
+}
+.hdr-link:active {
+  transform: translateY(4px); border-bottom-width: 0;
+  box-shadow: 0 0 0 0 #0a0818;
+}
+.header-status {
+  font-size: 0.5rem;
+  color: var(--accent);
+  font-family: 'Press Start 2P', monospace;
+  text-shadow: 0 0 8px rgba(200,168,64,0.4);
+}
+
+/* ── Layout ── */
+/* Double wood-frame wrapper around the 3-column tool layout */
+.app-frame {
+  flex: 1; overflow: hidden;
+  padding: 6px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0px, transparent 5px, rgba(80,50,20,0.18) 5px, rgba(80,50,20,0.18) 6px),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 12px, rgba(60,35,15,0.12) 12px, rgba(60,35,15,0.12) 18px),
+    linear-gradient(180deg, #3a1808 0%, #2a1408 50%, #1e1008 100%);
+  box-shadow: inset 0 3px 0 rgba(255,200,150,0.1), inset 0 -2px 0 rgba(0,0,0,0.3);
+  border: 3px solid var(--wood-shadow);
+  border-top: none;
+}
+.app { display: flex; height: 100%; overflow: hidden; gap: 5px; }
+
+/* ── Sidebar — dark wood, parchment-section headers ── */
+.sidebar {
+  width: 192px; flex-shrink: 0;
+  background: var(--surface);
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0px, transparent 7px, rgba(90,56,32,0.12) 7px, rgba(90,56,32,0.12) 8px),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 16px, rgba(60,35,15,0.08) 16px, rgba(60,35,15,0.08) 17px);
+  border: 2px solid var(--border); border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 var(--wood-shadow), inset 0 1px 0 rgba(255,200,150,0.06);
+  display: flex; flex-direction: column;
+  overflow-y: auto; padding: 0.5rem 0.5rem; gap: 0.7rem;
+}
+
+/* ── Editor area ── */
+.editor-area {
+  flex: 1; background: #080604;
+  border: 2px solid var(--border); border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 var(--wood-shadow), inset 0 2px 6px rgba(0,0,0,0.5);
+  position: relative; overflow: auto;
+}
+/* inner wrapper: always fills the editor-area so the canvas is centered
+   when smaller; expands freely when canvas is zoomed larger              */
+.canvas-scroll-wrap {
+  min-width: 100%; min-height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  box-sizing: border-box; padding: 20px;
+}
+
+/* ── Right panel — dark wood with section treatment ── */
+.right-panel {
+  width: 224px; flex-shrink: 0;
+  background: var(--surface);
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0px, transparent 7px, rgba(90,56,32,0.12) 7px, rgba(90,56,32,0.12) 8px),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 16px, rgba(60,35,15,0.08) 16px, rgba(60,35,15,0.08) 17px);
+  border: 2px solid var(--border); border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 var(--wood-shadow), inset 0 1px 0 rgba(255,200,150,0.06);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+/* ── Section label — pixel font, styled like StoryBuilder nav header ── */
+.lbl {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem; text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  background: linear-gradient(180deg, #3a2010 0%, #2a1808 100%);
+  padding: 0.28rem 0.5rem;
+  border-left: 3px solid var(--accent);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.3rem;
+  box-shadow: inset 0 1px 0 rgba(255,200,100,0.08);
+  display: block;
+}
+.section { display: flex; flex-direction: column; gap: 0.3rem; }
+
+/* ── Tabs — chunky SNES 3-D press buttons ── */
+.tab-group { display: flex; gap: 0.25rem; }
+.tab {
+  flex: 1; padding: 0.38rem 0;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.48rem;
+  background: linear-gradient(180deg, #3a3848 0%, #2a2838 50%, #1a1828 100%);
+  border: 2px solid #3a3848; border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 #0a0818, inset 0 1px 0 rgba(255,255,255,0.07);
+  color: var(--muted);
+  cursor: pointer; text-align: center;
+  transition: all 0.05s; user-select: none;
+}
+.tab.active {
+  background: linear-gradient(180deg, #d8b840 0%, #b89020 60%, #9a7810 100%);
+  color: #1a0c04; border-color: #7a5010; border-bottom-color: #4a2800;
+  box-shadow: 0 4px 0 0 #301800, inset 0 1px 0 rgba(255,230,150,0.3);
+  text-shadow: 0 1px 0 rgba(255,255,200,0.4);
+}
+.tab:hover:not(.active) {
+  background: linear-gradient(180deg, #4a4858 0%, #3a3848 50%, #2a2838 100%);
+  border-color: #5a5868; color: var(--text);
+}
+.tab:active:not(.active) { transform: translateY(4px); border-bottom-width: 0; box-shadow: 0 0 0 0 #0a0818; }
+
+/* ── Panel tabs (right panel) — StoryBuilder nav style ── */
+.panel-tabs {
+  display: flex; flex-shrink: 0;
+  background: linear-gradient(180deg, #2a1808 0%, #1a0c04 100%);
+  border-bottom: 3px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255,200,150,0.06);
+  gap: 2px; padding: 4px 4px 0;
+}
+.panel-tab {
+  flex: 1; padding: 0.42rem 0.2rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: linear-gradient(180deg, #3a3848 0%, #2a2838 50%, #1a1828 100%);
+  border: 2px solid #3a3848; border-bottom-width: 3px; border-bottom-color: var(--border);
+  box-shadow: 0 3px 0 0 #0a0818;
+  color: var(--muted); cursor: pointer; text-align: center;
+  transition: all 0.05s;
+}
+.panel-tab.active {
+  background: linear-gradient(180deg, #5868a8 0%, #4858a8 50%, #3848a8 100%);
+  color: #f0f0ff; border-color: #3848a8; border-bottom-color: var(--border);
+  box-shadow: 0 3px 0 0 #181828;
+}
+.panel-tab:hover:not(.active) {
+  background: linear-gradient(180deg, #4a4858 0%, #3a3848 50%, #2a2838 100%);
+  color: var(--text);
+}
+
+/* ── Assets panel ── */
+#assets-panel { display:none; flex-direction:column; height:calc(100% - 42px); overflow:hidden; }
+.assets-subtabs { display:flex; gap:0; flex-shrink:0; border-bottom:2px solid var(--border); }
+.assets-subtab {
+  flex:1; padding:0.28rem 0.4rem; font-size:0.58rem; cursor:pointer;
+  background:var(--panel); color:var(--muted); border:none; border-bottom:2px solid transparent;
+  font-family:'Press Start 2P',monospace; transition:color .15s;
+}
+.assets-subtab.active { color:var(--accent); border-bottom-color:var(--accent); background:rgba(200,168,64,.07); }
+.assets-subtab:hover:not(.active) { color:var(--text); }
+.assets-list { flex:1; overflow-y:auto; padding:0.4rem; display:flex; flex-direction:column; gap:0.4rem; }
+.asset-row {
+  display:flex; gap:0.4rem; align-items:flex-start;
+  background: linear-gradient(180deg, #302018 0%, #281810 100%);
+  border: 2px solid var(--border); border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 var(--wood-shadow), inset 0 1px 0 rgba(255,200,100,0.06);
+  padding:0.35rem; cursor:default;
+}
+.asset-row:hover { border-color: var(--border-lt); }
+.asset-thumb {
+  width:52px; height:52px; object-fit:contain; flex-shrink:0;
+  image-rendering:pixelated; background:var(--bg);
+  border: 2px solid var(--border); border-bottom-width: 3px;
+}
+.asset-meta { flex:1; min-width:0; display:flex; flex-direction:column; gap:0.2rem; }
+.asset-name {
+  font-family:'Press Start 2P',monospace; font-size:0.38rem;
+  color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.asset-info { font-size:0.62rem; color:var(--muted); line-height:1.3; }
+.asset-date { font-size:0.58rem; color:var(--border-lt); }
+.asset-btns { display:flex; gap:0.25rem; margin-top:0.15rem; }
+.assets-empty { padding:1rem 0.5rem; text-align:center; color:var(--muted); font-size:0.68rem; line-height:1.7; }
+
+/* ── Sheet-import modal ── */
+#si-modal {
+  display:none; position:fixed; inset:0; z-index:200;
+  background:rgba(0,0,0,0.72); align-items:center; justify-content:center;
+}
+#si-modal.open { display:flex; }
+.si-box {
+  background:var(--surface); border:3px solid var(--border);
+  border-bottom-width:6px; border-radius:4px;
+  width:340px; max-width:96vw; display:flex; flex-direction:column; gap:0;
+  box-shadow:0 8px 32px rgba(0,0,0,0.6);
+}
+.si-title {
+  font-family:'Press Start 2P',monospace; font-size:0.52rem;
+  padding:0.6rem 0.8rem; border-bottom:2px solid var(--border);
+  color:var(--accent); letter-spacing:0.06em;
+}
+.si-body { padding:0.7rem 0.8rem; display:flex; flex-direction:column; gap:0.55rem; }
+.si-row { display:flex; flex-direction:column; gap:0.2rem; }
+.si-lbl { font-family:'Press Start 2P',monospace; font-size:0.38rem; color:var(--muted); text-transform:uppercase; }
+.si-preview-wrap {
+  width:100%; height:140px; background:var(--bg); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative;
+}
+#si-canvas { image-rendering:pixelated; max-width:100%; max-height:140px; }
+#si-drop-hint { color:var(--muted); font-size:0.68rem; }
+.si-info { font-size:0.65rem; color:var(--muted); min-height:1rem; }
+.si-info.ok  { color:#6ecf6e; }
+.si-info.err { color:var(--danger); }
+.si-footer {
+  display:flex; gap:0.4rem; padding:0.6rem 0.8rem;
+  border-top:2px solid var(--border); justify-content:flex-end;
+}
+
+/* ── Size grid ── */
+.size-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
+.size-btn {
+  padding: 0.32rem 0.2rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  background: linear-gradient(180deg, #3a3848 0%, #2a2838 50%, #1a1828 100%);
+  border: 2px solid #3a3848; border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 #0a0818, inset 0 1px 0 rgba(255,255,255,0.07);
+  color: var(--muted);
+  cursor: pointer; text-align: center; user-select: none;
+  transition: all 0.05s;
+}
+.size-btn.active {
+  background: linear-gradient(180deg, #d8b840 0%, #b89020 60%, #9a7810 100%);
+  color: #1a0c04; border-color: #7a5010; border-bottom-color: #4a2800;
+  box-shadow: 0 4px 0 0 #301800, inset 0 1px 0 rgba(255,230,150,0.3);
+}
+.size-btn:hover:not(.active) {
+  background: linear-gradient(180deg, #4a4858 0%, #3a3848 50%, #2a2838 100%);
+  border-color: #5a5868; color: var(--text);
+}
+.size-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.size-btn:active:not(:disabled) { transform: translateY(4px); border-bottom-width: 0; box-shadow: 0 0 0 0 #0a0818; }
+.res-btn small { display: block; font-size: 0.4rem; color: inherit; opacity: 0.75; margin-top: 0.15rem; }
+
+/* ── Tool buttons ── */
+.tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
+.tool-btn {
+  padding: 0.5rem 0.2rem 0.35rem;
+  background: linear-gradient(180deg, #3a3848 0%, #2a2838 50%, #1a1828 100%);
+  border: 2px solid #3a3848; border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 #0a0818, inset 0 1px 0 rgba(255,255,255,0.07);
+  cursor: pointer; text-align: center;
+  font-size: 1.1rem; user-select: none; transition: all 0.05s;
+}
+.tool-btn .tlbl {
+  display: block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem; color: var(--muted); margin-top: 0.18rem;
+}
+.tool-btn.active {
+  background: linear-gradient(180deg, #d8b840 0%, #b89020 60%, #9a7810 100%);
+  border-color: #7a5010; border-bottom-color: #4a2800;
+  box-shadow: 0 4px 0 0 #301800, inset 0 1px 0 rgba(255,230,150,0.3);
+}
+.tool-btn.active .tlbl { color: #3a1000; }
+.tool-btn:hover:not(.active) {
+  background: linear-gradient(180deg, #4a4858 0%, #3a3848 50%, #2a2838 100%);
+  border-color: #5a5868;
+}
+.tool-btn:active { transform: translateY(4px); border-bottom-width: 0; box-shadow: 0 0 0 0 #0a0818; }
+
+/* ── Inputs ── */
+input[type="color"] {
+  width: 100%; height: 28px; border: 2px solid var(--border);
+  background: var(--panel); cursor: pointer; padding: 1px 3px;
+}
+input[type="range"]  { width: 100%; accent-color: var(--accent); }
+input[type="text"]   {
+  width: 100%; background: var(--panel); border: 2px solid var(--border);
+  border-bottom-width: 3px;
+  color: var(--text); padding: 0.25rem 0.4rem;
+  font-size: 0.68rem; font-family: monospace;
+}
+input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+select {
+  width: 100%; background: var(--panel); border: 2px solid var(--border);
+  border-bottom-width: 3px;
+  color: var(--text); padding: 0.25rem 0.4rem;
+  font-size: 0.68rem; cursor: pointer;
+}
+
+/* ── Palette ── */
+.palette { display: grid; grid-template-columns: repeat(8,1fr); gap: 2px; }
+.swatch {
+  aspect-ratio: 1; border-radius: 2px; border: 1px solid var(--border);
+  cursor: pointer; transition: transform 0.1s;
+}
+.swatch:hover { transform: scale(1.25); z-index: 1; position: relative; }
+
+/* ── Toggle ── */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; }
+.toggle {
+  width: 30px; height: 15px; background: var(--border);
+  border-radius: 8px; position: relative; cursor: pointer;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.toggle.on { background: var(--accent); }
+.toggle::after {
+  content: ''; position: absolute; width: 11px; height: 11px;
+  background: #fff; border-radius: 50%; top: 2px; left: 2px; transition: left 0.2s;
+}
+.toggle.on::after { left: 17px; }
+
+/* ── Editor canvas — heavy SNES-style frame ── */
+#editor-canvas {
+  image-rendering: pixelated; cursor: crosshair;
+  border: 4px solid var(--border);
+  border-bottom-width: 6px;
+  box-shadow: 0 0 0 1px #3a2810, 4px 6px 0 0 rgba(0,0,0,0.5);
+}
+
+/* ── Region label overlay — SNES banner ── */
+#region-label {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem; color: var(--accent);
+  background: linear-gradient(180deg, #2a1808 0%, #1a0c04 100%);
+  padding: 4px 14px;
+  border: 2px solid var(--accent); border-bottom-width: 3px;
+  box-shadow: 0 3px 0 0 rgba(0,0,0,0.6);
+  pointer-events: none; display: none; white-space: nowrap;
+}
+
+/* ── Import area ── */
+#import-area {
+  display: none; flex-direction: column; align-items: center;
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  overflow-y: auto;
+  background: rgba(8, 6, 4, 0.92);
+  z-index: 50;
+}
+/* inner wrapper: margin:auto gives true vertical centering even with scroll */
+#import-inner {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.75rem; margin: auto; padding: 1.5rem 1rem;
+  width: 100%; max-width: 520px; box-sizing: border-box;
+}
+.drop-zone {
+  width: 380px; height: 160px;
+  border: 2px dashed var(--border); border-radius: 8px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--muted); cursor: pointer; transition: border-color 0.2s;
+  font-size: 0.85rem; gap: 0.4rem;
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); color: var(--text); }
+.drop-zone .icon { font-size: 2rem; }
+#import-canvas { image-rendering: pixelated; border: 1px solid var(--border); cursor: crosshair; }
+.import-ctrls {
+  display: none; flex-wrap: wrap; gap: 0.5rem;
+  align-items: center; justify-content: center; font-size: 0.75rem;
+  flex-direction: column;
+}
+.import-ctrls .btn {
+  display: inline-flex;
+  width: auto;
+}
+
+/* ── Buttons — SNES 3-D press style — matches StoryBuilder/Launcher ── */
+.btn {
+  padding: 0.38rem 0.7rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.44rem;
+  background: linear-gradient(180deg, #4a4a58 0%, #3a3a48 50%, #2a2a38 100%);
+  color: var(--text);
+  border: 2px solid #4a4a58; border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 #1a1a28, inset 0 1px 0 rgba(255,255,255,0.08);
+  cursor: pointer; white-space: nowrap;
+  user-select: none; display: block; width: 100%; text-align: center;
+  transition: all 0.05s;
+}
+.btn:hover {
+  background: linear-gradient(180deg, #5a5a68 0%, #4a4a58 50%, #3a3a48 100%);
+  color: var(--accent-lt); border-color: #6a6a78;
+}
+.btn:active { transform: translateY(4px); border-bottom-width: 0; box-shadow: 0 0 0 0 #1a1a28; }
+.btn.primary {
+  background: linear-gradient(180deg, #a87030 0%, #885020 50%, #683010 100%);
+  color: #f8e8d0; border-color: #a87030; border-bottom-color: #401808;
+  box-shadow: 0 4px 0 0 #301008, inset 0 1px 0 rgba(255,220,180,0.25);
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+}
+.btn.primary:hover {
+  background: linear-gradient(180deg, #b88040 0%, #986030 50%, #784020 100%);
+  border-color: #b88040;
+}
+.btn.primary:active { transform: translateY(4px); border-bottom-width: 0; box-shadow: 0 0 0 0 #301008; }
+.btn.danger { border-color: var(--danger); color: var(--danger); }
+.btn.danger:hover { background: linear-gradient(180deg, #d05050 0%, #a03030 50%, #802020 100%); color: #fff; border-color: #c04040; box-shadow: 0 4px 0 0 #400a0a; }
+.btn:disabled    { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+/* ── Right panel ── */
+.panel-body { flex: 1; overflow-y: auto; }
+.frames-list {
+  padding: 0.4rem; display: flex; flex-direction: column; gap: 0.3rem;
+}
+.frame-item {
+  display: flex; align-items: center; gap: 0.35rem;
+  padding: 0.25rem; border-radius: 4px;
+  border: 1px solid transparent; cursor: pointer; transition: all 0.1s;
+}
+.frame-item:hover   { background: var(--hover); }
+.frame-item.active  { border-color: var(--accent); }
+.frame-thumb        { image-rendering: pixelated; border: 1px solid var(--border); flex-shrink: 0; border-radius: 2px; }
+.frame-lbl          { font-size: 0.65rem; color: var(--muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.frame-del          { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; padding: 0 0.15rem; line-height: 1; flex-shrink: 0; }
+.frame-del:hover    { color: var(--danger); }
+
+/* ── Tileset grid frame view ── */
+.frame-grid { padding: 0.3rem 0.4rem; display: flex; flex-direction: column; gap: 2px; }
+.frame-grid-row {
+  display: flex; align-items: center; gap: 1px;
+  border-left: 3px solid transparent;   /* coloured by JS via section */
+  padding-left: 2px;
+}
+.frame-grid-row-lbl {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem; color: var(--muted); width: 22px; flex-shrink: 0;
+  text-align: right; padding-right: 3px; cursor: default;
+}
+.frame-grid-thumb {
+  image-rendering: pixelated; border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer; flex-shrink: 0;
+}
+.frame-grid-thumb:hover { border-color: rgba(255,255,255,0.4); }
+.frame-grid-thumb.active { border-color: var(--accent) !important; box-shadow: 0 0 0 1px var(--accent); }
+.frame-grid-divider {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted); padding: 0.28rem 0 0.12rem;
+  border-top: 2px solid var(--border); margin-top: 0.3rem;
+}
+.frame-grid-divider:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+.frame-grid-divider.anim-divider {
+  color: #6090e0; border-top: 2px solid rgba(96,144,224,0.5);
+  margin-top: 0.45rem; padding-top: 0.32rem;
+}
+
+.frames-actions {
+  padding: 0.4rem; display: flex; flex-direction: column; gap: 0.25rem;
+  border-top: 1px solid var(--border); flex-shrink: 0;
+}
+
+/* ── Animations (region overview) ── */
+#anim-panel { display: none; flex-direction: column; height: 100%; }
+
+/* ── Animation preview player ─────────────────────────────────────────── */
+#ap-wrap {
+  flex-shrink: 0; background: var(--bg);
+  border-bottom: 3px solid var(--border);
+  display: flex; flex-direction: column; gap: 0;
+}
+#ap-header {
+  display: flex; align-items: center; gap: 0.3rem;
+  padding: 0.25rem 0.45rem 0.15rem;
+  border-bottom: 1px solid var(--border);
+}
+#ap-toggle {
+  font-family: 'Press Start 2P', monospace; font-size: 0.38rem;
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  padding: 0; flex-shrink: 0;
+}
+#ap-toggle:hover { color: var(--accent); }
+#ap-title {
+  font-family: 'Press Start 2P', monospace; font-size: 0.38rem;
+  color: var(--accent); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#ap-body { padding: 0.4rem; display: flex; flex-direction: column; gap: 0.35rem; }
+#ap-body.collapsed { display: none; }
+#ap-canvas-wrap {
+  display: flex; align-items: center; justify-content: center;
+  background: #080604; border: 2px solid var(--border); border-bottom-width: 3px;
+  min-height: 64px; overflow: hidden; position: relative;
+}
+#ap-canvas {
+  image-rendering: pixelated;
+  display: block;
+}
+#ap-empty {
+  color: var(--muted); font-size: 0.62rem; text-align: center; padding: 0.75rem;
+  line-height: 1.6;
+}
+#ap-meta {
+  font-size: 0.6rem; color: var(--muted);
+  display: flex; justify-content: space-between; align-items: center;
+}
+#ap-counter { font-family: 'Press Start 2P', monospace; font-size: 0.4rem; color: var(--text); }
+#ap-loop-badge {
+  font-family: 'Press Start 2P', monospace; font-size: 0.34rem;
+  padding: 1px 4px; border-radius: 2px;
+}
+#ap-controls {
+  display: flex; gap: 0.25rem; align-items: center; justify-content: center;
+}
+.ap-btn {
+  font-size: 0.75rem; line-height: 1; padding: 0.2rem 0.4rem;
+  background: var(--panel); border: 2px solid var(--border); border-bottom-width: 4px;
+  color: var(--text); cursor: pointer; border-radius: 2px; flex-shrink: 0;
+  transition: border-color 0.08s;
+}
+.ap-btn:hover  { border-color: var(--accent); }
+.ap-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+.ap-btn.active { background: var(--accent); color: #1a0c04; border-color: #7a5010; }
+#ap-speed {
+  font-family: 'Press Start 2P', monospace; font-size: 0.38rem;
+  background: var(--panel); border: 2px solid var(--border); color: var(--text);
+  padding: 0.15rem 0.25rem; cursor: pointer; margin-left: auto;
+}
+/* Play button on each region tile */
+.ap-play-btn {
+  font-size: 0.65rem; padding: 0.1rem 0.3rem;
+  background: var(--panel); border: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; border-radius: 2px; flex-shrink: 0;
+  line-height: 1;
+}
+.ap-play-btn:hover { border-color: var(--accent); color: var(--accent); }
+.ap-play-btn.playing { background: var(--accent); color: #1a0c04; border-color: #7a5010; }
+
+.anim-list {
+  flex: 1; overflow-y: auto; padding: 0.4rem;
+  display: flex; flex-direction: column; gap: 0.15rem;
+}
+.row-num {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem; color: var(--muted); min-width: 1.8rem;
+  text-align: right; flex-shrink: 0;
+}
+.region-tile {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.28rem 0.4rem;
+  background: linear-gradient(180deg, #302018 0%, #281810 100%);
+  border: 2px solid var(--border); border-bottom-width: 3px;
+  box-shadow: 0 3px 0 0 var(--wood-shadow), inset 0 1px 0 rgba(255,200,100,0.05);
+  cursor: pointer; transition: all 0.05s;
+}
+.region-tile:hover { border-color: var(--border-lt); background: linear-gradient(180deg, #402820 0%, #38201a 100%); }
+.region-tile.active {
+  border-color: var(--accent); border-bottom-color: #4a2800;
+  background: linear-gradient(180deg, #4a3018 0%, #3a2410 100%);
+  box-shadow: 0 3px 0 0 #301800, inset 0 0 0 1px rgba(200,168,64,0.15);
+}
+.region-tile.placeholder { opacity: 0.45; }
+.region-tile.placeholder:hover { opacity: 1; }
+/* fill status indicator */
+.fill-dot {
+  width: 8px; height: 8px;
+  flex-shrink: 0;
+}
+.fill-dot.full     { background: var(--accent); }
+.fill-dot.partial  { background: var(--warn); }
+.fill-dot.empty    { background: var(--border); }
+.fill-dot.required { background: var(--danger); }
+.region-info { flex: 1; min-width: 0; }
+.region-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem; font-weight: 400; line-height: 1.5;
+}
+.region-meta { font-size: 0.55rem; color: var(--muted); margin-top: 2px; font-family: monospace; }
+.region-fallback { font-size: 0.52rem; color: var(--muted); font-style: italic; }
+/* direction hint in region overview for character sprites */
+.dir-hint {
+  font-size: 0.85rem; flex-shrink: 0; line-height: 1; opacity: 0.85;
+}
+
+/* ── Frame hover tooltip ── */
+#frame-tip {
+  position: fixed; z-index: 300; pointer-events: none;
+  background: var(--panel);
+  border: 1px solid var(--border); border-bottom-width: 3px;
+  border-radius: 3px; padding: 0.35rem 0.55rem;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.55);
+  display: none; max-width: 200px;
+}
+.ftip-section {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem; text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 0.25rem; opacity: 0.85;
+}
+.ftip-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.46rem; line-height: 1.5; margin-bottom: 0.2rem;
+}
+.ftip-meta { font-size: 0.6rem; color: var(--muted); line-height: 1.4; }
+.ftip-hint { font-size: 1rem; float: right; margin-left: 0.35rem; line-height: 1; }
+
+.anim-footer {
+  padding: 0.4rem; border-top: 2px solid var(--border);
+  flex-shrink: 0; font-size: 0.52rem; color: var(--muted);
+  display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;
+  font-family: 'Press Start 2P', monospace;
+}
+.legend-dot { width: 7px; height: 7px; display: inline-block; margin-right: 2px; }
+
+/* ── Spritesheet section — parchment inset treatment ── */
+.sheet-section {
+  border-top: 3px solid var(--border);
+  padding: 0.5rem 0.55rem; flex-shrink: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(139,90,43,0.04) 2px, rgba(139,90,43,0.04) 3px),
+    linear-gradient(180deg, #2a1e10 0%, #221808 100%);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+}
+#sheet-canvas {
+  image-rendering: pixelated;
+  border: 2px solid var(--border); border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 var(--wood-shadow);
+  width: 100%; margin: 0.35rem 0;
+}
+.sheet-btns   { display: flex; flex-direction: column; gap: 0.3rem; }
+.sheet-info   {
+  font-size: 0.42rem; color: var(--muted); margin-top: 0.25rem;
+  font-family: 'Press Start 2P', monospace; line-height: 1.8;
+}
+
+/* ── Coords overlay — SNES HUD style ── */
+.coords {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem; color: var(--accent);
+  background: linear-gradient(180deg, #2a1808 0%, #1a0c04 100%);
+  padding: 3px 12px;
+  border: 2px solid var(--border); border-bottom-width: 3px;
+  box-shadow: 0 3px 0 0 rgba(0,0,0,0.7);
+  pointer-events: none;
+}
+
+/* ── Warning badge ── */
+.warn-badge {
+  display: inline-block; background: var(--danger);
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem;
+  padding: 2px 5px; margin-left: 4px; vertical-align: middle;
+}
+
+/* ── Biome badge (shown under sheet preview when a tileset is loaded) ── */
+#biome-badge {
+  display: flex; align-items: center; gap: 0.35rem;
+  padding: 0.28rem 0.45rem; margin-top: 0.25rem;
+  background: var(--panel); border: 1px solid var(--border);
+  border-left-width: 3px; border-radius: 2px;
+  font-size: 0.62rem; color: var(--text); line-height: 1;
+}
+#biome-badge .bb-icon { font-size: 0.9rem; flex-shrink: 0; }
+#biome-badge .bb-name {
+  font-family: 'Press Start 2P', monospace; font-size: 0.38rem;
+  color: var(--accent); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#biome-badge .bb-asset {
+  font-size: 0.58rem; color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90px;
+}
+
+/* ── Section color legend in frame list ── */
+.sec-legend {
+  padding: 0.35rem 0.5rem 0.3rem; font-size: 0.38rem;
+  font-family: 'Press Start 2P', monospace;
+  border-top: 2px solid var(--border);
+  display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; color: var(--muted);
+}
+.sec-legend-item {
+  display: flex; align-items: center; gap: 3px; white-space: nowrap;
+}
+.sec-legend-swatch {
+  width: 8px; height: 8px; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* ── Scrollbar — parchment style matching launcher ── */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track {
+  background: var(--parchment-dk);
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.15);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6a5040 0%, #5a4030 50%, #4a3020 100%);
+  border: 2px solid var(--parchment-dk);
+  box-shadow: inset 1px 1px 0 rgba(255,200,150,0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7a6050 0%, #6a5040 50%, #5a4030 100%);
+}
+
+/* ── Category filter pills — SNES button style ── */
+.cat-pills { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+.cat-pill {
+  padding: 0.2rem 0.5rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem;
+  background: linear-gradient(180deg, #3a3848 0%, #2a2838 50%, #1a1828 100%);
+  border: 2px solid #3a3848; border-bottom-width: 3px;
+  box-shadow: 0 3px 0 0 #0a0818;
+  color: var(--muted); cursor: pointer; user-select: none; white-space: nowrap;
+  transition: all 0.05s;
+}
+.cat-pill.active {
+  background: linear-gradient(180deg, #d8b840 0%, #b89020 60%, #9a7810 100%);
+  color: #180c00; border-color: #7a5010; border-bottom-color: #4a2800;
+  box-shadow: 0 3px 0 0 #301800;
+}
+.cat-pill:hover:not(.active) {
+  background: linear-gradient(180deg, #4a4858 0%, #3a3848 50%, #2a2838 100%);
+  border-color: #5a5868; color: var(--text);
+}
+.cat-pill:active { transform: translateY(3px); border-bottom-width: 0; box-shadow: 0 0 0 0 #0a0818; }
+
+/* ── Tier picker — cartridge slot style ── */
+.tier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; }
+.tier-btn {
+  padding: 0.32rem 0.2rem 0.28rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem; line-height: 1.4;
+  background: linear-gradient(180deg, #3a3848 0%, #2a2838 50%, #1a1828 100%);
+  border: 2px solid #3a3848; border-bottom-width: 4px;
+  box-shadow: 0 4px 0 0 #0a0818, inset 0 1px 0 rgba(255,255,255,0.07);
+  color: var(--muted);
+  cursor: pointer; text-align: center; user-select: none; transition: all 0.05s;
+  display: flex; flex-direction: column; align-items: center; gap: 0.12rem;
+}
+.tier-btn.active {
+  background: linear-gradient(180deg, #d8b840 0%, #b89020 60%, #9a7810 100%);
+  color: #1a0c04; border-color: #7a5010; border-bottom-color: #4a2800;
+  box-shadow: 0 4px 0 0 #301800, inset 0 1px 0 rgba(255,230,150,0.3);
+}
+.tier-btn:hover:not(.active) {
+  background: linear-gradient(180deg, #4a4858 0%, #3a3848 50%, #2a2838 100%);
+  border-color: #5a5868; color: var(--text);
+}
+.tier-btn:active { transform: translateY(4px); border-bottom-width: 0; box-shadow: 0 0 0 0 #0a0818; }
+.tier-px  { font-size: 0.38rem; color: inherit; opacity: 0.72; }
+.tier-fit {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.36rem; font-weight: 700;
+  padding: 1px 5px; line-height: 1.6;
+  min-width: 30px; display: inline-block; text-align: center;
+}
+.tier-fit.fnone  { display: none; }
+.tier-fit.f4k    { background: rgba(200,168,64,0.22);  color: #c8a840; }
+.tier-fit.f8k    { background: rgba(200,168,64,0.12);  color: #d8bc70; }
+.tier-fit.f16k   { background: rgba(232,144,48,0.20);  color: #e89030; }
+.tier-fit.fsplit { background: rgba(200,64,64,0.22);   color: #c84040; }
+
+/* ── Import slot info bar ── */
+#import-slot-info {
+  display: none;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.35rem 0.7rem; font-size: 0.68rem; text-align: center;
+  color: var(--text); line-height: 1.5; width: 380px; max-width: 95%;
+}
+#import-slot-info strong { color: var(--accent); }
+#import-slot-info .slot-sub { font-size: 0.58rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-line"></div>
+  <div class="hdr-diamond">◈</div>
+  <h1>RealmKit</h1>
+  <div class="hdr-diamond">◈</div>
+  <div class="hdr-line right"></div>
+  <span class="hdr-pipe">│</span>
+  <span class="title">Sprite Builder</span>
+  <div class="hdr-spacer"></div>
+  <a href="index.html" class="hdr-link">← Engine</a>
+  <span class="header-status" id="status">Ready</span>
+</header>
+
+<div class="app-frame">
+<div class="app">
+
+  <!-- ═══════════════ LEFT SIDEBAR ═══════════════ -->
+  <div class="sidebar">
+
+    <div class="section">
+      <div class="lbl">Mode</div>
+      <div class="tab-group">
+        <div class="tab active" id="tab-paint"  onclick="setMode('paint')">🎨 Paint</div>
+        <div class="tab"        id="tab-import" onclick="setMode('import')">📥 Import</div>
+      </div>
+    </div>
+
+    <!-- Sheet / Template section -->
+    <div class="section" id="sheet-sec">
+      <div class="lbl">Sprite Sheet</div>
+      <div class="cat-pills" id="cat-pills">
+        <!-- populated by loadTemplates() -->
+      </div>
+      <select id="tpl-select" onchange="onTemplateChange()">
+        <option value="">— Free paint —</option>
+      </select>
+      <div id="tpl-info" style="font-size:0.6rem;color:var(--muted);display:none;"></div>
+    </div>
+
+    <!-- Tier / Resolution section — shown when a sheet is selected -->
+    <div class="section" id="tier-sec" style="display:none;">
+      <div style="display:flex;align-items:baseline;gap:0.35rem;margin-bottom:0.3rem;">
+        <div class="lbl" style="margin:0;">Tier</div>
+        <div id="tier-hint" style="font-size:0.56rem;color:var(--muted);font-style:italic;flex:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+      </div>
+      <div class="tier-grid" id="tier-grid">
+        <div class="tier-btn" data-mult="1"  onclick="setResolution(1)">16-bit<span class="tier-px" id="tier-px-1"></span><span class="tier-fit fnone" id="tier-fit-1"></span></div>
+        <div class="tier-btn" data-mult="2"  onclick="setResolution(2)">32-bit<span class="tier-px" id="tier-px-2"></span><span class="tier-fit fnone" id="tier-fit-2"></span></div>
+        <div class="tier-btn" data-mult="4"  onclick="setResolution(4)">64-bit<span class="tier-px" id="tier-px-4"></span><span class="tier-fit fnone" id="tier-fit-4"></span></div>
+        <div class="tier-btn" data-mult="8"  onclick="setResolution(8)">128-bit<span class="tier-px" id="tier-px-8"></span><span class="tier-fit fnone" id="tier-fit-8"></span></div>
+      </div>
+    </div>
+
+    <!-- Sprite Size (free-paint only) -->
+    <div class="section" id="size-sec">
+      <div class="lbl">Sprite Size</div>
+      <div class="size-grid" id="size-grid">
+        <div class="size-btn active" data-size="16"  onclick="setSize(16)">16 × 16</div>
+        <div class="size-btn"        data-size="32"  onclick="setSize(32)">32 × 32</div>
+        <div class="size-btn"        data-size="64"  onclick="setSize(64)">64 × 64</div>
+        <div class="size-btn"        data-size="128" onclick="setSize(128)">128 × 128</div>
+      </div>
+      <div class="lbl" style="margin-top:0.5rem;">Total Frames</div>
+      <div style="display:flex;align-items:center;gap:0.35rem;">
+        <input type="number" id="fp-frame-count" value="8" min="1" max="192"
+          style="width:60px;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:0.2rem 0.3rem;font-size:0.7rem;"
+          onchange="fpSetFrameCount(this.value)">
+        <button class="btn" style="font-size:0.55rem;padding:0.2rem 0.4rem;" onclick="fpPromptFrameCount()">Set</button>
+      </div>
+    </div>
+
+    <div class="section" id="tools-sec">
+      <div class="lbl">Tools</div>
+      <div class="tool-grid">
+        <div class="tool-btn active" data-tool="pencil"     onclick="setTool('pencil')"     title="Pencil (P)">✏️<span class="tlbl">Pencil</span></div>
+        <div class="tool-btn"        data-tool="eraser"     onclick="setTool('eraser')"     title="Eraser (E)">🧹<span class="tlbl">Eraser</span></div>
+        <div class="tool-btn"        data-tool="fill"       onclick="setTool('fill')"       title="Fill (F)">🪣<span class="tlbl">Fill</span></div>
+        <div class="tool-btn"        data-tool="eyedropper" onclick="setTool('eyedropper')" title="Pick (I)">💧<span class="tlbl">Pick</span></div>
+      </div>
+    </div>
+
+    <div class="section" id="color-sec">
+      <div class="lbl">Color</div>
+      <input type="color" id="color-picker" value="#4ecca3" oninput="onColorPick(this.value)">
+      <input type="text"  id="color-hex"    value="#4ecca3" maxlength="7" placeholder="#rrggbb" oninput="onHexInput(this.value)">
+      <div class="lbl" style="margin-top:0.3rem;">Opacity <span id="opacity-val">100%</span></div>
+      <input type="range" id="opacity-slider" min="0" max="255" value="255" oninput="onOpacity(this.value)">
+    </div>
+
+    <div class="section">
+      <div class="lbl">Recent Colors</div>
+      <div class="palette" id="palette"></div>
+    </div>
+
+    <div class="section" id="onion-sec">
+      <div class="toggle-row">
+        <span>Onion Skin</span>
+        <div class="toggle" id="onion-toggle" onclick="toggleOnion()"></div>
+      </div>
+      <div style="font-size:0.6rem;color:var(--muted);">Shows prev frame at 30% opacity</div>
+    </div>
+
+    <div class="section">
+      <div class="lbl">Zoom</div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button class="btn" style="flex:1;padding:0.3rem 0;font-size:1rem;line-height:1;" onclick="zoomBy(-1)" title="Zoom out">−</button>
+        <button class="btn" style="flex:1;padding:0.3rem 0;font-size:0.55rem;line-height:1;" onclick="editorFit();renderEditor()" title="Fit to editor">Fit</button>
+        <button class="btn" style="flex:1;padding:0.3rem 0;font-size:1rem;line-height:1;" onclick="zoomBy(1)"  title="Zoom in">+</button>
+      </div>
+      <div class="coords" id="zoom-lbl" style="text-align:center;margin-top:4px;color:var(--accent);cursor:pointer;" title="Click to fit" onclick="editorFit();renderEditor()">—px</div>
+    </div>
+
+    <div class="section">
+      <div class="lbl">Shortcuts</div>
+      <div style="font-size:0.6rem;color:var(--muted);line-height:1.7;">
+        P · E · F · I — tools<br>
+        Ctrl+Z — undo<br>
+        ← → — prev/next frame<br>
+        Ctrl+D — duplicate frame
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════ EDITOR ═══════════════ -->
+  <div class="editor-area">
+    <div class="canvas-scroll-wrap" id="canvas-scroll-wrap">
+
+    <canvas id="editor-canvas"></canvas>
+    </div>
+
+    <div id="import-area">
+      <div id="import-inner">
+
+        <!-- Slot indicator — only visible when a template is active -->
+        <div id="import-slot-info">
+          <div>Placing into: <strong id="import-slot-region">—</strong></div>
+          <div class="slot-sub" id="import-slot-sub"></div>
+        </div>
+
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <span class="icon">🖼️</span>
+          <span>Click or drag an image here</span>
+          <span style="font-size:0.72rem;">PNG · JPG · GIF · WebP</span>
+        </div>
+        <input type="file" id="file-input" accept="image/*" style="display:none" onchange="onFileSelect(event)">
+        <canvas id="import-canvas" style="display:none;"></canvas>
+
+        <div class="import-ctrls" id="import-ctrls">
+          <span style="color:var(--muted);">Drag to crop · <span style="color:var(--accent);">Shift</span> = square lock</span>
+
+          <select id="scale-mode" style="margin-bottom:0.1rem;">
+            <option value="smooth">Smooth (bicubic)</option>
+            <option value="pixel">Pixel (nearest-neighbor)</option>
+          </select>
+
+          <!-- Action buttons row 1: single-frame actions -->
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;">
+            <button class="btn primary" id="btn-edit-frame" onclick="applyImportEdit()" title="Overwrite the current frame with this image">Edit Frame →</button>
+            <button class="btn primary" id="btn-place-next" onclick="applyImport(true)"  title="Import into current frame then advance to the next">Place &amp; Next →</button>
+            <button class="btn"         onclick="clearImport()">Clear</button>
+          </div>
+
+          <!-- Action row 2: frame-range apply — always visible -->
+          <div id="multi-import-row" style="display:flex;flex-direction:column;align-items:center;gap:0.35rem;width:100%;margin-top:0.35rem;border-top:1px solid var(--border);padding-top:0.35rem;">
+
+            <!-- Row 2a: manual range -->
+            <div style="display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap;justify-content:center;">
+              <span style="font-size:0.62rem;color:var(--muted);">Range:</span>
+              <input type="text" id="mi-range" placeholder="e.g. 0-3, 5, 8-11"
+                style="width:130px;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:0.25rem 0.4rem;font-size:0.65rem;">
+              <button class="btn primary" id="btn-mi-go" onclick="applyImportMulti()" title="Apply this image to the specified frame numbers or ranges">Apply →</button>
+            </div>
+
+            <!-- Row 2b: count from current frame -->
+            <div style="display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap;justify-content:center;">
+              <span style="font-size:0.62rem;color:var(--muted);">From here:</span>
+              <input type="number" id="mi-count" min="1" value="1"
+                style="width:52px;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:0.25rem 0.4rem;font-size:0.65rem;">
+              <span style="font-size:0.62rem;color:var(--muted);">frames</span>
+              <button class="btn primary" id="btn-mi-count" onclick="applyImportCount()" title="Apply to N frames starting at the current frame">Apply →</button>
+            </div>
+
+            <!-- Row 2c: named animation region (template mode only) -->
+            <div id="mi-region-row" style="display:none;flex-direction:row;gap:0.4rem;align-items:center;flex-wrap:wrap;justify-content:center;">
+              <span style="font-size:0.62rem;color:var(--muted);">Region:</span>
+              <select id="mi-region-sel"
+                style="background:var(--panel);border:1px solid var(--border);color:var(--text);padding:0.25rem 0.35rem;font-size:0.62rem;max-width:148px;">
+                <option value="">— pick —</option>
+              </select>
+              <button class="btn primary" id="btn-mi-region" onclick="applyImportRegion()" title="Apply to every frame in the selected animation region">Apply →</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="region-label"></div>
+
+    <!-- ── Coords overlay — bottom-left of canvas area ── -->
+    <div style="position:absolute;bottom:8px;left:8px;pointer-events:none;z-index:20;">
+      <div class="coords" id="coords">—</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ RIGHT PANEL ═══════════════ -->
+  <div class="right-panel">
+
+    <div class="panel-tabs">
+      <div class="panel-tab active" id="ptab-frames" onclick="setPanelTab('frames')">Frames</div>
+      <div class="panel-tab"        id="ptab-anim"   onclick="setPanelTab('anim')">Anims</div>
+      <div class="panel-tab"        id="ptab-assets" onclick="setPanelTab('assets')">Assets</div>
+    </div>
+
+    <!-- Frames tab -->
+    <div id="frames-panel" style="display:flex;flex-direction:column;height:calc(100% - 33px);overflow:hidden;">
+      <div class="panel-body">
+        <div class="frames-list" id="frames-list"></div>
+      </div>
+      <div class="frames-actions">
+        <button class="btn"        onclick="addFrame()" id="btn-add"      title="Add a new blank frame">+ New Frame</button>
+        <button class="btn"        onclick="duplicateFrame()"             title="Duplicate current frame into a new frame">Duplicate</button>
+        <button class="btn"        onclick="clearFrame()"                 title="Fill current frame with transparency">Clear</button>
+        <button class="btn danger" onclick="deleteFrame()" id="btn-del"   title="Delete current frame (disabled in template mode)">Delete</button>
+      </div>
+      <div class="sheet-section">
+        <div class="lbl">Spritesheet Preview</div>
+        <canvas id="sheet-canvas" height="1"></canvas>
+        <div class="sheet-btns">
+          <button class="btn primary" onclick="saveToServer()"   id="btn-save"   title="Save spritesheet to server">☁️ Save</button>
+          <button class="btn"         onclick="exportAll()"      id="btn-export" title="Download spritesheet as PNG + JSON">⬇ Export</button>
+          <button class="btn"         onclick="openSheetImport()"               title="Import a full spritesheet PNG and auto-slice it into all frames">🗂 Import Sheet</button>
+          <button class="btn"         onclick="newSpritesheet()"                title="Discard all frames and start a fresh spritesheet">✦ New</button>
+        </div>
+        <div class="sheet-info" id="sheet-info"></div>
+        <div id="biome-badge" style="display:none;"></div>
+      </div>
+      <!-- Section colour legend — visible when a tileset template is loaded -->
+      <div class="sec-legend" id="frames-sec-legend" style="display:none;"></div>
+    </div>
+
+    <!-- Animations tab -->
+    <div id="anim-panel">
+
+      <!-- ── Animation Preview Player ── -->
+      <div id="ap-wrap">
+        <div id="ap-header">
+          <button id="ap-toggle" onclick="apToggleCollapse()" title="Show / hide preview">▼</button>
+          <span id="ap-title">Click a region to preview</span>
+        </div>
+        <div id="ap-body">
+          <div id="ap-canvas-wrap">
+            <canvas id="ap-canvas" width="64" height="64"></canvas>
+            <div id="ap-empty">Click any animation region below to preview it here</div>
+          </div>
+          <div id="ap-meta">
+            <span id="ap-counter">—</span>
+            <span id="ap-loop-badge" style="display:none;"></span>
+          </div>
+          <div id="ap-controls">
+            <button class="ap-btn" onclick="apStep(-1)"        title="Step back one frame">◀</button>
+            <button class="ap-btn" id="ap-btn-play" onclick="apTogglePlay()" title="Play / pause">▶</button>
+            <button class="ap-btn" onclick="apStop()"          title="Stop and reset to first frame">■</button>
+            <button class="ap-btn" onclick="apStep(1)"         title="Step forward one frame">▶▶</button>
+            <button class="ap-btn" id="ap-btn-ping" onclick="apTogglePing()" title="Ping-pong: play forward then backward for a full cycle">⇄</button>
+            <select id="ap-speed" title="Playback speed" onchange="apSetSpeed(this.value)">
+              <option value="0.25">¼×</option>
+              <option value="0.5">½×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+              <option value="4">4×</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-list" id="anim-list">
+        <div style="padding:1rem;text-align:center;color:var(--muted);font-size:0.72rem;">
+          Select a template to see animation slots
+        </div>
+      </div>
+      <div class="anim-footer" id="anim-footer">
+        <span><span class="legend-dot" style="background:var(--accent)"></span>Painted</span>
+        <span><span class="legend-dot" style="background:var(--warn)"></span>Partial</span>
+        <span><span class="legend-dot" style="background:var(--border)"></span>Empty</span>
+        <span><span class="legend-dot" style="background:var(--danger)"></span>Required</span>
+      </div>
+    </div>
+
+    <!-- Assets tab -->
+    <div id="assets-panel">
+      <!-- Local / Server sub-toggle -->
+      <div class="assets-subtabs">
+        <button class="assets-subtab active" id="asubtab-local"  onclick="switchAssetsView('local')">💾 Local</button>
+        <button class="assets-subtab"        id="asubtab-server" onclick="switchAssetsView('server')">☁️ Server</button>
+      </div>
+      <div class="assets-list" id="assets-list"></div>
+      <div class="assets-list" id="assets-server-list" style="display:none;"></div>
+    </div>
+
+  </div>
+</div>
+</div><!-- end .app-frame -->
+
+<!-- ── Frame hover tooltip ───────────────────────────────────────────── -->
+<div id="frame-tip"></div>
+
+<!-- ── Sheet Import modal ─────────────────────────────────────────────── -->
+<div id="si-modal">
+  <div class="si-box">
+    <div class="si-title">🗂 Import Full Sheet</div>
+    <div class="si-body">
+      <div class="si-row">
+        <label class="si-lbl">Source spritesheet PNG</label>
+        <div class="si-preview-wrap" id="si-drop-area">
+          <canvas id="si-canvas" style="display:none;"></canvas>
+          <span id="si-drop-hint">Click to pick, or drag &amp; drop</span>
+          <input type="file" id="si-file" accept="image/png,image/webp,image/gif" style="display:none" onchange="siOnFile(event)">
+        </div>
+      </div>
+      <div class="si-row">
+        <label class="si-lbl" for="si-src-size">Source frame size</label>
+        <select id="si-src-size" onchange="siUpdateInfo()">
+          <option value="auto">Auto-detect from sheet size</option>
+          <option value="8">8 × 8</option>
+          <option value="16">16 × 16</option>
+          <option value="32">32 × 32</option>
+          <option value="64">64 × 64</option>
+          <option value="128">128 × 128</option>
+        </select>
+      </div>
+      <div class="si-row">
+        <label class="si-lbl" for="si-scale">Scale mode</label>
+        <select id="si-scale">
+          <option value="pixel">Pixel (nearest-neighbour)</option>
+          <option value="smooth">Smooth (bicubic)</option>
+        </select>
+      </div>
+      <div class="si-info" id="si-info">Load a sheet to continue.</div>
+    </div>
+    <div class="si-footer">
+      <button class="btn primary" id="si-btn-go" onclick="doSheetImport()" disabled>Import All Frames</button>
+      <button class="btn"         onclick="closeSheetImport()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CONSTANTS & STATE
+// ═══════════════════════════════════════════════════════════
+const EDITOR_W   = 512;   // display canvas width
+const EDITOR_H   = 512;   // display canvas height
+const MAX_UNDO   = 20;
+const MAX_FRAMES = 192;
+
+const S = {
+  mode:         'paint',
+  frameW:       16,      // px width of one sprite frame
+  frameH:       16,      // px height of one sprite frame
+  tool:         'pencil',
+  color:        '#4ecca3',
+  opacity:      255,
+  frames:       [],         // Uint8ClampedArray[] — RGBA pixel data per frame
+  undoStacks:   [],
+  currentFrame: 0,
+  onionSkin:    false,
+  isDrawing:    false,
+  lastPx:       -1,
+  lastPy:       -1,
+  palette:      [],
+  // Template state
+  template:       null,   // full template object from API
+  regions:        [],     // sprite_template_regions[]
+  scale:          1,      // resolution multiplier: 1=16-bit, 2=32-bit, 4=64-bit, 8=128-bit
+  allTemplates:   [],     // all templates from API — used for category filtering
+  currentAssetId:   null,  // id of the last-saved/loaded local asset (enables overwrite on Save)
+  currentServerId:  null,  // id of the last-saved/loaded server asset
+  pixelScale: 1,          // canvas pixels per sprite pixel (zoom level)
+  // Free-paint animations (used when S.template is null)
+  fpAnimations: [],       // [{id, name, frames:[], fps:8, loop:true}]
+};
+
+// ── Zoom helpers ──────────────────────────────────────────────────────────
+function computeFitScale() {
+  const wrap = document.getElementById('canvas-scroll-wrap');
+  if (!wrap) return Math.max(1, Math.min(Math.floor(EDITOR_W / S.frameW), Math.floor(EDITOR_H / S.frameH)));
+  const aw = wrap.clientWidth  - 40;  // minus padding
+  const ah = wrap.clientHeight - 40;
+  return Math.max(1, Math.min(Math.floor(aw / S.frameW), Math.floor(ah / S.frameH)));
+}
+
+function applyPixelScale(scale) {
+  S.pixelScale = Math.max(1, Math.min(64, scale));
+  eCanvas.width  = S.frameW * S.pixelScale;
+  eCanvas.height = S.frameH * S.pixelScale;
+  eCtx.imageSmoothingEnabled = false;
+  updateZoomLabel();
+}
+
+function editorFit() {
+  applyPixelScale(computeFitScale());
+  // scroll back to top-left
+  const wrap = document.getElementById('canvas-scroll-wrap');
+  if (wrap && wrap.parentElement) { wrap.parentElement.scrollLeft = 0; wrap.parentElement.scrollTop = 0; }
+}
+
+function updateZoomLabel() {
+  const el = document.getElementById('zoom-lbl');
+  if (el) el.textContent = S.pixelScale + 'px';
+}
+
+function zoomBy(delta, anchorX, anchorY) {
+  // anchorX/Y = canvas-element coords to keep fixed (optional)
+  const oldScale = S.pixelScale;
+  const newScale = Math.max(1, Math.min(64, oldScale + delta));
+  if (newScale === oldScale) return;
+
+  const scrollEl = document.getElementById('canvas-scroll-wrap')?.parentElement;
+  if (scrollEl && anchorX !== undefined) {
+    // Keep the sprite pixel under the cursor at the same screen position
+    const spriteX = anchorX / oldScale;
+    const spriteY = anchorY / oldScale;
+    applyPixelScale(newScale);
+    renderEditor();
+    // Adjust scroll so that same sprite pixel stays under cursor
+    const canvasRect = eCanvas.getBoundingClientRect();
+    const wrapRect   = scrollEl.getBoundingClientRect();
+    scrollEl.scrollLeft += spriteX * newScale - anchorX;
+    scrollEl.scrollTop  += spriteY * newScale - anchorY;
+  } else {
+    // Zoom toward center of viewport
+    if (scrollEl) {
+      const cx = scrollEl.scrollLeft + scrollEl.clientWidth  / 2;
+      const cy = scrollEl.scrollTop  + scrollEl.clientHeight / 2;
+      applyPixelScale(newScale);
+      renderEditor();
+      scrollEl.scrollLeft = cx * (newScale / oldScale) - scrollEl.clientWidth  / 2;
+      scrollEl.scrollTop  = cy * (newScale / oldScale) - scrollEl.clientHeight / 2;
+    } else {
+      applyPixelScale(newScale);
+      renderEditor();
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CANVAS REFERENCES
+// ═══════════════════════════════════════════════════════════
+const eCanvas = document.getElementById('editor-canvas');
+const eCtx    = eCanvas.getContext('2d', { willReadFrequently: true });
+const sheetCanvas = document.getElementById('sheet-canvas');
+const sheetCtx    = sheetCanvas.getContext('2d');
+const iCanvas = document.getElementById('import-canvas');
+const iCtx    = iCanvas.getContext('2d');
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+async function init() {
+  checkAutoLoad();          // must run before loadTemplates()
+  setFrameSize(16, 16, true);
+  renderPalette();
+  setupEditorEvents();
+  setupImportDrop();
+  setupKeyboard();
+  await loadTemplates();
+  renderFreePaintAnims();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TEMPLATES
+// ═══════════════════════════════════════════════════════════
+async function loadTemplates() {
+  try {
+    const res  = await fetch('api/sprite-templates');
+    const data = await res.json();
+    S.allTemplates = data || [];
+
+    // Build category filter pills dynamically from available categories
+    const cats  = [...new Set(S.allTemplates.map(t => t.category).filter(Boolean).sort())];
+    const pills = document.getElementById('cat-pills');
+    pills.innerHTML = '';
+    ['', ...cats].forEach(cat => {
+      const p = document.createElement('div');
+      p.className    = 'cat-pill' + (cat === '' ? ' active' : '');
+      p.dataset.cat  = cat;
+      p.textContent  = cat === '' ? 'All' : cat.charAt(0).toUpperCase() + cat.slice(1);
+      p.onclick      = () => filterCat(cat);
+      pills.appendChild(p);
+    });
+
+    filterCat('');        // populate select with all templates
+    tryAutoTemplate();   // ?template=id → auto-select biome template
+    tryAutoLoad();       // ?loadAsset=id → restore saved tileset
+  } catch { /* API not reachable — free-paint only */ }
+}
+
+// Filter the sheet <select> by category, preserving current selection if possible
+function filterCat(cat) {
+  document.querySelectorAll('#cat-pills .cat-pill').forEach(p =>
+    p.classList.toggle('active', p.dataset.cat === cat));
+
+  const sel    = document.getElementById('tpl-select');
+  const curVal = sel.value;
+  sel.innerHTML = '<option value="">— Free paint —</option>';
+
+  const filtered = cat ? S.allTemplates.filter(t => t.category === cat) : S.allTemplates;
+  const groups   = {};
+  filtered.forEach(tpl => {
+    const c = tpl.category || 'other';
+    if (!groups[c]) {
+      const grp = document.createElement('optgroup');
+      grp.label = c.charAt(0).toUpperCase() + c.slice(1);
+      sel.appendChild(grp);
+      groups[c] = grp;
+    }
+    const opt    = document.createElement('option');
+    opt.value    = tpl.id;
+    const parts  = tpl.name.split('_');
+    const suffix = parts.length > 1
+      ? parts.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ')
+      : '';
+    const prefix = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+    const label  = suffix ? prefix + ' \u2014 ' + suffix : prefix;
+    opt.textContent  = label + '  (' + tpl.frame_w + '\u00d7' + tpl.frame_h + ')';
+    opt.dataset.json = JSON.stringify(tpl);
+    groups[c].appendChild(opt);
+  });
+
+  sel.value = curVal;  // re-select previous choice if still visible
+}
+
+// ── Tier / GPU-fit helpers ──────────────────────────────────────────────────
+// Returns a CSS class describing how well a sheet at this tier fits GPU limits.
+//   f4k  = max dim ≤ 4096  (all hardware)
+//   f8k  = max dim ≤ 8192  (32-bit GPUs and up)
+//   f16k = max dim ≤ 16384 (64-bit GPUs and up)
+//   fsplit = max dim > 16384 (needs texture atlas split)
+function computeTierFit(tpl, totalRows, mult) {
+  const w = tpl.cols_per_row * tpl.frame_w * mult;
+  const h = totalRows        * tpl.frame_h * mult;
+  const m = Math.max(w, h);
+  if (m <= 4096)  return 'f4k';
+  if (m <= 8192)  return 'f8k';
+  if (m <= 16384) return 'f16k';
+  return 'fsplit';
+}
+
+// Update all four tier buttons with pixel size labels, GPU-fit badges, and active state.
+function updateTierUI(tpl, totalRows) {
+  const fitLabels = { f4k: '4K ✓', f8k: '8K ✓', f16k: '16K ✓', fsplit: 'SPLIT ⚠' };
+  [1, 2, 4, 8].forEach(m => {
+    const cls = computeTierFit(tpl, totalRows, m);
+    const px  = document.getElementById('tier-px-' + m);
+    const fit = document.getElementById('tier-fit-' + m);
+    const btn = document.querySelector('#tier-grid [data-mult="' + m + '"]');
+    if (px)  px.textContent  = (tpl.frame_w * m) + '\u00d7' + (tpl.frame_h * m);
+    if (fit) { fit.className = 'tier-fit ' + cls; fit.textContent = fitLabels[cls]; }
+    if (btn) btn.classList.toggle('active', m === S.scale);
+  });
+
+  // Update hint line
+  const tierNames = { 1: '16-bit', 2: '32-bit', 4: '64-bit', 8: '128-bit' };
+  const hint = document.getElementById('tier-hint');
+  const activeFit = computeTierFit(tpl, totalRows, S.scale);
+  if (activeFit === 'fsplit') {
+    hint.textContent = 'needs split';
+    hint.style.color = 'var(--danger)';
+  } else {
+    const gpuLabel = { f4k: '4K GPU', f8k: '8K GPU', f16k: '16K GPU' };
+    hint.textContent = tierNames[S.scale] + ' · ' + (gpuLabel[activeFit] || '');
+    hint.style.color = 'var(--muted)';
+  }
+}
+
+async function onTemplateChange() {
+  const sel = document.getElementById('tpl-select');
+  const val = sel.value;
+
+  if (!val) {
+    clearTemplate();
+    return;
+  }
+
+  // Fetch full template with regions
+  try {
+    setStatus('Loading template…');
+    const res  = await fetch('api/sprite-templates/' + val);
+    const data = await res.json();
+    applyTemplate(data);
+    setStatus('Template: ' + data.name);
+  } catch {
+    setStatus('Failed to load template');
+  }
+}
+
+function applyTemplate(tpl) {
+  // Confirm if we have unsaved work
+  const hasWork = S.frames.some(f => f.some(v => v > 0));
+  if (hasWork && !confirm('Apply template "' + tpl.name + '"? Current frames will be cleared.')) {
+    document.getElementById('tpl-select').value = '';
+    return;
+  }
+
+  S.template       = tpl;
+  S.regions        = (tpl.regions || []).sort((a, b) => a.sort_order - b.sort_order || a.start_frame - b.start_frame);
+  S.currentAssetId  = null;  // fresh template apply = no asset context yet
+  S.currentServerId = null;
+  // Default to highest tier (128-bit / 8×) so artists paint at max quality
+  S.scale    = 8;
+
+  const cols = tpl.cols_per_row;
+
+  // Use rows_per_sheet when the template declares it (biome tilesets: 16 rows = 128 frames).
+  // Fall back to inferring from the highest region end frame for older templates.
+  let totalFrames;
+  if (tpl.rows_per_sheet && tpl.rows_per_sheet > 0) {
+    totalFrames = tpl.rows_per_sheet * cols;
+  } else {
+    // Find the region that ends at the highest frame index (not just the last sorted one)
+    const maxFrame = S.regions.reduce((m, r) => Math.max(m, r.start_frame + r.frame_count), 0);
+    totalFrames = maxFrame > 0 ? Math.ceil(maxFrame / cols) * cols : cols;
+  }
+  const totalRows = totalFrames / cols;
+
+  // Lock frame size to template × scale and reset viewport
+  S.frameW = tpl.frame_w * S.scale;
+  S.frameH = tpl.frame_h * S.scale;
+  applyPixelScale(computeFitScale());
+
+  // Hide free-paint size buttons; show tier picker
+  document.getElementById('size-sec').style.display  = 'none';
+  document.getElementById('tier-sec').style.display  = '';
+  document.getElementById('anim-footer').style.display = '';
+
+  // Populate tier buttons with pixel sizes + GPU-fit badges
+  updateTierUI(tpl, totalRows);
+
+  // Show template info line
+  const info = document.getElementById('tpl-info');
+  info.textContent = S.frameW + '×' + S.frameH + 'px · ' + cols + ' cols · ' + totalRows + ' rows · ' + totalFrames + ' frames';
+  info.style.display = '';
+
+  // Allocate frames
+  S.frames     = Array.from({ length: totalFrames }, () => newFrame());
+  S.undoStacks = Array.from({ length: totalFrames }, () => []);
+  S.currentFrame = 0;
+
+  // Switch to animations panel
+  setPanelTab('anim');
+  renderRegionOverview();
+  updateFrameList();
+  updateSheet();
+  renderEditor();
+  updateBiomeBadge();
+}
+
+function clearTemplate() {
+  apStop();
+  AP.reg = null;
+  S.template = null;
+  S.regions  = [];
+  S.scale    = 1;
+  S.currentAssetId = null;
+  document.getElementById('tpl-info').style.display = 'none';
+  document.getElementById('size-sec').style.display  = '';   // restore free-paint size grid
+  document.getElementById('tier-sec').style.display  = 'none';
+  document.getElementById('anim-footer').style.display = 'none';
+  setFrameSize(16, 16, true);
+  updateSheet();
+  updateBiomeBadge();
+  renderFreePaintAnims();
+}
+
+function setResolution(mult) {
+  if (!S.template || mult === S.scale) return;
+  const hasWork = S.frames.some(f => f.some(v => v > 0));
+  if (!hasWork) {
+    _applyResolutionClear(mult);      // nothing painted — resize silently
+  } else {
+    _showRescaleDialog(S.scale, mult); // has pixels — offer rescale options
+  }
+}
+
+// ── Resolution helpers ────────────────────────────────────────────────────
+
+/** Resize without pixel data — used when all frames are blank. */
+function _applyResolutionClear(mult) {
+  const tierNames = { 1: '16-bit', 2: '32-bit', 4: '64-bit', 8: '128-bit' };
+  S.scale  = mult;
+  S.frameW = S.template.frame_w * mult;
+  S.frameH = S.template.frame_h * mult;
+  applyPixelScale(computeFitScale());
+  const count = S.frames.length;
+  S.frames     = Array.from({ length: count }, () => newFrame());
+  S.undoStacks = Array.from({ length: count }, () => []);
+  S.currentFrame = 0;
+  const totalRows = count / S.template.cols_per_row;
+  updateTierUI(S.template, totalRows);
+  document.getElementById('tpl-info').textContent =
+    S.frameW + '\u00d7' + S.frameH + 'px \u00b7 ' + S.template.cols_per_row +
+    ' cols \u00b7 ' + totalRows + ' rows \u00b7 ' + count + ' frames';
+  updateFrameList(); updateSheet(); renderEditor();
+  setStatus(tierNames[mult] + ' \u2014 ' + S.frameW + '\u00d7' + S.frameH + 'px per frame');
+}
+
+/** Show a modal asking how to handle painted frames when switching tiers. */
+function _showRescaleDialog(oldMult, newMult) {
+  const tierNames = { 1: '16-bit', 2: '32-bit', 4: '64-bit', 8: '128-bit' };
+  const tpl  = S.template;
+  const oldW = tpl.frame_w * oldMult, oldH = tpl.frame_h * oldMult;
+  const newW = tpl.frame_w * newMult, newH = tpl.frame_h * newMult;
+  const isDown = newMult < oldMult;
+  const arrow  = isDown ? '\u2193' : '\u2191';
+
+  const existing = document.getElementById('rescale-modal');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'rescale-modal';
+  overlay.style.cssText =
+    'position:fixed;inset:0;background:rgba(0,0,0,0.72);display:flex;' +
+    'align-items:center;justify-content:center;z-index:9999;';
+
+  const box = document.createElement('div');
+  box.style.cssText =
+    'background:#2c1a0c;border:2px solid #5a3c20;border-radius:6px;' +
+    'padding:1.5rem 1.5rem 1.25rem;max-width:380px;width:90%;' +
+    'color:#e8d8c8;font-size:0.75rem;line-height:1.6;';
+
+  const noteColor = isDown ? '#e89030' : '#7bc87b';
+  const noteText  = isDown
+    ? 'Scaling down loses resolution \u2014 this cannot be undone.'
+    : 'Scaling up will stretch pixels \u2014 this cannot be undone.';
+
+  // Bicubic only makes sense for downscaling; nearest neighbor works both ways
+  const bicubicBtn = isDown
+    ? '<button class="btn" style="background:#1e2e1e;color:#7bc87b;border-color:#3a5a3a;" ' +
+      'onclick="_doRescale(' + newMult + ',\'bicubic\')">Bicubic \u2014 smooth blend</button>'
+    : '';
+
+  box.innerHTML =
+    '<div style="font-family:\'Press Start 2P\',monospace;font-size:0.72rem;' +
+      'color:#c8a840;margin-bottom:0.6rem;">' +
+      arrow + ' ' + tierNames[oldMult] + ' \u2192 ' + tierNames[newMult] +
+    '</div>' +
+    '<p style="color:#907860;margin:0 0 0.4rem;">' +
+      oldW + '\u00d7' + oldH + ' \u2192 ' + newW + '\u00d7' + newH + ' px per frame' +
+    '</p>' +
+    '<p style="color:' + noteColor + ';margin:0 0 1rem;">' + noteText + '</p>' +
+    '<div style="display:flex;flex-direction:column;gap:0.5rem;">' +
+      '<button class="btn primary" onclick="_doRescale(' + newMult + ',\'nearest\')">' +
+        'Nearest Neighbor \u2014 sharp pixels</button>' +
+      bicubicBtn +
+      '<button class="btn danger" ' +
+        'onclick="document.getElementById(\'rescale-modal\').remove();' +
+        'setStatus(\'Rescale cancelled.\');">Cancel</button>' +
+    '</div>';
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+
+/** Resample a single Uint8ClampedArray frame from old dimensions to new. */
+function _rescaleFrame(frameData, oldW, oldH, newW, newH, method) {
+  const src = document.createElement('canvas');
+  src.width = oldW; src.height = oldH;
+  src.getContext('2d').putImageData(
+    new ImageData(new Uint8ClampedArray(frameData), oldW, oldH), 0, 0);
+
+  const dst = document.createElement('canvas');
+  dst.width = newW; dst.height = newH;
+  const ctx = dst.getContext('2d');
+  ctx.imageSmoothingEnabled = (method === 'bicubic');
+  if (method === 'bicubic') ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(src, 0, 0, newW, newH);
+
+  return new Uint8ClampedArray(ctx.getImageData(0, 0, newW, newH).data);
+}
+
+/** Called by modal buttons — rescale all frames then apply the new tier. */
+function _doRescale(newMult, method) {
+  const modal = document.getElementById('rescale-modal');
+  if (modal) modal.remove();
+
+  const tpl  = S.template;
+  const oldW = S.frameW, oldH = S.frameH;
+  const newW = tpl.frame_w * newMult, newH = tpl.frame_h * newMult;
+  const tierNames = { 1: '16-bit', 2: '32-bit', 4: '64-bit', 8: '128-bit' };
+
+  setStatus('Rescaling ' + S.frames.length + ' frames\u2026');
+
+  const rescaled = S.frames.map(f => _rescaleFrame(f, oldW, oldH, newW, newH, method));
+
+  S.scale  = newMult;
+  S.frameW = newW;
+  S.frameH = newH;
+  S.frames = rescaled;
+  S.undoStacks   = Array.from({ length: rescaled.length }, () => []);
+  S.currentFrame = Math.min(S.currentFrame, rescaled.length - 1);
+
+  applyPixelScale(computeFitScale());
+
+  const count     = rescaled.length;
+  const totalRows = count / tpl.cols_per_row;
+  updateTierUI(tpl, totalRows);
+
+  document.getElementById('tpl-info').textContent =
+    newW + '\u00d7' + newH + 'px \u00b7 ' + tpl.cols_per_row +
+    ' cols \u00b7 ' + totalRows + ' rows \u00b7 ' + count + ' frames';
+
+  updateFrameList(); updateSheet(); renderEditor();
+  if (S.template) renderRegionOverview();
+
+  const methodLabel = method === 'bicubic' ? 'bicubic' : 'nearest neighbor';
+  setStatus(tierNames[newMult] + ' \u2014 rescaled ' + count + ' frames (' + methodLabel + ')');
+}
+
+function maxFrame(regions) {
+  return regions.reduce((m, r) => Math.max(m, r.start_frame + r.frame_count - 1), 0);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  REGION OVERVIEW
+// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  ANIMATION PREVIEW PLAYER
+// ═══════════════════════════════════════════════════════════
+const AP = {
+  reg:       null,    // current region being previewed
+  localIdx:  0,       // frame index within the region (0 … reg.frame_count-1)
+  direction: 1,       // +1 forward, -1 backward (for ping-pong)
+  playing:   false,
+  pingPong:  false,   // true = play 0→N→0 instead of looping 0→N
+  speed:     1.0,
+  collapsed: false,
+  _rafId:    null,
+  _lastTime: 0,
+  _elapsed:  0,       // ms accumulated since last frame advance
+  _regCache: {},      // start_frame → region object, populated by renderRegionOverview
+};
+
+function apLoad(reg) {
+  // Stop any running animation first
+  apStop();
+  AP.reg      = reg;
+  AP.localIdx = 0;
+  AP.direction = 1;
+  delete AP.reg._fpFrames;
+  delete AP.reg._fpSelf;
+
+  const canvas  = document.getElementById('ap-canvas');
+  const empty   = document.getElementById('ap-empty');
+  const title   = document.getElementById('ap-title');
+  const loopBadge = document.getElementById('ap-loop-badge');
+
+  title.textContent = reg.display_name;
+
+  // Size the canvas: scale up to fill ~195px panel width, max 8×
+  const panelW  = 195;
+  const scale   = Math.max(1, Math.min(8, Math.floor(panelW / S.frameW)));
+  canvas.width  = S.frameW  * scale;
+  canvas.height = S.frameH * scale;
+  canvas.style.width  = canvas.width  + 'px';
+  canvas.style.height = canvas.height + 'px';
+
+  // Loop badge
+  if (reg.frame_count > 1) {
+    loopBadge.style.display = '';
+    if (AP.pingPong) {
+      loopBadge.textContent = '⇄ ping-pong';
+      loopBadge.style.background = '#3060c0'; loopBadge.style.color = '#fff';
+    } else if (reg.loop) {
+      loopBadge.textContent = '↺ loop';
+      loopBadge.style.background = 'var(--accent)'; loopBadge.style.color = '#1a0c04';
+    } else {
+      loopBadge.textContent = '→ once';
+      loopBadge.style.background = 'var(--border)'; loopBadge.style.color = 'var(--text)';
+    }
+  } else {
+    loopBadge.style.display = 'none';
+  }
+
+  empty.style.display  = 'none';
+  canvas.style.display = 'block';
+  apDraw();
+  apUpdateCounter();
+
+  // Auto-play if region has multiple frames
+  if (reg.frame_count > 1) apPlay();
+
+  // Highlight the active play button in the list
+  document.querySelectorAll('.ap-play-btn').forEach(b => b.classList.remove('playing'));
+  const btn = document.getElementById('ap-pb-' + reg.start_frame);
+  if (btn) btn.classList.add('playing');
+}
+
+function apDraw() {
+  if (!AP.reg) return;
+  const canvas = document.getElementById('ap-canvas');
+  const ctx    = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+
+  let fi;
+  if (AP.reg._fpFrames) {
+    fi = AP.reg._fpFrames[AP.localIdx];
+  } else {
+    fi = AP.reg.start_frame + AP.localIdx;
+  }
+  const frame = S.frames[fi];
+  if (!frame) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
+
+  // Draw checker background
+  const cw = canvas.width, ch = canvas.height;
+  const cell = Math.max(4, Math.floor(cw / 8));
+  for (let y = 0; y < ch; y += cell)
+    for (let x = 0; x < cw; x += cell) {
+      ctx.fillStyle = ((x / cell + y / cell) % 2 === 0) ? '#2a2a3a' : '#1a1a2a';
+      ctx.fillRect(x, y, cell, cell);
+    }
+
+  // Blit frame at pixel scale
+  const scale  = Math.floor(cw / S.frameW);
+  const tmp    = document.createElement('canvas');
+  tmp.width    = S.frameW; tmp.height = S.frameH;
+  tmp.getContext('2d').putImageData(
+    new ImageData(new Uint8ClampedArray(frame), S.frameW, S.frameH), 0, 0);
+  ctx.drawImage(tmp, 0, 0, S.frameW, S.frameH, 0, 0, S.frameW * scale, S.frameH * scale);
+}
+
+function apUpdateCounter() {
+  if (!AP.reg) return;
+  const fc  = AP.reg.frame_count;
+  const fps = (AP.reg.fps || 8) * AP.speed;
+  document.getElementById('ap-counter').textContent =
+    'F' + (AP.localIdx + 1) + '/' + fc + '  ·  ' + fps.toFixed(1) + 'fps';
+}
+
+function apPlay() {
+  if (AP.playing) return;
+  AP.playing   = true;
+  AP._elapsed  = 0;
+  AP._lastTime = performance.now();
+  document.getElementById('ap-btn-play').textContent = '⏸';
+  document.getElementById('ap-btn-play').classList.add('active');
+  AP._rafId = requestAnimationFrame(apTick);
+}
+
+function apPause() {
+  AP.playing = false;
+  if (AP._rafId) { cancelAnimationFrame(AP._rafId); AP._rafId = null; }
+  document.getElementById('ap-btn-play').textContent = '▶';
+  document.getElementById('ap-btn-play').classList.remove('active');
+}
+
+function apTogglePlay() {
+  if (!AP.reg || AP.reg.frame_count <= 1) return;
+  AP.playing ? apPause() : apPlay();
+}
+
+function apStop() {
+  apPause();
+  AP.localIdx  = 0;
+  AP.direction = 1;
+  if (AP.reg) { apDraw(); apUpdateCounter(); }
+}
+
+function apStep(delta) {
+  if (!AP.reg) return;
+  apPause();
+  const fc = AP.reg.frame_count;
+  AP.localIdx = ((AP.localIdx + delta) % fc + fc) % fc;
+  apDraw(); apUpdateCounter();
+}
+
+function apTogglePing() {
+  AP.pingPong  = !AP.pingPong;
+  AP.direction = 1;
+  const btn = document.getElementById('ap-btn-ping');
+  btn.classList.toggle('active', AP.pingPong);
+  // Refresh loop badge
+  if (AP.reg) apLoad(AP.reg);
+}
+
+function apSetSpeed(val) {
+  AP.speed    = parseFloat(val) || 1;
+  AP._elapsed = 0;   // reset accumulator so speed change takes effect immediately
+  apUpdateCounter();
+}
+
+function apToggleCollapse() {
+  AP.collapsed = !AP.collapsed;
+  document.getElementById('ap-body').classList.toggle('collapsed', AP.collapsed);
+  document.getElementById('ap-toggle').textContent = AP.collapsed ? '▶' : '▼';
+}
+
+// requestAnimationFrame tick — advances frames based on elapsed time vs fps
+function apTick(now) {
+  if (!AP.playing || !AP.reg) return;
+  const fps     = (AP.reg.fps || 8) * AP.speed;
+  const mspf    = 1000 / fps;            // milliseconds per frame
+  AP._elapsed  += (now - AP._lastTime);
+  AP._lastTime  = now;
+
+  if (AP._elapsed >= mspf) {
+    AP._elapsed -= mspf;
+    const fc = AP.reg.frame_count;
+
+    if (AP.pingPong) {
+      // Ping-pong: advance in current direction, reverse at ends
+      AP.localIdx += AP.direction;
+      if (AP.localIdx >= fc - 1) { AP.localIdx = fc - 1; AP.direction = -1; }
+      else if (AP.localIdx <= 0) { AP.localIdx = 0;       AP.direction =  1; }
+    } else if (AP.reg.loop) {
+      AP.localIdx = (AP.localIdx + 1) % fc;
+    } else {
+      // Play once — stop at last frame
+      if (AP.localIdx < fc - 1) {
+        AP.localIdx++;
+      } else {
+        apPause();
+        return;
+      }
+    }
+    apDraw();
+    apUpdateCounter();
+  }
+
+  AP._rafId = requestAnimationFrame(apTick);
+}
+
+// Called from renderEditor / updateFrameList to keep preview in sync while painting
+function apRefreshIfActive(frameIdx) {
+  if (!AP.reg) return;
+  if (AP.reg._fpFrames) {
+    if (AP.reg._fpFrames.includes(frameIdx)) apDraw();
+  } else if (frameIdx >= AP.reg.start_frame &&
+      frameIdx < AP.reg.start_frame + AP.reg.frame_count) {
+    apDraw();
+  }
+}
+
+function editTemplateRegion(startFrame) {
+  const reg = S.regions.find(r => r.start_frame === startFrame);
+  if (!reg) return;
+
+  const fps = parseInt(prompt('FPS for "' + reg.display_name + '" (current: ' + reg.fps + '):', String(reg.fps)));
+  if (fps === null) return;
+
+  const fc = parseInt(prompt('Frame count for "' + reg.display_name + '" (current: ' + reg.frame_count + '):', String(reg.frame_count)));
+  if (fc === null) return;
+
+  const loop = confirm('Loop "' + reg.display_name + '"?\n\nOK = looped\nCancel = play once');
+
+  reg.fps = fps;
+  reg.frame_count = fc;
+  reg.loop = loop;
+
+  renderRegionOverview();
+  updateFrameList(); updateSheet();
+  setStatus('Updated "' + reg.display_name + '" · ' + fc + 'f @ ' + fps + 'fps' + (loop ? ' loop' : ' once'));
+}
+
+function renderRegionOverview() {
+  const list = document.getElementById('anim-list');
+  if (!S.template) {
+    renderFreePaintAnims();
+    return;
+  }
+
+  const cols      = S.template.cols_per_row;
+  const totalRows = Math.ceil(S.frames.length / cols);
+
+  // Cache all region objects so inline play buttons can reference them without serialising
+  AP._regCache = {};
+  S.regions.forEach(r => { AP._regCache[r.start_frame] = r; });
+
+  // Build a lookup: startFrame → region (for placeholder detection)
+  const regionByFrame = {};
+  S.regions.forEach(reg => { regionByFrame[reg.start_frame] = reg; });
+
+  // Frames covered by any named region
+  const coveredFrames = new Set();
+  S.regions.forEach(reg => {
+    for (let f = reg.start_frame; f < reg.start_frame + reg.frame_count; f++) coveredFrames.add(f);
+  });
+
+  list.innerHTML = '';
+
+  // ── Section header helper ──────────────────────────────────
+  function sectionLabel(text, first) {
+    const sep = document.createElement('div');
+    sep.style.cssText = 'font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);' +
+      'padding:0.25rem 0.4rem 0.05rem;margin-top:' + (first ? '0' : '0.35rem') + ';';
+    sep.textContent = text;
+    list.appendChild(sep);
+  }
+
+  // ── Tile position helper (for 1-frame tileset slots) ──────
+  function tilePos(frame) {
+    const row = Math.floor(frame / cols), col = frame % cols;
+    return 'ID ' + frame + ' · r' + row + ' c' + col;
+  }
+
+  // ── Named regions sorted by sort_order ─────────────────────
+  const sorted = [...S.regions].sort((a, b) =>
+    (a.sort_order ?? 999) - (b.sort_order ?? 999));
+
+  // Determine section grouping from sort_order bands (biome tileset semantic layout):
+  //   0–9  → 💧 Animated strips
+  //   10–19 → Primary Ground    (Row 0: grass / snow / sand variants)
+  //   20–29 → Secondary Ground  (Row 1: dirt / ice / cracked earth)
+  //   30–39 → Rock / Stone      (Row 2)
+  //   40–49 → Water + Edges     (Row 3)
+  //   50–59 → Paths             (Row 4)
+  //   60–69 → Flora             (Row 5)
+  //   70–79 → Objects           (Row 6)
+  //   80–89 → Structures        (Row 7)
+  // For non-tileset templates use anim_name prefix grouping (legacy behaviour).
+  const isTileset = S.template.category === 'tileset';
+
+  function sectionFor(reg) {
+    if (!isTileset) return reg.anim_name.split('_')[0];
+    const so = reg.sort_order ?? 999;
+    if (so < 10)  return '💧 Animated';
+    if (so < 20)  return 'Primary Ground';
+    if (so < 30)  return 'Secondary Ground';
+    if (so < 40)  return 'Rock / Stone';
+    if (so < 50)  return 'Water + Edges';
+    if (so < 60)  return 'Paths';
+    if (so < 70)  return 'Flora';
+    if (so < 80)  return 'Objects';
+    if (so < 90)  return 'Structures';
+    return 'Other';
+  }
+
+  let lastSection = null;
+  sorted.forEach(reg => {
+    const sec = sectionFor(reg);
+    if (sec !== lastSection) {
+      sectionLabel(sec, lastSection === null);
+      lastSection = sec;
+    }
+
+    const isActive = (S.currentFrame >= reg.start_frame &&
+                      S.currentFrame < reg.start_frame + reg.frame_count);
+    const frames   = S.frames.slice(reg.start_frame, reg.start_frame + reg.frame_count);
+    const painted  = frames.filter(f => f.some(v => v > 0)).length;
+    const fc       = reg.frame_count;
+
+    let dotClass;
+    if      (painted === fc)  dotClass = 'full';
+    else if (painted > 0)     dotClass = 'partial';
+    else if (reg.is_required) dotClass = 'required';
+    else                      dotClass = 'empty';
+
+    // Row number: for multi-frame regions show the row; for 1-frame tiles show col+row
+    const rowNum = Math.floor(reg.start_frame / cols);
+
+    // Meta line: single-frame tiles show their engine tile ID + position
+    const metaText = isTileset && fc === 1
+      ? tilePos(reg.start_frame)
+      : fc + 'f @ ' + reg.fps + 'fps' + (reg.loop ? ' loop' : ' once');
+
+    // Direction/category hint emoji — shown for character templates, hidden for tilesets
+    const dirHint = !isTileset ? dirHintFor(reg) : '';
+    // Section colour accent for tileset region tiles
+    const secColor = isTileset
+      ? (SECTION_COLORS[sectionFor(reg)] || '#404040') : '';
+
+    const tile = document.createElement('div');
+    tile.className = 'region-tile' + (isActive ? ' active' : '');
+    tile.onclick   = () => { selectFrame(reg.start_frame); apLoad(reg); };
+    if (secColor) tile.style.borderLeftColor = secColor;
+    tile.innerHTML =
+      '<span class="row-num">' + rowNum + '</span>' +
+      '<div class="fill-dot ' + dotClass + '"></div>' +
+      '<div class="region-info">' +
+        '<div class="region-name">' + reg.display_name +
+          (reg.is_required ? '<span class="warn-badge">REQ</span>' : '') +
+        '</div>' +
+        '<div class="region-meta">' + metaText +
+          (reg.fallback_anim ? ' · ↩' + reg.fallback_anim : '') +
+        '</div>' +
+      '</div>' +
+      (dirHint ? '<span class="dir-hint" title="Direction / action">' + dirHint + '</span>' : '') +
+      (fc > 1 ? '<button class="ap-play-btn" id="ap-pb-' + reg.start_frame + '" title="Preview animation" onclick="event.stopPropagation();apLoad(AP._regCache[' + reg.start_frame + '])">▶</button>' : '') +
+      '<button class="ap-play-btn" title="Edit region" onclick="event.stopPropagation();editTemplateRegion(' + reg.start_frame + ')" style="flex-shrink:0;background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.7rem;padding:0 0.1rem;">✏️</button>' +
+      '<div style="font-size:0.45rem;color:var(--muted);flex-shrink:0;font-family:\'Press Start 2P\',monospace;">' + painted + '/' + fc + '</div>';
+    list.appendChild(tile);
+  });
+
+  // ── Unnamed / placeholder rows ─────────────────────────────
+  let shownPlaceholderHeader = false;
+  for (let row = 0; row < totalRows; row++) {
+    const frameIdx = row * cols;
+    // Skip any row entirely covered by a named region
+    const rowFrames = Array.from({length: cols}, (_, i) => frameIdx + i);
+    if (rowFrames.every(f => coveredFrames.has(f))) continue;
+
+    if (!shownPlaceholderHeader) {
+      sectionLabel('Unused Rows', lastSection !== null);
+      shownPlaceholderHeader = true;
+    }
+    const isActive = (S.currentFrame >= frameIdx && S.currentFrame < frameIdx + cols);
+    const tile = document.createElement('div');
+    tile.className = 'region-tile placeholder' + (isActive ? ' active' : '');
+    tile.onclick   = () => { selectFrame(frameIdx); setPanelTab('anim'); };
+    tile.innerHTML =
+      '<span class="row-num">' + row + '</span>' +
+      '<div class="fill-dot empty"></div>' +
+      '<div class="region-info">' +
+        '<div class="region-name" style="color:var(--muted);font-weight:400;">Row ' + row + '</div>' +
+        '<div class="region-meta">frames ' + frameIdx + '–' + (frameIdx + cols - 1) + '</div>' +
+      '</div>';
+    list.appendChild(tile);
+  }
+}
+
+function jumpToRegion(reg) {
+  selectFrame(reg.start_frame);
+  setPanelTab('anim');
+}
+
+function regionForFrame(frameIdx) {
+  if (!S.template || !S.regions.length) return null;
+  if (frameIdx < 0 || frameIdx >= S.frames.length) return null;
+  return S.regions.find(r =>
+    frameIdx >= r.start_frame && frameIdx < r.start_frame + r.frame_count
+  ) || null;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FREE-PAINT ANIMATIONS
+// ═══════════════════════════════════════════════════════════
+function fpMakeId() { return 'fpa_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+
+function parseFrameRanges(input) {
+  const frames = new Set();
+  const parts = input.split(/[;,]+/);
+  for (const p of parts) {
+    const trimmed = p.trim();
+    if (!trimmed) continue;
+    const dash = trimmed.indexOf('-');
+    if (dash === -1) {
+      const n = parseInt(trimmed);
+      if (!isNaN(n) && n >= 0) frames.add(n);
+    } else {
+      const a = parseInt(trimmed.slice(0, dash));
+      const b = parseInt(trimmed.slice(dash + 1));
+      if (!isNaN(a) && !isNaN(b)) {
+        const lo = Math.min(a, b), hi = Math.max(a, b);
+        for (let f = lo; f <= hi; f++) frames.add(f);
+      }
+    }
+  }
+  return [...frames].sort((a, b) => a - b);
+}
+
+function fpSetFrameCount(val) {
+  const n = Math.max(1, Math.min(192, parseInt(val) || 8));
+  const old = S.frames.length;
+  if (n === old) return;
+  if (n > old) {
+    for (let i = old; i < n; i++) S.frames.push(newFrame());
+  } else {
+    S.frames.length = n;
+  }
+  document.getElementById('fp-frame-count').value = S.frames.length;
+  updateFrameList(); updateSheet(); renderEditor();
+  setStatus('Set ' + S.frames.length + ' frames');
+}
+
+function fpPromptFrameCount() {
+  const val = prompt('Total frame count (1–192):', S.frames.length);
+  if (val !== null) fpSetFrameCount(val);
+}
+
+function fpAddAnim() {
+  const name = prompt('Animation name:\n(e.g. Walk, Jump, Idle, Attack)');
+  if (!name || !name.trim()) return;
+  const rawFrames = prompt('Frames for "' + name.trim() + '":\n(e.g. 0-3  or  0-3; 8-11  or  just 5)', '0-3');
+  if (rawFrames === null) return;
+  const frames = parseFrameRanges(rawFrames);
+  if (!frames.length) { alert('No valid frames specified.'); return; }
+  const fps = parseInt(prompt('FPS for "' + name.trim() + '" (default 8):', '8')) || 8;
+  const loop = confirm('Loop this animation?');
+  S.fpAnimations.push({ id: fpMakeId(), name: name.trim(), frames, fps, loop });
+  renderFreePaintAnims();
+  updateFrameList(); updateSheet();
+  setStatus('Added animation: ' + name.trim() + ' · ' + frames.length + ' frames');
+}
+
+function fpEditAnim(id) {
+  const anim = S.fpAnimations.find(a => a.id === id);
+  if (!anim) return;
+  const name = prompt('Rename animation:', anim.name);
+  if (name === null) return;
+  const rawFrames = prompt('Frames for "' + (name || anim.name) + '":', anim.frames[0] + '-' + anim.frames[anim.frames.length - 1]);
+  if (rawFrames === null) return;
+  const frames = parseFrameRanges(rawFrames);
+  if (!frames.length) { alert('No valid frames specified.'); return; }
+  const fps = parseInt(prompt('FPS:', String(anim.fps))) || anim.fps;
+  const loop = confirm('Loop this animation?');
+  if (name && name.trim()) anim.name = name.trim();
+  anim.frames = frames;
+  anim.fps = fps;
+  anim.loop = loop;
+  renderFreePaintAnims();
+  updateFrameList(); updateSheet();
+  setStatus('Updated: ' + anim.name);
+}
+
+function fpDeleteAnim(id) {
+  const anim = S.fpAnimations.find(a => a.id === id);
+  if (!anim) return;
+  if (!confirm('Delete animation "' + anim.name + '"?')) return;
+  S.fpAnimations = S.fpAnimations.filter(a => a.id !== id);
+  renderFreePaintAnims();
+  updateFrameList(); updateSheet();
+  setStatus('Deleted: ' + anim.name);
+}
+
+function fpLoadAnimPreview(anim) {
+  if (!anim.frames.length) return;
+  apStop();
+  AP.reg = {
+    display_name: anim.name,
+    frame_count: anim.frames.length,
+    fps: anim.fps,
+    loop: anim.loop,
+    start_frame: 0,
+    _fpFrames: anim.frames,
+    _fpSelf: anim,
+  };
+  AP.localIdx = 0;
+  AP.direction = 1;
+  AP.playing = false;
+  AP.pingPong = false;
+
+  const canvas = document.getElementById('ap-canvas');
+  const panelW = 195;
+  const scale = Math.max(1, Math.min(8, Math.floor(panelW / S.frameW)));
+  canvas.width = S.frameW * scale;
+  canvas.height = S.frameH * scale;
+  canvas.style.width = canvas.width + 'px';
+  canvas.style.height = canvas.height + 'px';
+
+  const title = document.getElementById('ap-title');
+  const loopBadge = document.getElementById('ap-loop-badge');
+  title.textContent = anim.name;
+  if (anim.frames.length > 1) {
+    loopBadge.style.display = '';
+    loopBadge.textContent = anim.loop ? '↺ loop' : '→ once';
+    loopBadge.style.background = anim.loop ? 'var(--accent)' : 'var(--border)';
+    loopBadge.style.color = anim.loop ? '#1a0c04' : 'var(--text)';
+  } else {
+    loopBadge.style.display = 'none';
+  }
+  document.getElementById('ap-empty').style.display = 'none';
+  document.getElementById('ap-counter').textContent = '1/' + anim.frames.length;
+  apDraw();
+}
+
+function fpAnimRanges() {
+  return S.fpAnimations.map(a => a.frames.join(',')).join('; ');
+}
+
+function renderFreePaintAnims() {
+  const list = document.getElementById('anim-list');
+  const total = S.frames.length;
+
+  const wrapper = document.createElement('div');
+  wrapper.style.padding = '0.5rem';
+
+  // Header row
+  const header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;';
+  header.innerHTML =
+    '<span style="font-size:0.65rem;color:var(--muted);">' + total + ' frames total</span>' +
+    '<button class="btn" style="font-size:0.55rem;padding:0.2rem 0.4rem;" onclick="fpAddAnim()">+ Add Animation</button>';
+  wrapper.appendChild(header);
+
+  if (!S.fpAnimations.length) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center;color:var(--muted);font-size:0.72rem;padding:1rem 0;';
+    empty.textContent = 'No animations yet. Click "+ Add Animation" to define one.';
+    wrapper.appendChild(empty);
+  } else {
+    S.fpAnimations.forEach(anim => {
+      const painted = anim.frames.filter(f => f < S.frames.length && S.frames[f].some(v => v > 0)).length;
+      const dotClass = painted === anim.frames.length ? 'full' : painted > 0 ? 'partial' : 'empty';
+
+      const item = document.createElement('div');
+      item.className = 'fp-anim-item';
+      item.style.cssText = 'display:flex;align-items:center;gap:0.35rem;padding:0.3rem 0.35rem;' +
+        'border-bottom:1px solid var(--border);cursor:pointer;';
+
+      item.innerHTML =
+        '<div class="fill-dot ' + dotClass + '" style="flex-shrink:0;"></div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:0.7rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + anim.name + '</div>' +
+          '<div style="font-size:0.58rem;color:var(--muted);">frames ' + anim.frames[0] + '–' + anim.frames[anim.frames.length - 1] + ' · ' + anim.frames.length + 'f · ' + anim.fps + 'fps' + (anim.loop ? ' loop' : ' once') + '</div>' +
+        '</div>' +
+        '<div style="font-size:0.45rem;color:var(--muted);flex-shrink:0;font-family:\'Press Start 2P\',monospace;">' + painted + '/' + anim.frames.length + '</div>' +
+        '<button class="ap-play-btn" title="Preview" style="flex-shrink:0;background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.8rem;padding:0 0.2rem;">▶</button>';
+      item.querySelector('button').onclick = (e) => { e.stopPropagation(); fpLoadAnimPreview(anim); };
+      item.onclick = () => {
+        if (anim.frames.length > 0) {
+          selectFrame(anim.frames[0]);
+          fpLoadAnimPreview(anim);
+        }
+      };
+
+      const editBtn = document.createElement('button');
+      editBtn.textContent = '✏️';
+      editBtn.title = 'Edit';
+      editBtn.style.cssText = 'background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.7rem;padding:0 0.15rem;flex-shrink:0;';
+      editBtn.onclick = (e) => { e.stopPropagation(); fpEditAnim(anim.id); };
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑';
+      delBtn.title = 'Delete';
+      delBtn.style.cssText = 'background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.7rem;padding:0 0.15rem;flex-shrink:0;';
+      delBtn.onclick = (e) => { e.stopPropagation(); fpDeleteAnim(anim.id); };
+
+      item.appendChild(editBtn);
+      item.appendChild(delBtn);
+      wrapper.appendChild(item);
+    });
+  }
+
+  // Frame-range usage summary
+  if (S.fpAnimations.length > 0) {
+    const summary = document.createElement('div');
+    summary.style.cssText = 'margin-top:0.5rem;font-size:0.55rem;color:var(--muted);line-height:1.5;';
+    const used = new Set();
+    S.fpAnimations.forEach(a => a.frames.forEach(f => used.add(f)));
+    const unused = total - used.size;
+    summary.textContent = 'Frames: ' + used.size + ' used, ' + unused + ' unused across all anims';
+    wrapper.appendChild(summary);
+  }
+
+  list.innerHTML = '';
+  list.appendChild(wrapper);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PANEL TABS
+// ═══════════════════════════════════════════════════════════
+function setPanelTab(tab) {
+  ['frames','anim','assets'].forEach(t => {
+    document.getElementById('ptab-' + t).classList.toggle('active', t === tab);
+  });
+  document.getElementById('frames-panel').style.display = tab === 'frames' ? 'flex' : 'none';
+  document.getElementById('anim-panel').style.display   = tab === 'anim'   ? 'flex' : 'none';
+  document.getElementById('assets-panel').style.display = tab === 'assets' ? 'flex' : 'none';
+  if (tab === 'assets') renderAssetsPanel();
+}
+
+// ── My Saved Assets panel ──────────────────────────────────────────────────
+function renderAssetsPanel() {
+  const list = document.getElementById('assets-list');
+  let all = [];
+  try { all = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e) {}
+  if (!all.length) {
+    list.innerHTML = '<div class="assets-empty">No saved assets yet.<br><br>Use 💾 Save to store your work-in-progress and reload it here any time.</div>';
+    return;
+  }
+  list.innerHTML = all.map(function(a) {
+    const date    = a.saved_at ? new Date(a.saved_at).toLocaleDateString() : '';
+    const biomeKey = (a.biome || (a.template_id || '').replace('tpl_ts_','').replace('tpl_tileset_',''));
+    const biomeMeta = BIOME_ICONS[biomeKey] || { icon: '🗺️', color: 'var(--accent)' };
+    const tplLabel  = a.template_name || biomeKey || '—';
+    const isActive  = a.id === S.currentAssetId;
+    const info = (a.frame_count || '?') + ' frames · ' + (a.frameW || '?') + '×' + (a.frameH || '?');
+    return '<div class="asset-row" style="' + (isActive ? 'border-color:var(--accent);' : '') + '">' +
+      '<div style="position:relative;flex-shrink:0;">' +
+        '<img class="asset-thumb" src="' + (a.sheet_png || '') + '" title="' + a.name + '">' +
+        '<span style="position:absolute;bottom:1px;right:1px;font-size:0.75rem;line-height:1;" title="' + tplLabel + '">' + biomeMeta.icon + '</span>' +
+      '</div>' +
+      '<div class="asset-meta">' +
+        '<div class="asset-name" style="' + (isActive ? 'color:var(--accent);' : '') + '">' + a.name + (isActive ? ' ✏' : '') + '</div>' +
+        '<div class="asset-info" style="color:' + biomeMeta.color + ';opacity:0.9;">' + tplLabel + '</div>' +
+        '<div class="asset-info">' + info + ' · ' + date + '</div>' +
+        '<div class="asset-btns">' +
+          '<button class="btn primary" style="font-size:0.58rem;padding:0.2rem 0.4rem;" onclick="loadLocalAsset(\'' + a.id + '\');setPanelTab(\'frames\')">📂 Load</button>' +
+          '<button class="btn danger"  style="font-size:0.58rem;padding:0.2rem 0.35rem;" onclick="deleteLocalAsset(\'' + a.id + '\')" title="Delete this saved asset">🗑</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function deleteLocalAsset(id) {
+  if (!confirm('Delete this saved asset? This cannot be undone.')) return;
+  try {
+    const all = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    localStorage.setItem(LS_KEY, JSON.stringify(all.filter(function(a) { return a.id !== id; })));
+    ppUnregisterCatalog(id);
+  } catch(e) {}
+  renderAssetsPanel();
+}
+
+// ── Local / Server sub-tab toggle ─────────────────────────────────────────────
+let _assetsView = 'local';
+
+function switchAssetsView(view) {
+  _assetsView = view;
+  document.getElementById('asubtab-local').classList.toggle('active',  view === 'local');
+  document.getElementById('asubtab-server').classList.toggle('active', view === 'server');
+  document.getElementById('assets-list').style.display        = view === 'local'  ? '' : 'none';
+  document.getElementById('assets-server-list').style.display = view === 'server' ? '' : 'none';
+  if (view === 'server') renderServerAssetsPanel();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SERVER ASSET SAVE / LOAD
+// ═══════════════════════════════════════════════════════════
+
+/** POST the current work to /api/pp-assets as a PNG with metadata. */
+function saveToServer(overwriteId) {
+  if (!S.template) {
+    setStatus('Server save: please load a template first');
+    return;
+  }
+
+  const existingId = overwriteId || S.currentServerId || null;
+
+  // Look up existing name from cache
+  let existingName = null;
+  if (existingId) {
+    const cached = (_serverAssetsCache || []).find(a => a.id === existingId);
+    existingName = cached ? cached.name : null;
+  }
+
+  let name;
+  if (existingName) {
+    // Already saved — ask: overwrite with same name, or rename?
+    const choice = prompt(
+      'Save "' + existingName + '" to server?\n\n' +
+      '• Press OK to overwrite with this name\n' +
+      '• Type a new name to save as a copy\n' +
+      '• Press Cancel to abort',
+      existingName
+    );
+    if (choice === null) return;            // cancelled
+    name = choice.trim() || existingName;  // blank → keep old name
+  } else {
+    // Brand new — just ask for a name
+    name = prompt('Name this spritesheet:\n(e.g. "Grassland Tileset")');
+    if (!name || !name.trim()) return;
+    name = name.trim();
+  }
+
+  // Use current working scale — no forced upscaling
+  const sheet = buildSheetCanvas();
+
+  setStatus('Uploading to server…');
+
+  sheet.toBlob(async function(blob) {
+    try {
+      const assetId = existingId || ('pp_' + Date.now());
+      const fd = new FormData();
+      fd.append('file',          blob,  assetId + '.png');
+      fd.append('id',            assetId);
+      fd.append('name',          name);
+      fd.append('category',      S.template.category || 'tileset');
+      fd.append('frame_w',       S.frameW);
+      fd.append('frame_h',       S.frameH);
+      fd.append('frame_count',   S.frames.length);
+      fd.append('cols',          S.template.cols || 8);
+      fd.append('scale',         S.scale);
+      fd.append('template_id',   S.template.id   || '');
+      fd.append('template_name', S.template.name || '');
+      fd.append('biome',         (S.template.id || '').replace('tpl_ts_','').replace('tpl_tileset_',''));
+
+      const res = await fetch('api/pp-assets', { method: 'POST', body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: res.statusText }));
+        throw new Error(err.error || res.statusText);
+      }
+      const saved = await res.json();
+      S.currentServerId = saved.id;
+
+      // Also update shared catalog so Builder sidebar can see it immediately
+      ppRegisterCatalog({
+        id:          saved.id,
+        name:        saved.name,
+        category:    saved.category,
+        frameW:      saved.frameW,
+        frameH:      saved.frameH,
+        scale:       saved.scale,
+        frame_count: saved.frame_count,
+        saved_at:    saved.saved_at,
+        file_path:   saved.file_path,  // server URL — extra field for sidebar
+      });
+
+      _serverAssetsCache = null; // invalidate cache
+      setStatus('☁️ Saved "' + name + '" to server ✓');
+      if (_assetsView === 'server') renderServerAssetsPanel();
+    } catch (e) {
+      setStatus('Server save failed — ' + e.message);
+    }
+  }, 'image/png');
+}
+
+// Simple in-memory cache to avoid repeat fetches while the tab is open
+let _serverAssetsCache = null;
+
+async function renderServerAssetsPanel() {
+  const list = document.getElementById('assets-server-list');
+  list.innerHTML = '<div class="assets-empty">Loading…</div>';
+  try {
+    if (!_serverAssetsCache) {
+      const res = await fetch('api/pp-assets');
+      if (!res.ok) throw new Error('Server returned ' + res.status);
+      _serverAssetsCache = await res.json();
+    }
+    const all = _serverAssetsCache;
+    if (!all.length) {
+      list.innerHTML = '<div class="assets-empty">No server assets yet.<br><br>Use ☁️ Save to Server to push an asset.</div>';
+      return;
+    }
+    list.innerHTML = all.map(function(a) {
+      const date  = a.saved_at ? new Date(a.saved_at).toLocaleDateString() : '';
+      const info  = (a.frame_count || '?') + ' frames · ' + (a.frameW || '?') + '×' + (a.frameH || '?');
+      const tpl   = a.template_name || a.biome || '—';
+      const isAct = a.id === S.currentServerId;
+      const imgSrc = a.file_path ? a.file_path : '';
+      return '<div class="asset-row" style="' + (isAct ? 'border-color:var(--accent);' : '') + '">' +
+        '<div style="position:relative;flex-shrink:0;">' +
+          '<img class="asset-thumb" src="' + imgSrc + '" title="' + a.name + '" onerror="this.style.opacity=0.3">' +
+          '<span style="position:absolute;top:1px;left:1px;font-size:0.6rem;">☁️</span>' +
+        '</div>' +
+        '<div class="asset-meta">' +
+          '<div class="asset-name" style="' + (isAct ? 'color:var(--accent);' : '') + '">' + a.name + (isAct ? ' ✏' : '') + '</div>' +
+          '<div class="asset-info">' + tpl + '</div>' +
+          '<div class="asset-info">' + info + ' · ' + date + '</div>' +
+          '<div class="asset-btns">' +
+            '<button class="btn primary" style="font-size:0.58rem;padding:0.2rem 0.4rem;" onclick="loadServerAsset(\'' + a.id + '\')">📂 Load</button>' +
+            '<button class="btn" style="font-size:0.58rem;padding:0.2rem 0.4rem;background:#2a3a2a;color:#7bc87b;border-color:#3a5a3a;" onclick="saveToServer(\'' + a.id + '\')" title="Re-save current work as this asset">☁️ Re-save</button>' +
+            '<button class="btn danger" style="font-size:0.58rem;padding:0.2rem 0.35rem;" onclick="deleteServerAsset(\'' + a.id + '\')" title="Delete from server">🗑</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div class="assets-empty">⚠ Could not reach server.<br><small>' + e.message + '</small><br><br>Is the API running?</div>';
+  }
+}
+
+/** Load a server asset back into the editor (fetches PNG → slices into frames). */
+async function loadServerAsset(id) {
+  const cache = _serverAssetsCache || [];
+  let asset = cache.find(a => a.id === id);
+  if (!asset) {
+    try {
+      const res = await fetch('api/pp-assets/' + id);
+      if (!res.ok) throw new Error('Not found');
+      asset = await res.json();
+    } catch (e) {
+      alert('Could not load asset: ' + e.message);
+      return;
+    }
+  }
+
+  const hasWork = S.frames.some(f => f.some(v => v > 0));
+  if (hasWork && !confirm('Load "' + asset.name + '"? Current work will be cleared.')) return;
+
+  setStatus('Loading "' + asset.name + '" from server…');
+
+  // Fetch the template for this asset
+  let tpl = null;
+  if (asset.template_id) {
+    try {
+      const res = await fetch('api/sprite-templates/' + asset.template_id);
+      if (res.ok) tpl = await res.json();
+    } catch (e) { /* offline fallback below */ }
+    if (!tpl) {
+      const stub = S.allTemplates.find(t => t.id === asset.template_id);
+      if (stub) tpl = Object.assign({}, stub);
+    }
+  }
+  if (!tpl) {
+    alert('Template "' + asset.template_id + '" not found.\nMake sure the API is running.');
+    return;
+  }
+
+  // Load the server PNG and slice it into frames
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function() {
+    const fw = asset.frameW, fh = asset.frameH;
+    const cols  = asset.cols || Math.round(img.width / fw);
+    const total = asset.frame_count || (cols * Math.round(img.height / fh));
+
+    const frames = [];
+    for (let i = 0; i < total; i++) {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const tmp = document.createElement('canvas');
+      tmp.width = fw; tmp.height = fh;
+      const tc = tmp.getContext('2d');
+      tc.imageSmoothingEnabled = false;
+      tc.drawImage(img, col * fw, row * fh, fw, fh, 0, 0, fw, fh);
+      frames.push(new Uint8ClampedArray(tc.getImageData(0, 0, fw, fh).data));
+    }
+
+    applyTemplate(tpl);
+    S.scale  = asset.scale || 1;
+    S.frameW = fw;
+    S.frameH = fh;
+
+    // ── Restore UI to match the loaded asset's template + tier ─────────────
+    // applyTemplate() always defaults to scale=8; fix the dropdown, category
+    // pill, tier button highlight, and info line to reflect the actual asset.
+    const _tplSel = document.getElementById('tpl-select');
+    if (_tplSel) {
+      filterCat(tpl.category || '');          // activates correct pill, rebuilds dropdown
+      _tplSel.value = asset.template_id || ''; // selects the right template
+    }
+    const _loadedRows = Math.round(img.height / fh);
+    updateTierUI(tpl, _loadedRows);           // highlights the correct tier button
+    // Fix the info line (applyTemplate wrote it at scale=8, update for actual scale)
+    const _tplInfo = document.getElementById('tpl-info');
+    if (_tplInfo) {
+      const _cols2 = tpl.cols_per_row;
+      _tplInfo.textContent = fw + '\u00d7' + fh + 'px \u00b7 ' + _cols2 + ' cols \u00b7 ' + _loadedRows + ' rows \u00b7 ' + (_cols2 * _loadedRows) + ' frames';
+    }
+    // ───────────────────────────────────────────────────────────────────────
+
+    frames.forEach((f, i) => { if (i < S.frames.length) S.frames[i] = f; });
+    S.undoStacks    = Array.from({ length: S.frames.length }, () => []);
+    S.currentServerId = asset.id;
+    S.currentAssetId  = null;   // this is a server-loaded asset, not a local one
+    applyPixelScale(computeFitScale());
+    updateFrameList(); updateSheet(); renderEditor();
+    if (S.template) renderRegionOverview();
+    updateBiomeBadge();
+    setPanelTab('frames');
+    setStatus('☁️ Loaded "' + asset.name + '" from server — ☁️ Re-save to update it');
+  };
+  img.onerror = function() {
+    setStatus('Failed to load PNG from server — is the API serving static files?');
+  };
+  img.src = asset.file_path;
+}
+
+async function deleteServerAsset(id) {
+  if (!confirm('Delete this asset from the server? This cannot be undone.')) return;
+  try {
+    const res = await fetch('api/pp-assets/' + id, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+    _serverAssetsCache = null;
+    ppUnregisterCatalog(id);
+    if (S.currentServerId === id) S.currentServerId = null;
+    setStatus('Server asset deleted');
+    renderServerAssetsPanel();
+  } catch(e) {
+    setStatus('Delete failed — ' + e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MODE & SIZE
+// ═══════════════════════════════════════════════════════════
+function setMode(mode) {
+  S.mode = mode;
+  document.getElementById('tab-paint').classList.toggle('active',  mode === 'paint');
+  document.getElementById('tab-import').classList.toggle('active', mode === 'import');
+  document.getElementById('tools-sec').style.display  = mode === 'paint' ? '' : 'none';
+  document.getElementById('onion-sec').style.display  = mode === 'paint' ? '' : 'none';
+  document.getElementById('color-sec').style.display  = mode === 'paint' ? '' : 'none';
+  eCanvas.style.display                               = mode === 'paint' ? '' : 'none';
+  document.getElementById('import-area').style.display = mode === 'import' ? 'flex' : 'none';
+  document.getElementById('coords').style.display     = mode === 'paint' ? '' : 'none';
+  document.getElementById('region-label').style.display = mode === 'paint' && regionForFrame(S.currentFrame) ? '' : 'none';
+  if (mode === 'import') refreshImportSlotInfo();
+}
+
+function setSize(size, silent) {
+  if (S.template) return; // locked by template
+  if (!silent && S.frames.length && !confirm('Change size to ' + size + '×' + size + '? All frames will be cleared.')) return;
+  setFrameSize(size, size, silent);
+  document.querySelectorAll('.size-btn').forEach(b =>
+    b.classList.toggle('active', +b.dataset.size === size));
+}
+
+function setFrameSize(w, h, silent) {
+  S.frameW = w; S.frameH = h;
+  applyPixelScale(computeFitScale());
+  S.frames     = [newFrame()];
+  S.undoStacks = [[]];
+  S.currentFrame = 0;
+  updateFrameList(); updateSheet(); renderEditor();
+}
+
+function setTool(tool) {
+  S.tool = tool;
+  document.querySelectorAll('.tool-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.tool === tool));
+  eCanvas.style.cursor = tool === 'fill' ? 'cell' : 'crosshair';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FRAME MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+function newFrame() {
+  return new Uint8ClampedArray(S.frameW * S.frameH * 4);
+}
+
+function addFrame() {
+  if (S.template) return; // template controls frame count
+  if (S.frames.length >= MAX_FRAMES) return;
+  S.frames.push(newFrame());
+  S.undoStacks.push([]);
+  S.currentFrame = S.frames.length - 1;
+  updateFrameList(); updateSheet(); renderEditor();
+}
+
+function duplicateFrame() {
+  if (S.frames.length >= MAX_FRAMES) return;
+  const copy = new Uint8ClampedArray(S.frames[S.currentFrame]);
+  S.frames.splice(S.currentFrame + 1, 0, copy);
+  S.undoStacks.splice(S.currentFrame + 1, 0, []);
+  S.currentFrame++;
+  updateFrameList(); updateSheet(); renderEditor();
+  if (S.template) renderRegionOverview();
+}
+
+function deleteFrame() {
+  if (S.template) return; // template controls frame count
+  if (S.frames.length <= 1) return;
+  S.frames.splice(S.currentFrame, 1);
+  S.undoStacks.splice(S.currentFrame, 1);
+  S.currentFrame = Math.min(S.currentFrame, S.frames.length - 1);
+  updateFrameList(); updateSheet(); renderEditor();
+}
+
+// Fill the current frame with transparency (all zeros)
+function clearFrame() {
+  S.frames[S.currentFrame].fill(0);
+  S.undoStacks[S.currentFrame] = [];
+  updateFrameList(); updateSheet(); renderEditor();
+  if (S.template) renderRegionOverview();
+  setStatus('Frame ' + S.currentFrame + ' cleared');
+}
+
+// Reset everything and start a blank spritesheet
+function newSpritesheet() {
+  if (!confirm('Start a new spritesheet?\n\nAll unsaved work will be lost.')) return;
+
+  // Reset template selection
+  const tplSelect = document.getElementById('tpl-select');
+  if (tplSelect) tplSelect.value = '';
+  S.template = null;
+  S.regions  = [];
+  S.currentServerId  = null;
+  S.currentAssetId   = null;
+
+  // Reset to 1 blank frame at current size
+  S.currentFrame = 0;
+  S.frames       = [newFrame()];
+  S.undoStacks   = [[]];
+
+  // Reset cat pill active states
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+
+  updateFrameList(); updateSheet(); renderEditor();
+  setMode('paint');
+
+  // Re-render template info and region overview areas
+  const tplInfo = document.getElementById('tpl-info');
+  if (tplInfo) tplInfo.style.display = 'none';
+  const roEl = document.getElementById('region-overview');
+  if (roEl)   roEl.innerHTML = 'Select a template to see animation slots';
+
+  setStatus('New spritesheet started');
+}
+
+function selectFrame(idx) {
+  S.currentFrame = Math.max(0, Math.min(idx, S.frames.length - 1));
+  updateFrameList();
+  renderEditor();
+  updateRegionLabel();
+  if (S.template) renderRegionOverview();
+  if (S.mode === 'import') refreshImportSlotInfo();
+}
+
+function updateRegionLabel() {
+  const lbl = document.getElementById('region-label');
+  const reg = regionForFrame(S.currentFrame);
+  if (reg && S.mode === 'paint') {
+    lbl.textContent = reg.display_name;
+    lbl.style.display = '';
+  } else {
+    lbl.style.display = 'none';
+  }
+}
+
+// ── Section → accent colour map (matches CSS --sec-* variables) ─────────────
+const BIOME_ICONS = {
+  grassland: { icon: '🌿', color: '#2e7030' },
+  tundra:    { icon: '❄️',  color: '#68a8d8' },
+  desert:    { icon: '🏜️', color: '#c8a030' },
+  forest:    { icon: '🌲', color: '#307820' },
+  swamp:     { icon: '🐸', color: '#507840' },
+  volcanic:  { icon: '🌋', color: '#c84020' },
+  custom:    { icon: '🎨', color: '#8838a8' },
+};
+
+const SECTION_COLORS = {
+  '💧 Animated':      '#3060c0',
+  'Primary Ground':   '#2e7030',
+  'Secondary Ground': '#7a5428',
+  'Rock / Stone':     '#6a6a6a',
+  'Water + Edges':    '#2878a8',
+  'Paths':            '#8a7030',
+  'Flora':            '#307820',
+  'Objects':          '#783898',
+  'Structures':       '#703018',
+};
+
+// Returns section name from sort_order (matches renderRegionOverview sectionFor)
+function sectionFromSortOrder(so) {
+  if (so < 10)  return '💧 Animated';
+  if (so < 20)  return 'Primary Ground';
+  if (so < 30)  return 'Secondary Ground';
+  if (so < 40)  return 'Rock / Stone';
+  if (so < 50)  return 'Water + Edges';
+  if (so < 60)  return 'Paths';
+  if (so < 70)  return 'Flora';
+  if (so < 80)  return 'Objects';
+  if (so < 90)  return 'Structures';
+  return 'Other';
+}
+
+// Returns directional hint emoji for a region based on anim_name / display_name
+function dirHintFor(reg) {
+  const n = (reg.anim_name || reg.display_name || '').toLowerCase();
+  if (/south|_s[_\b]|_s$|down/.test(n))  return '↓';
+  if (/north|_n[_\b]|_n$|up/.test(n))    return '↑';
+  if (/east|_e[_\b]|_e$|right/.test(n))  return '→';
+  if (/west|_w[_\b]|_w$|left/.test(n))   return '←';
+  if (/idle|stand/.test(n))              return '○';
+  if (/attack|slash|strike/.test(n))     return '⚔';
+  if (/hurt|hit|damage/.test(n))         return '💥';
+  if (/death|die|dead/.test(n))          return '✝';
+  if (/run|sprint/.test(n))              return '▶▶';
+  if (/cast|magic|spell/.test(n))        return '✨';
+  return '';
+}
+
+// ── Biome badge ───────────────────────────────────────────────────────────────
+function updateBiomeBadge() {
+  const el = document.getElementById('biome-badge');
+  if (!el) return;
+  if (!S.template || S.template.category !== 'tileset') {
+    el.style.display = 'none';
+    return;
+  }
+  // Derive biome key from template id (e.g. "tpl_ts_grassland" → "grassland")
+  const key    = (S.template.id || '').replace('tpl_ts_', '').replace('tpl_tileset_', '');
+  const meta   = BIOME_ICONS[key] || { icon: '🗺️', color: 'var(--accent)' };
+  const label  = S.template.name || key;
+
+  // Find current asset name if one is loaded
+  let assetName = '';
+  if (S.currentAssetId) {
+    try {
+      const all = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+      const a   = all.find(x => x.id === S.currentAssetId);
+      if (a) assetName = a.name;
+    } catch(e) {}
+  }
+
+  el.style.display      = 'flex';
+  el.style.borderLeftColor = meta.color;
+  el.innerHTML =
+    '<span class="bb-icon">' + meta.icon + '</span>' +
+    '<span class="bb-name">'  + label + '</span>' +
+    (assetName ? '<span class="bb-asset" title="' + assetName + '">' + assetName + '</span>' : '');
+}
+
+// ── Frame tooltip helpers ──────────────────────────────────────────────────
+const _tip = { el: null };
+function _getTip() {
+  if (!_tip.el) _tip.el = document.getElementById('frame-tip');
+  return _tip.el;
+}
+function showFrameTip(e, reg, frameIdx, isTileset) {
+  const tip = _getTip(); if (!tip) return;
+  const sec   = sectionFromSortOrder(reg ? (reg.sort_order ?? 999) : 999);
+  const color = reg ? (SECTION_COLORS[sec] || '#808080') : '#808080';
+  const hint  = (!isTileset && reg) ? dirHintFor(reg) : '';
+  const name  = reg ? reg.display_name : 'Unassigned';
+  const meta  = ['F' + frameIdx];
+  if (reg && reg.frame_count > 1) meta.push(reg.frame_count + '-frame ' + (reg.fps || '?') + 'fps');
+  tip.innerHTML =
+    (hint ? '<span class="ftip-hint">' + hint + '</span>' : '') +
+    '<div class="ftip-section" style="color:' + color + '">' + sec.replace('💧 ','') + '</div>' +
+    '<div class="ftip-name"   style="color:' + color + '">' + name + '</div>' +
+    '<div class="ftip-meta">' + meta.join(' · ') + '</div>';
+  tip.style.borderColor = color;
+  tip.style.display = 'block';
+  moveFrameTip(e);
+}
+function moveFrameTip(e) {
+  const tip = _getTip(); if (!tip) return;
+  const x = e.clientX + 14, y = e.clientY - 10;
+  tip.style.left = Math.min(x, window.innerWidth  - tip.offsetWidth  - 6) + 'px';
+  tip.style.top  = Math.max(6, Math.min(y, window.innerHeight - tip.offsetHeight - 6)) + 'px';
+}
+function hideFrameTip() { const t = _getTip(); if (t) t.style.display = 'none'; }
+
+function updateFrameList() {
+  const list = document.getElementById('frames-list');
+  list.innerHTML = '';
+
+  const isTilesetGrid = S.template && S.template.category === 'tileset' && S.frames.length >= 32;
+
+  if (isTilesetGrid) {
+    // ── Compact grid view: mirrors the sheet layout, colour-coded by section ──
+    list.style.padding = '0';
+
+    const cols   = S.template.cols_per_row;
+    const rows   = Math.ceil(S.frames.length / cols);
+    const fw = S.frameW, fh = S.frameH;
+
+    // Panel usable width ≈ 207px. Row label = 25px. Remaining ÷ cols = thumb width.
+    const thumbW = Math.max(14, Math.floor((207 - 25 - cols) / cols));
+    const thumbH = Math.round(thumbW * fh / fw);
+
+    // Build per-row metadata: first region's sort_order → section → colour
+    const rowHint  = {};   // row → display_name tooltip
+    const rowColor = {};   // row → hex accent colour
+    S.regions.forEach(reg => {
+      const r = Math.floor(reg.start_frame / cols);
+      if (!rowHint[r]) {
+        rowHint[r]  = reg.display_name;
+        const sec   = sectionFromSortOrder(reg.sort_order ?? 999);
+        rowColor[r] = SECTION_COLORS[sec] || '#404040';
+      }
+    });
+
+    // For biome tilesets: static rows 0–7, animated rows 8–15
+    const animBoundary = (S.template.rows_per_sheet === 16) ? 8 : rows;
+
+    const grid = document.createElement('div');
+    grid.className = 'frame-grid';
+
+    // Header for static section
+    const staticHdr = document.createElement('div');
+    staticHdr.className = 'frame-grid-divider';
+    staticHdr.textContent = '▸ Static Tiles · R0–' + (animBoundary - 1);
+    grid.appendChild(staticHdr);
+
+    const seenSections = new Set();  // for legend building
+
+    for (let row = 0; row < rows; row++) {
+      // Insert animated-section divider before first animated row
+      if (row === animBoundary) {
+        const animHdr = document.createElement('div');
+        animHdr.className = 'frame-grid-divider anim-divider';
+        animHdr.textContent = '💧 Animated · R' + animBoundary + '–' + (rows - 1);
+        grid.appendChild(animHdr);
+      }
+
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'frame-grid-row';
+
+      // Section colour for this row
+      const rc = rowColor[row] || (row >= animBoundary ? '#3060c0' : '#404040');
+      rowDiv.style.borderLeftColor = rc;
+      if (rowHint[row]) seenSections.add({ name: rowHint[row].split(' ')[0], color: rc });
+
+      // Row label — tinted to match section
+      const rowLbl = document.createElement('span');
+      rowLbl.className = 'frame-grid-row-lbl';
+      rowLbl.style.color = rc;
+      rowLbl.textContent = 'R' + row;
+      rowLbl.title = rowHint[row] || ('Row ' + row);
+      rowDiv.appendChild(rowLbl);
+
+      // Frame thumbnails for this row
+      for (let col = 0; col < cols; col++) {
+        const fi = row * cols + col;
+        if (fi >= S.frames.length) break;
+
+        const thumb = document.createElement('canvas');
+        thumb.className = 'frame-grid-thumb' + (fi === S.currentFrame ? ' active' : '');
+        thumb.width  = fw;
+        thumb.height = fh;
+        thumb.style.width  = thumbW + 'px';
+        thumb.style.height = thumbH + 'px';
+
+        const reg = regionForFrame(fi);
+
+        const tc = thumb.getContext('2d');
+        tc.imageSmoothingEnabled = false;
+        drawChecker(tc, fw, fh, Math.max(1, Math.round(fw / 8)));
+        tc.putImageData(new ImageData(new Uint8ClampedArray(S.frames[fi]), fw, fh), 0, 0);
+
+        // Coloured hover tooltip
+        thumb.addEventListener('mouseenter', e => showFrameTip(e, reg, fi, true));
+        thumb.addEventListener('mousemove',  e => moveFrameTip(e));
+        thumb.addEventListener('mouseleave', ()  => hideFrameTip());
+        thumb.onclick = () => selectFrame(fi);
+        rowDiv.appendChild(thumb);
+      }
+
+      grid.appendChild(rowDiv);
+    }
+
+    list.appendChild(grid);
+
+    // ── Section colour legend ──────────────────────────────────────────────────
+    const legendEl = document.getElementById('frames-sec-legend');
+    if (legendEl) {
+      legendEl.innerHTML = '';
+      Object.entries(SECTION_COLORS).forEach(([name, color]) => {
+        const item = document.createElement('div');
+        item.className = 'sec-legend-item';
+        const sw = document.createElement('div');
+        sw.className = 'sec-legend-swatch';
+        sw.style.background = color;
+        const lbl = document.createElement('span');
+        lbl.style.color = color;
+        lbl.textContent = name.replace('💧 ', '');
+        item.append(sw, lbl);
+        legendEl.appendChild(item);
+      });
+      legendEl.style.display = 'flex';
+    }
+
+  } else {
+    // ── Original list view ────────────────────────────────────────────────────
+    list.style.padding = '';
+    const thumbW = 28, thumbH = Math.round(28 * S.frameH / S.frameW);
+
+    S.frames.forEach((frame, i) => {
+      const item = document.createElement('div');
+      item.className = 'frame-item' + (i === S.currentFrame ? ' active' : '');
+      item.onclick   = () => selectFrame(i);
+
+      const thumb = document.createElement('canvas');
+      thumb.className = 'frame-thumb';
+      thumb.width = S.frameW; thumb.height = S.frameH;
+      thumb.style.width  = thumbW + 'px';
+      thumb.style.height = thumbH + 'px';
+      const tc = thumb.getContext('2d');
+      tc.imageSmoothingEnabled = false;
+      drawChecker(tc, S.frameW, S.frameH, Math.max(1, Math.round(S.frameW / 8)));
+      tc.putImageData(new ImageData(new Uint8ClampedArray(frame), S.frameW, S.frameH), 0, 0);
+
+      const reg = regionForFrame(i);
+
+      const lbl = document.createElement('span');
+      lbl.className = 'frame-lbl';
+      if (reg) {
+        const localIdx = i - reg.start_frame;
+        lbl.textContent = reg.display_name + ' ' + (localIdx + 1);
+      } else {
+        lbl.textContent = 'F' + (i + 1);
+      }
+
+      // Coloured hover tooltip — shows section, region name, direction hint
+      item.addEventListener('mouseenter', e => showFrameTip(e, reg, i, false));
+      item.addEventListener('mousemove',  e => moveFrameTip(e));
+      item.addEventListener('mouseleave', ()  => hideFrameTip());
+
+      const del = document.createElement('button');
+      del.className   = 'frame-del';
+      del.textContent = '×';
+      del.title = 'Delete frame';
+      del.onclick = e => { e.stopPropagation(); S.currentFrame = i; deleteFrame(); };
+      if (S.template) del.style.display = 'none';
+
+      item.append(thumb, lbl, del);
+      list.appendChild(item);
+    });
+  }
+
+  document.getElementById('btn-del').disabled = S.frames.length <= 1 || !!S.template;
+  document.getElementById('btn-add').disabled = !!S.template;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RENDERING
+// ═══════════════════════════════════════════════════════════
+function drawChecker(ctx, w, h, cell) {
+  for (let y = 0; y < h; y += cell)
+    for (let x = 0; x < w; x += cell) {
+      ctx.fillStyle = ((x / cell + y / cell) % 2 === 0) ? '#3a3a4a' : '#2a2a3a';
+      ctx.fillRect(x, y, cell, cell);
+    }
+}
+
+function frameToBitmap(frame) {
+  const tmp = document.createElement('canvas');
+  tmp.width = S.frameW; tmp.height = S.frameH;
+  tmp.getContext('2d').putImageData(
+    new ImageData(new Uint8ClampedArray(frame), S.frameW, S.frameH), 0, 0);
+  return tmp;
+}
+
+function renderEditor() {
+  apRefreshIfActive(S.currentFrame);   // keep preview in sync while painting
+  const W  = eCanvas.width;
+  const H  = eCanvas.height;
+  const ps = S.pixelScale;
+
+  eCtx.clearRect(0, 0, W, H);
+
+  // checkerboard background
+  drawChecker(eCtx, W, H, Math.max(1, ps));
+
+  // onion skin
+  if (S.onionSkin && S.currentFrame > 0) {
+    eCtx.globalAlpha = 0.3;
+    eCtx.imageSmoothingEnabled = false;
+    eCtx.drawImage(frameToBitmap(S.frames[S.currentFrame - 1]), 0, 0, W, H);
+    eCtx.globalAlpha = 1;
+  }
+
+  // pixels
+  eCtx.imageSmoothingEnabled = false;
+  eCtx.drawImage(frameToBitmap(S.frames[S.currentFrame]), 0, 0, W, H);
+
+  // pixel grid (when zoomed in enough)
+  if (ps >= 4) {
+    eCtx.strokeStyle = 'rgba(255,255,255,0.06)';
+    eCtx.lineWidth   = 0.5;
+    for (let x = 0; x <= S.frameW; x++) {
+      eCtx.beginPath(); eCtx.moveTo(x * ps, 0); eCtx.lineTo(x * ps, H); eCtx.stroke();
+    }
+    for (let y = 0; y <= S.frameH; y++) {
+      eCtx.beginPath(); eCtx.moveTo(0, y * ps); eCtx.lineTo(W, y * ps); eCtx.stroke();
+    }
+  }
+}
+
+function updateSheet() {
+  const fw = S.frameW, fh = S.frameH;
+  const n  = S.frames.length;
+
+  let sheetW, sheetH;
+
+  if (S.template) {
+    // Grid layout: cols_per_row × rows
+    const cols = S.template.cols_per_row;
+    const rows = Math.ceil(n / cols);
+    sheetW = fw * cols;
+    sheetH = fh * rows;
+
+    sheetCanvas.width  = sheetW;
+    sheetCanvas.height = sheetH;
+
+    // Constrain preview to fit sidebar: max 196px wide, max 240px tall.
+    // For 16-row biome sheets the height constraint kicks in, producing a
+    // taller-than-wide thumbnail that shows the full sheet layout at a glance.
+    const maxW  = 196;
+    const maxH  = 240;
+    const scale = Math.min(1, maxW / sheetW, maxH / sheetH);
+    sheetCanvas.style.width  = Math.max(1, Math.round(sheetW * scale)) + 'px';
+    sheetCanvas.style.height = Math.max(1, Math.round(sheetH * scale)) + 'px';
+
+    drawChecker(sheetCtx, sheetW, sheetH, 4);
+    sheetCtx.imageSmoothingEnabled = false;
+    S.frames.forEach((f, i) => {
+      const col = i % cols, row = Math.floor(i / cols);
+      sheetCtx.drawImage(frameToBitmap(f), col * fw, row * fh);
+    });
+
+    // Draw region boundary lines on preview
+    sheetCtx.strokeStyle = 'rgba(78,204,163,0.35)';
+    sheetCtx.lineWidth   = 1;
+    S.regions.forEach(reg => {
+      // Draw boundary box for the first row-slice of each region
+      const startCol = reg.start_frame % cols;
+      const startRow = Math.floor(reg.start_frame / cols);
+      const framesInFirstRow = Math.min(reg.frame_count, cols - startCol);
+      sheetCtx.strokeRect(startCol * fw + 0.5, startRow * fh + 0.5,
+                          framesInFirstRow * fw - 1, fh - 1);
+    });
+
+    // For biome tilesets (rows_per_sheet=16), draw a blue dashed line between
+    // static rows 0–7 and animated rows 8–15
+    if (S.template.rows_per_sheet === 16 && rows >= 16) {
+      const divY = 8 * fh;
+      sheetCtx.save();
+      sheetCtx.strokeStyle = 'rgba(74,158,255,0.75)';
+      sheetCtx.lineWidth   = 2;
+      sheetCtx.setLineDash([4, 3]);
+      sheetCtx.beginPath();
+      sheetCtx.moveTo(0, divY);
+      sheetCtx.lineTo(sheetW, divY);
+      sheetCtx.stroke();
+      sheetCtx.restore();
+    }
+
+    document.getElementById('sheet-info').textContent =
+      sheetW + '×' + sheetH + 'px · ' + n + ' frames · ' + cols + ' cols';
+  } else {
+    // Horizontal strip
+    sheetW = fw * n; sheetH = fh;
+    sheetCanvas.width  = sheetW;
+    sheetCanvas.height = sheetH;
+
+    const maxW  = 196;
+    const scale = Math.min(1, maxW / sheetW);
+    sheetCanvas.style.width  = Math.max(1, Math.round(sheetW * scale)) + 'px';
+    sheetCanvas.style.height = Math.max(1, Math.round(sheetH * scale)) + 'px';
+
+    drawChecker(sheetCtx, sheetW, sheetH, 4);
+    sheetCtx.imageSmoothingEnabled = false;
+    S.frames.forEach((f, i) => sheetCtx.drawImage(frameToBitmap(f), i * fw, 0));
+
+    document.getElementById('sheet-info').textContent =
+      n + ' frame' + (n !== 1 ? 's' : '') + ' · ' + sheetW + '×' + sheetH + 'px';
+  }
+
+  // Update export button label
+  document.getElementById('btn-export').textContent =
+    S.template ? '⬇ Export PNG + JSON' : '⬇ Export PNG';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DRAWING TOOLS
+// ═══════════════════════════════════════════════════════════
+function canvasToPixel(e) {
+  const rect = eCanvas.getBoundingClientRect();
+  return {
+    px: Math.floor((e.clientX - rect.left) * S.frameW / rect.width),
+    py: Math.floor((e.clientY - rect.top)  * S.frameH / rect.height),
+  };
+}
+
+function hexToRgba(hex) {
+  return [
+    parseInt(hex.slice(1, 3), 16),
+    parseInt(hex.slice(3, 5), 16),
+    parseInt(hex.slice(5, 7), 16),
+    S.opacity,
+  ];
+}
+
+function setPixel(px, py) {
+  if (px < 0 || px >= S.frameW || py < 0 || py >= S.frameH) return;
+  const frame = S.frames[S.currentFrame];
+  const i     = (py * S.frameW + px) * 4;
+  if (S.tool === 'eraser') {
+    frame[i] = frame[i+1] = frame[i+2] = frame[i+3] = 0;
+  } else {
+    const [r, g, b, a] = hexToRgba(S.color);
+    frame[i] = r; frame[i+1] = g; frame[i+2] = b; frame[i+3] = a;
+  }
+}
+
+function plotLine(x0, y0, x1, y1, fn) {
+  const dx =  Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+  const dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+  let err = dx + dy;
+  for (;;) {
+    fn(x0, y0);
+    if (x0 === x1 && y0 === y1) break;
+    const e2 = 2 * err;
+    if (e2 >= dy) { err += dy; x0 += sx; }
+    if (e2 <= dx) { err += dx; y0 += sy; }
+  }
+}
+
+function floodFill(px, py) {
+  const frame = S.frames[S.currentFrame];
+  const fw = S.frameW, fh = S.frameH;
+  const i0 = (py * fw + px) * 4;
+  const [tr, tg, tb, ta] = [frame[i0], frame[i0+1], frame[i0+2], frame[i0+3]];
+  const [fr, fg, fb, fa] = hexToRgba(S.color);
+  if (tr === fr && tg === fg && tb === fb && ta === fa) return;
+
+  const stack   = [[px, py]];
+  const visited = new Uint8Array(fw * fh);
+  while (stack.length) {
+    const [x, y] = stack.pop();
+    if (x < 0 || x >= fw || y < 0 || y >= fh) continue;
+    if (visited[y * fw + x]) continue;
+    const i = (y * fw + x) * 4;
+    if (frame[i] !== tr || frame[i+1] !== tg || frame[i+2] !== tb || frame[i+3] !== ta) continue;
+    visited[y * fw + x] = 1;
+    frame[i] = fr; frame[i+1] = fg; frame[i+2] = fb; frame[i+3] = fa;
+    stack.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]);
+  }
+}
+
+function eyedrop(px, py) {
+  if (px < 0 || px >= S.frameW || py < 0 || py >= S.frameH) return;
+  const frame = S.frames[S.currentFrame];
+  const i = (py * S.frameW + px) * 4;
+  const hex = '#' + [frame[i], frame[i+1], frame[i+2]].map(v => v.toString(16).padStart(2,'0')).join('');
+  S.color = hex; S.opacity = frame[i+3];
+  document.getElementById('color-picker').value   = hex;
+  document.getElementById('color-hex').value      = hex;
+  document.getElementById('opacity-slider').value = frame[i+3];
+  document.getElementById('opacity-val').textContent = Math.round(frame[i+3] / 255 * 100) + '%';
+  addToPalette(hex);
+  setTool('pencil');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UNDO
+// ═══════════════════════════════════════════════════════════
+function pushUndo() {
+  const stack = S.undoStacks[S.currentFrame];
+  stack.push(new Uint8ClampedArray(S.frames[S.currentFrame]));
+  if (stack.length > MAX_UNDO) stack.shift();
+}
+
+function undo() {
+  const stack = S.undoStacks[S.currentFrame];
+  if (!stack.length) return;
+  S.frames[S.currentFrame] = stack.pop();
+  renderEditor(); updateFrameList(); updateSheet();
+  if (S.template) renderRegionOverview();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  EDITOR MOUSE EVENTS
+// ═══════════════════════════════════════════════════════════
+function setupEditorEvents() {
+  // ── Scroll wheel: zoom centered on cursor ──
+  eCanvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    if (S.mode !== 'paint') return;
+    const rect = eCanvas.getBoundingClientRect();
+    const cx   = e.clientX - rect.left;   // cursor pos relative to canvas element
+    const cy   = e.clientY - rect.top;
+    zoomBy(e.deltaY < 0 ? 1 : -1, cx, cy);
+  }, { passive: false });
+
+  // ── Double-click: fit ──
+  eCanvas.addEventListener('dblclick', () => { if (S.mode === 'paint') { editorFit(); renderEditor(); } });
+
+  // ── Mousedown: draw ──
+  eCanvas.addEventListener('mousedown', e => {
+    e.preventDefault();
+    if (e.button !== 0) return;
+    const { px, py } = canvasToPixel(e);
+    if (S.tool === 'eyedropper') { eyedrop(px, py); return; }
+    if (S.tool === 'fill') {
+      pushUndo();
+      floodFill(px, py);
+      renderEditor(); updateFrameList(); updateSheet();
+      if (S.template) renderRegionOverview();
+      return;
+    }
+    pushUndo();
+    S.isDrawing = true;
+    S.lastPx = px; S.lastPy = py;
+    setPixel(px, py);
+    renderEditor();
+  });
+
+  eCanvas.addEventListener('mousemove', e => {
+    const { px, py } = canvasToPixel(e);
+    const inBounds   = px >= 0 && px < S.frameW && py >= 0 && py < S.frameH;
+    document.getElementById('coords').textContent = inBounds ? px + ', ' + py : '—';
+    if (!S.isDrawing) return;
+    if (px === S.lastPx && py === S.lastPy) return;
+    plotLine(S.lastPx, S.lastPy, px, py, setPixel);
+    S.lastPx = px; S.lastPy = py;
+    renderEditor();
+  });
+
+  const stopDraw = () => {
+    if (S.isDrawing) {
+      S.isDrawing = false;
+      updateFrameList(); updateSheet();
+      if (S.template) renderRegionOverview();
+    }
+  };
+  eCanvas.addEventListener('mouseup',    stopDraw);
+  eCanvas.addEventListener('mouseleave', stopDraw);
+  eCanvas.addEventListener('contextmenu', e => e.preventDefault());
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COLOR & PALETTE
+// ═══════════════════════════════════════════════════════════
+function onColorPick(hex) {
+  S.color = hex;
+  document.getElementById('color-hex').value = hex;
+  addToPalette(hex);
+}
+
+function onHexInput(val) {
+  if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+    S.color = val;
+    document.getElementById('color-picker').value = val;
+    addToPalette(val);
+  }
+}
+
+function onOpacity(val) {
+  S.opacity = parseInt(val);
+  document.getElementById('opacity-val').textContent = Math.round(val / 255 * 100) + '%';
+}
+
+function addToPalette(hex) {
+  S.palette = [hex, ...S.palette.filter(c => c !== hex)].slice(0, 16);
+  renderPalette();
+}
+
+function renderPalette() {
+  const el = document.getElementById('palette');
+  const defaults = ['#ffffff','#000000','#e94560','#4ecca3','#ffcc00','#00aaff',
+                    '#ff8800','#aa44aa','#664444','#446644','#444488','#aaaa44',
+                    '#a0a0c0','#884422','#228844','#224488'];
+  const colors = S.palette.length ? S.palette : defaults;
+  el.innerHTML = '';
+  colors.slice(0, 16).forEach(c => {
+    const s = document.createElement('div');
+    s.className = 'swatch'; s.style.background = c; s.title = c;
+    s.onclick = () => {
+      S.color = c;
+      document.getElementById('color-picker').value = c;
+      document.getElementById('color-hex').value    = c;
+    };
+    el.appendChild(s);
+  });
+}
+
+function toggleOnion() {
+  S.onionSkin = !S.onionSkin;
+  document.getElementById('onion-toggle').classList.toggle('on', S.onionSkin);
+  renderEditor();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  IMPORT MODE
+// ═══════════════════════════════════════════════════════════
+let importImg = null, importOrigW = 0, importOrigH = 0;
+let cropStart = null, cropEnd = null, isCropping = false;
+
+function setupImportDrop() {
+  const dz = document.getElementById('drop-zone');
+  dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop',      e  => {
+    e.preventDefault(); dz.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('image/')) loadFile(f);
+  });
+  iCanvas.addEventListener('mousedown', e => { cropStart = importPos(e); cropEnd = { ...cropStart }; isCropping = true; });
+  iCanvas.addEventListener('mousemove', e => {
+    if (!isCropping) return;
+    const pos = importPos(e);
+    const dx = pos.x - cropStart.x, dy = pos.y - cropStart.y;
+    if (e.shiftKey) {
+      // Shift held → constrain to square
+      const side = Math.min(Math.abs(dx), Math.abs(dy));
+      cropEnd = { x: cropStart.x + Math.sign(dx) * side, y: cropStart.y + Math.sign(dy) * side };
+    } else {
+      // Free drag → preserve whatever aspect ratio the user draws
+      cropEnd = { x: pos.x, y: pos.y };
+    }
+    renderImport();
+  });
+  iCanvas.addEventListener('mouseup', () => { isCropping = false; });
+}
+
+function importPos(e) {
+  const r = iCanvas.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * (iCanvas.width / r.width), y: (e.clientY - r.top) * (iCanvas.height / r.height) };
+}
+
+function onFileSelect(e) { const f = e.target.files[0]; if (f) loadFile(f); }
+
+function loadFile(file) {
+  const img = new Image();
+  img.onload = () => {
+    importImg = img; importOrigW = img.naturalWidth; importOrigH = img.naturalHeight;
+    const maxDim = 480, scale = Math.min(1, maxDim / Math.max(importOrigW, importOrigH));
+    iCanvas.width  = Math.round(importOrigW * scale);
+    iCanvas.height = Math.round(importOrigH * scale);
+    iCanvas.style.width  = iCanvas.width  + 'px';
+    iCanvas.style.height = iCanvas.height + 'px';
+    // Default crop = full image (preserve natural aspect ratio)
+    cropStart = { x: 0, y: 0 }; cropEnd = { x: iCanvas.width, y: iCanvas.height };
+    document.getElementById('drop-zone').style.display = 'none';
+    iCanvas.style.display = '';
+    document.getElementById('import-ctrls').style.display = 'flex';
+    renderImport();
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+function renderImport() {
+  if (!importImg) return;
+  iCtx.clearRect(0, 0, iCanvas.width, iCanvas.height);
+  iCtx.drawImage(importImg, 0, 0, iCanvas.width, iCanvas.height);
+  if (!cropStart || !cropEnd) return;
+  const x = Math.min(cropStart.x, cropEnd.x), y = Math.min(cropStart.y, cropEnd.y);
+  const w = Math.abs(cropEnd.x - cropStart.x), h = Math.abs(cropEnd.y - cropStart.y);
+  iCtx.fillStyle = 'rgba(0,0,0,0.55)';
+  iCtx.fillRect(0, 0, iCanvas.width, y);
+  iCtx.fillRect(0, y + h, iCanvas.width, iCanvas.height - y - h);
+  iCtx.fillRect(0, y, x, h);
+  iCtx.fillRect(x + w, y, iCanvas.width - x - w, h);
+  iCtx.strokeStyle = '#4ecca3'; iCtx.lineWidth = 2;
+  iCtx.strokeRect(x, y, w, h);
+  const cs = 8; iCtx.fillStyle = '#4ecca3';
+  [[x,y],[x+w-cs,y],[x,y+h-cs],[x+w-cs,y+h-cs]].forEach(([cx,cy]) => iCtx.fillRect(cx, cy, cs, cs));
+}
+
+// andNext=true  → stay in Import mode, advance to next frame, ready for next tile
+// andNext=false → place tile and return to Paint mode (legacy behaviour)
+// Shared helper: crop + scale the import image to frame pixels
+function _buildImportPixels() {
+  if (!importImg) return null;
+  const sx = importOrigW / iCanvas.width, sy = importOrigH / iCanvas.height;
+  let x = Math.round(Math.min(cropStart.x, cropEnd.x) * sx);
+  let y = Math.round(Math.min(cropStart.y, cropEnd.y) * sy);
+  let w = Math.round(Math.abs(cropEnd.x - cropStart.x) * sx);
+  let h = Math.round(Math.abs(cropEnd.y - cropStart.y) * sy);
+  if (w < 2 || h < 2) { x = 0; y = 0; w = importOrigW; h = importOrigH; }
+
+  const cropBuf = document.createElement('canvas');
+  cropBuf.width = w; cropBuf.height = h;
+  cropBuf.getContext('2d').drawImage(importImg, x, y, w, h, 0, 0, w, h);
+
+  const out = document.createElement('canvas');
+  out.width = S.frameW; out.height = S.frameH;
+  const oCtx = out.getContext('2d');
+  const smooth = document.getElementById('scale-mode').value === 'smooth';
+  oCtx.imageSmoothingEnabled = smooth;
+  oCtx.imageSmoothingQuality = 'high';
+  oCtx.drawImage(cropBuf, 0, 0, S.frameW, S.frameH);
+  return new Uint8ClampedArray(oCtx.getImageData(0, 0, S.frameW, S.frameH).data);
+}
+
+// Button 1 — always overwrites the current frame, returns to paint mode
+function applyImportEdit() {
+  const pixels = _buildImportPixels();
+  if (!pixels) return;
+  S.frames[S.currentFrame] = pixels;
+  S.undoStacks[S.currentFrame] = [];
+  updateFrameList(); updateSheet();
+  if (S.template) renderRegionOverview();
+  setMode('paint'); renderEditor(); clearImport();
+  setStatus('Imported into frame ' + S.currentFrame + ' (' + S.frameW + '\u00d7' + S.frameH + ')');
+}
+
+// Button 2 — overwrites current frame then advances to the next one
+function applyImport(andNext) {
+  const pixels = _buildImportPixels();
+  if (!pixels) return;
+  S.frames[S.currentFrame] = pixels;
+  S.undoStacks[S.currentFrame] = [];
+  updateFrameList(); updateSheet();
+  if (S.template) renderRegionOverview();
+
+  if (andNext) {
+    // Advance to next frame and stay in Import mode, ready for next image
+    const prevFrame = S.currentFrame;
+    S.currentFrame = Math.min(S.currentFrame + 1, S.frames.length - 1);
+    clearImport();
+    refreshImportSlotInfo();
+    renderEditor();
+    const next = regionForFrame(S.currentFrame);
+    setStatus('Placed frame ' + prevFrame + '! Now on ' + (next ? next.display_name : 'frame ' + S.currentFrame));
+  } else {
+    setMode('paint'); renderEditor(); clearImport();
+    setStatus('Imported & scaled to ' + S.frameW + '\u00d7' + S.frameH);
+  }
+}
+
+
+// ── Shared pixel-builder — crops + scales import image to S.frameW×S.frameH ──
+function _buildImportPixelsFull() {
+  const sx = importOrigW / iCanvas.width, sy = importOrigH / iCanvas.height;
+  let x = Math.round(Math.min(cropStart.x, cropEnd.x) * sx);
+  let y = Math.round(Math.min(cropStart.y, cropEnd.y) * sy);
+  let w = Math.round(Math.abs(cropEnd.x - cropStart.x) * sx);
+  let h = Math.round(Math.abs(cropEnd.y - cropStart.y) * sy);
+  if (w < 2 || h < 2) { x = 0; y = 0; w = importOrigW; h = importOrigH; }
+
+  const cropBuf = document.createElement('canvas');
+  cropBuf.width = w; cropBuf.height = h;
+  cropBuf.getContext('2d').drawImage(importImg, x, y, w, h, 0, 0, w, h);
+
+  const out  = document.createElement('canvas');
+  out.width  = S.frameW; out.height = S.frameH;
+  const oCtx = out.getContext('2d');
+  const smooth = document.getElementById('scale-mode').value === 'smooth';
+  oCtx.imageSmoothingEnabled = smooth;
+  if (smooth) oCtx.imageSmoothingQuality = 'high';
+  oCtx.drawImage(cropBuf, 0, 0, S.frameW, S.frameH);
+  return new Uint8ClampedArray(oCtx.getImageData(0, 0, S.frameW, S.frameH).data);
+}
+
+// ── Shared apply — stamps pixels into a list of frame indices ──
+function _stampToFrames(frameList, pixels, label) {
+  for (const fi of frameList) {
+    S.frames[fi] = new Uint8ClampedArray(pixels);
+    S.undoStacks[fi] = [];
+  }
+  updateFrameList(); updateSheet();
+  if (S.template) renderRegionOverview();
+  selectFrame(frameList[frameList.length - 1]);
+  clearImport();
+  setMode('paint');
+  setStatus('Imported into ' + frameList.length + ' frame(s)' + (label ? ': ' + label : ''));
+}
+
+// Button: manual range e.g. "0-3, 5, 8-11"
+function applyImportMulti() {
+  if (!importImg) return;
+  const raw = document.getElementById('mi-range').value;
+  if (!raw.trim()) {
+    alert('Enter frame numbers or ranges.\n\nExamples:\n  0-3\n  0-3, 8-11\n  5');
+    return;
+  }
+  const frames = parseFrameRanges(raw);
+  if (!frames.length) { alert('No valid frame numbers found in: ' + raw); return; }
+  const bad = frames.filter(f => f < 0 || f >= S.frames.length);
+  if (bad.length) {
+    alert('Frame numbers out of range: ' + bad.join(', ') + '\n\nValid: 0 – ' + (S.frames.length - 1));
+    return;
+  }
+  _stampToFrames(frames, _buildImportPixelsFull(), frames.join(', '));
+}
+
+// Button: N frames from the current frame
+function applyImportCount() {
+  if (!importImg) return;
+  const n = parseInt(document.getElementById('mi-count').value, 10);
+  if (!n || n < 1) { alert('Enter a count of 1 or more frames.'); return; }
+  const start = S.currentFrame;
+  const end   = Math.min(start + n - 1, S.frames.length - 1);
+  const frames = [];
+  for (let i = start; i <= end; i++) frames.push(i);
+  _stampToFrames(frames, _buildImportPixelsFull(), start + (end > start ? '–' + end : ''));
+}
+
+// Button: all frames in a named animation region
+function applyImportRegion() {
+  if (!importImg) return;
+  const idx = parseInt(document.getElementById('mi-region-sel').value, 10);
+  if (isNaN(idx)) { alert('Pick a region from the dropdown first.'); return; }
+  const reg = S.regions[idx];
+  if (!reg) return;
+  const frames = [];
+  for (let i = reg.start_frame; i < reg.start_frame + reg.frame_count; i++) frames.push(i);
+  _stampToFrames(frames, _buildImportPixelsFull(), '"' + reg.display_name + '" (' + frames.length + ' frames)');
+}
+
+// Update the slot info banner and button states for the current mode/frame
+function refreshImportSlotInfo() {
+  const info    = document.getElementById('import-slot-info');
+  const btnEdit = document.getElementById('btn-edit-frame');
+  const btnNext = document.getElementById('btn-place-next');
+
+  if (!S.template) {
+    // Free-paint mode: no slot info banner; buttons show generic labels
+    info.style.display = 'none';
+    if (btnEdit) { btnEdit.style.display = ''; btnEdit.textContent = 'Edit Frame \u2192'; }
+    if (btnNext) { btnNext.style.display = ''; btnNext.textContent = 'Place \u0026 Next \u2192'; }
+    return;
+  }
+
+  // Template mode: show slot info banner; rename buttons to slot terminology
+  info.style.display = '';
+  if (btnEdit) { btnEdit.style.display = ''; btnEdit.textContent = 'Place in Slot \u2192'; }
+  if (btnNext) { btnNext.style.display = ''; btnNext.textContent = 'Place \u0026 Next \u2192'; }
+
+  const reg  = regionForFrame(S.currentFrame);
+  const cols = S.template.cols_per_row;
+  const slotInRegion = reg
+    ? (S.currentFrame - reg.start_frame) + 1 + ' of ' + reg.frame_count
+    : null;
+
+  document.getElementById('import-slot-region').textContent =
+    reg ? reg.display_name : 'Unassigned';
+
+  const rowNum  = Math.floor(S.currentFrame / cols);
+  const colNum  = (S.currentFrame % cols) + 1;
+  const subParts = ['frame ' + S.currentFrame];
+  if (slotInRegion) subParts.push('tile ' + slotInRegion);
+  subParts.push('row ' + rowNum + ', col ' + colNum);
+  document.getElementById('import-slot-sub').textContent = subParts.join(' · ');
+
+  // ── Region dropdown: populate and show ──────────────────────────────────
+  const regionRow = document.getElementById('mi-region-row');
+  const regionSel = document.getElementById('mi-region-sel');
+  if (regionRow && regionSel && S.regions && S.regions.length) {
+    regionRow.style.display = 'flex';
+    // Rebuild options (cheap — only a handful of regions)
+    regionSel.innerHTML = '<option value="">— pick —</option>';
+    S.regions.forEach(function(r, i) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = r.display_name + ' (' + r.frame_count + ')';
+      regionSel.appendChild(opt);
+    });
+    // Auto-select whichever region the current frame belongs to
+    const curIdx = S.regions.findIndex(function(r) {
+      return S.currentFrame >= r.start_frame &&
+             S.currentFrame < r.start_frame + r.frame_count;
+    });
+    if (curIdx >= 0) regionSel.value = curIdx;
+  } else if (regionRow) {
+    regionRow.style.display = 'none';
+  }
+
+  // ── Count: pre-fill with frames remaining in the current region ─────────
+  const countEl = document.getElementById('mi-count');
+  if (countEl) {
+    const remaining = reg
+      ? (reg.start_frame + reg.frame_count) - S.currentFrame
+      : 1;
+    countEl.value = Math.max(1, remaining);
+  }
+}
+
+function clearImport() {
+  importImg = null; cropStart = null; cropEnd = null;
+  document.getElementById('drop-zone').style.display = '';
+  iCanvas.style.display = 'none';
+  document.getElementById('import-ctrls').style.display = 'none';
+  document.getElementById('file-input').value = '';
+  document.getElementById('mi-range').value = '';
+  const _mc = document.getElementById('mi-count'); if (_mc) _mc.value = '1';
+  const _mr = document.getElementById('mi-region-sel'); if (_mr) _mr.value = '';
+  iCtx.clearRect(0, 0, iCanvas.width, iCanvas.height);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  EXPORT
+// ═══════════════════════════════════════════════════════════
+function buildSheetCanvas() {
+  const fw = S.frameW, fh = S.frameH;
+  const out = document.createElement('canvas');
+
+  if (S.template) {
+    const cols = S.template.cols_per_row;
+    const rows = Math.ceil(S.frames.length / cols);
+    out.width  = fw * cols;
+    out.height = fh * rows;
+    const ctx = out.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    S.frames.forEach((f, i) => {
+      ctx.drawImage(frameToBitmap(f), (i % cols) * fw, Math.floor(i / cols) * fh);
+    });
+  } else {
+    out.width  = fw * S.frames.length;
+    out.height = fh;
+    const ctx = out.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    S.frames.forEach((f, i) => ctx.drawImage(frameToBitmap(f), i * fw, 0));
+  }
+  return out;
+}
+
+function buildManifest(pngFilename) {
+  const tpl = S.template;
+  const cols = tpl.cols_per_row;
+  const rows = Math.ceil(S.frames.length / cols);
+  const dirs = JSON.parse(tpl.directions || '["down"]');
+
+  const manifest = {
+    name:        pngFilename.replace(/\.png$/, ''),
+    type:        tpl.category,
+    template:    tpl.name,
+    image:       pngFilename,
+    imageWidth:  tpl.frame_w * cols,
+    imageHeight: tpl.frame_h * rows,
+    frameWidth:  tpl.frame_w,
+    frameHeight: tpl.frame_h,
+    frameCount:  S.frames.length,
+    colsPerRow:  cols,
+    directions:  dirs,
+    animations:  {},
+  };
+
+  S.regions.forEach(reg => {
+    const frames = [];
+    for (let i = 0; i < reg.frame_count; i++) frames.push(reg.start_frame + i);
+    manifest.animations[reg.anim_name] = {
+      displayName:  reg.display_name,
+      frames,
+      fps:          reg.fps,
+      loop:         !!reg.loop,
+      required:     !!reg.is_required,
+      fallback:     reg.fallback_anim || null,
+    };
+  });
+
+  return manifest;
+}
+
+function buildFpManifest(pngFilename) {
+  return {
+    name:        pngFilename.replace(/\.png$/, ''),
+    type:        'sprite',
+    image:       pngFilename,
+    imageWidth:  S.frameW * S.frames.length,
+    imageHeight: S.frameH,
+    frameWidth:  S.frameW,
+    frameHeight: S.frameH,
+    frameCount:  S.frames.length,
+    colsPerRow:  S.frames.length,
+    directions:  ['down'],
+    animations:  S.fpAnimations.reduce((acc, a) => {
+      acc[a.name] = {
+        displayName: a.name,
+        frames: a.frames,
+        fps: a.fps,
+        loop: !!a.loop,
+        required: false,
+        fallback: null,
+      };
+      return acc;
+    }, {}),
+  };
+}
+
+function downloadBlob(blob, filename) {
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = filename; link.href = url; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+function exportAll() {
+  const ts   = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  const base = S.template
+    ? S.template.name + '_' + S.frameW + 'x' + S.frameH + '_' + ts
+    : 'sprite_' + S.frameW + 'x' + S.frameH + '_' + S.frames.length + 'f_' + ts;
+
+  const sheet = buildSheetCanvas();
+
+  // Check for required empty slots before exporting
+  if (S.template) {
+    const cols   = S.template.cols_per_row;
+    const missing = S.regions.filter(reg => {
+      if (!reg.is_required) return false;
+      return !S.frames.slice(reg.start_frame, reg.start_frame + reg.frame_count).some(f => f.some(v => v > 0));
+    });
+    if (missing.length) {
+      const names = missing.map(r => r.display_name).join(', ');
+      if (!confirm('⚠️ Required animations are empty: ' + names + '\n\nExport anyway?')) return;
+    }
+  }
+
+  // PNG
+  sheet.toBlob(blob => {
+    downloadBlob(blob, base + '.png');
+
+    if (S.template) {
+      const manifest = buildManifest(base + '.png');
+      const jsonBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+      setTimeout(() => downloadBlob(jsonBlob, base + '.json'), 300);
+      setStatus('Exported PNG + JSON manifest · ' + S.frames.length + ' frames');
+    } else if (S.fpAnimations.length) {
+      const manifest = buildFpManifest(base + '.png');
+      const jsonBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+      setTimeout(() => downloadBlob(jsonBlob, base + '.json'), 300);
+      setStatus('Exported PNG + JSON · ' + S.frames.length + ' frames · ' + S.fpAnimations.length + ' anims');
+    } else {
+      setStatus('Exported: ' + S.frames.length + ' frame(s) · ' + (S.frameW * S.frames.length) + '×' + S.frameH + 'px');
+    }
+  }, 'image/png');
+}
+
+async function saveToAssets() {
+  const key = prompt('Asset key for this sprite:\n(e.g.  sprite.player  or  sprite.enemy.goblin)');
+  if (!key || !key.trim()) return;
+
+  const sheet = buildSheetCanvas();
+  sheet.toBlob(async blob => {
+    const form = new FormData();
+    const safe = key.trim().replace(/[^a-z0-9._-]/gi, '_');
+    form.append('file',        blob, safe + '.png');
+    form.append('asset_key',   key.trim());
+    form.append('width',       S.frameW);
+    form.append('height',      S.frameH);
+    form.append('frame_count', S.frames.length);
+
+    try {
+      setStatus('Saving…');
+      const res  = await fetch('api/uploads', { method: 'POST', body: form });
+      const data = await res.json();
+      if (data.url) {
+        setStatus('Saved ✓ — ' + data.url);
+        alert('Saved!\n\nURL:  ' + data.url + '\nKey:  ' + key.trim() + '\n\nRegister it in the Asset Manager to use it in your story.');
+      } else {
+        setStatus('Error: ' + (data.error || 'Upload failed'));
+      }
+    } catch {
+      setStatus('Upload failed — check API is running');
+    }
+  }, 'image/png');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LOCAL ASSET SAVE / LOAD  (tileset recall via localStorage)
+// ═══════════════════════════════════════════════════════════
+const LS_KEY    = 'rk_tileset_assets';
+const PP_CATALOG = 'realmkit.pp_catalog';  // shared with RealmKit Builder sidebar
+
+/**
+ * Write / update a lightweight catalog entry so the Builder sidebar
+ * can discover assets made in Pixel Painter without pulling heavy image data.
+ * Called automatically after every successful save.
+ */
+function ppRegisterCatalog(asset) {
+  try {
+    const entry = {
+      id:          asset.id,
+      name:        asset.name,
+      category:    asset.category  || 'tileset',
+      frameW:      asset.frameW,
+      frameH:      asset.frameH,
+      scale:       asset.scale,
+      frame_count: asset.frame_count,
+      saved_at:    asset.saved_at,
+    };
+    let catalog = [];
+    try { catalog = JSON.parse(localStorage.getItem(PP_CATALOG) || '[]'); } catch(e) {}
+    const idx = catalog.findIndex(e => e.id === entry.id);
+    if (idx !== -1) catalog[idx] = entry;
+    else catalog.unshift(entry);
+    localStorage.setItem(PP_CATALOG, JSON.stringify(catalog));
+  } catch(e) { /* catalog write failed silently — don't break save */ }
+}
+
+/**
+ * Remove a catalog entry when an asset is deleted.
+ */
+function ppUnregisterCatalog(assetId) {
+  try {
+    let catalog = JSON.parse(localStorage.getItem(PP_CATALOG) || '[]');
+    localStorage.setItem(PP_CATALOG, JSON.stringify(catalog.filter(e => e.id !== assetId)));
+  } catch(e) {}
+}
+
+
+function saveToBrowserAtScale(targetScale) {
+  if (!S.template) {
+    setStatus('Save to Browser: free-paint needs a template for scaled saves');
+    return;
+  }
+  const overwriteId = S.currentAssetId || null;
+  let name;
+  if (overwriteId) {
+    const all = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    const existing = all.find(a => a.id === overwriteId);
+    name = existing ? existing.name : null;
+  }
+  if (!name) {
+    name = prompt('Name this tileset asset:');
+    if (!name || !name.trim()) return;
+    name = name.trim();
+  }
+
+  const origScale = S.scale;
+  const origFW = S.frameW, origFH = S.frameH;
+  S.scale = targetScale;
+  S.frameW = S.template.frame_w * targetScale;
+  S.frameH = S.template.frame_h * targetScale;
+
+  const sheet = buildSheetCanvas();
+  S.scale = origScale;
+  S.frameW = origFW;
+  S.frameH = origFH;
+
+  sheet.toBlob(blob => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const assetId = overwriteId || ('ts_' + Date.now());
+      const asset = {
+        id:            assetId,
+        name:          name,
+        template_id:   S.template.id,
+        template_name: S.template.name,
+        biome:         (S.template.id || '').replace('tpl_ts_', ''),
+        category:      S.template.category,
+        frameW:        S.frameW,
+        frameH:        S.frameH,
+        scale:         targetScale,
+        frame_count:   S.frames.length,
+        saved_at:      new Date().toISOString(),
+        sheet_png:     reader.result,
+        regions:       S.regions,
+      };
+
+      try {
+        let all = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        if (overwriteId) {
+          const idx = all.findIndex(a => a.id === overwriteId);
+          if (idx !== -1) all[idx] = asset;
+          else all.unshift(asset);
+        } else {
+          all.unshift(asset);
+        }
+        localStorage.setItem(LS_KEY, JSON.stringify(all));
+        S.currentAssetId = assetId;
+        ppRegisterCatalog(asset);
+        setStatus('Saved "' + name + '" at ' + targetScale + '× ✓');
+        renderAssetsPanel();
+      } catch (e) {
+        setStatus('Save failed — ' + e.message);
+        alert('Save failed (localStorage full?)\nTry exporting as PNG instead.');
+      }
+    };
+    reader.readAsDataURL(blob);
+  }, 'image/png');
+}
+
+function saveLocally(forceNew) {
+  if (!S.template) { saveToAssets(); return; }
+
+  // If we already have a loaded/saved asset, overwrite it — unless forceNew requested
+  const overwriteId = (!forceNew && S.currentAssetId) ? S.currentAssetId : null;
+
+  let name;
+  if (overwriteId) {
+    // Reuse existing name — no prompt needed
+    const all = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    const existing = all.find(a => a.id === overwriteId);
+    name = existing ? existing.name : null;
+  }
+  if (!name) {
+    name = prompt('Name this tileset asset:\n(e.g. "Grassland v1" or "Tundra — winter")');
+    if (!name || !name.trim()) return;
+    name = name.trim();
+  }
+
+  const sheet = buildSheetCanvas();
+  sheet.toBlob(blob => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const frameData = S.frames.map(f => {
+        const tmp = document.createElement('canvas');
+        tmp.width = S.frameW; tmp.height = S.frameH;
+        tmp.getContext('2d').putImageData(
+          new ImageData(new Uint8ClampedArray(f), S.frameW, S.frameH), 0, 0);
+        return tmp.toDataURL('image/png');
+      });
+
+      const assetId = overwriteId || ('ts_' + Date.now());
+      const asset = {
+        id:            assetId,
+        name:          name,
+        template_id:   S.template.id,
+        template_name: S.template.name,
+        biome:         (S.template.id || '').replace('tpl_ts_', ''),
+        category:      S.template.category,
+        frameW:        S.frameW,
+        frameH:        S.frameH,
+        scale:         S.scale,
+        frame_count:   S.frames.length,
+        saved_at:      new Date().toISOString(),
+        sheet_png:     reader.result,
+        frame_data:    frameData,
+        regions:       S.regions,
+      };
+
+      try {
+        let all = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        if (overwriteId) {
+          // Replace in-place, preserving list order
+          const idx = all.findIndex(a => a.id === overwriteId);
+          if (idx !== -1) all[idx] = asset;
+          else            all.unshift(asset);
+        } else {
+          all.unshift(asset);   // new save → put at top
+        }
+        localStorage.setItem(LS_KEY, JSON.stringify(all));
+        S.currentAssetId = assetId;
+        ppRegisterCatalog(asset);
+        const verb = overwriteId ? 'Updated' : 'Saved';
+        setStatus(verb + ' ✓ — "' + name + '" — open the Assets tab to manage');
+        renderAssetsPanel();
+      } catch (e) {
+        setStatus('Local save failed — ' + e.message);
+        alert('Save failed (localStorage full?)\nTry exporting as PNG instead.');
+      }
+    };
+    reader.readAsDataURL(blob);
+  }, 'image/png');
+}
+
+function loadLocalAsset(assetId) {
+  try {
+    const all = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    const asset = all.find(a => a.id === assetId);
+    if (!asset) { alert('Asset not found: ' + assetId); return; }
+
+    // Check if there's unsaved work
+    const hasWork = S.frames.some(f => f.some(v => v > 0));
+    if (hasWork && !confirm('Load "' + asset.name + '"? Current work will be cleared.')) return;
+
+    // Restore frame data
+    let loaded = 0;
+    const total = asset.frame_data.length;
+    const frames = Array.from({ length: total }, () => null);
+
+    asset.frame_data.forEach((dataUrl, i) => {
+      const img = new Image();
+      img.onload = () => {
+        const tmp = document.createElement('canvas');
+        tmp.width = asset.frameW; tmp.height = asset.frameH;
+        const tc = tmp.getContext('2d');
+        tc.imageSmoothingEnabled = false;
+        tc.drawImage(img, 0, 0);
+        frames[i] = new Uint8ClampedArray(tc.getImageData(0, 0, asset.frameW, asset.frameH).data);
+        if (++loaded === total) _finishLocalLoad(asset, frames);
+      };
+      img.src = dataUrl;
+    });
+  } catch (e) {
+    alert('Failed to load asset: ' + e.message);
+  }
+}
+
+async function _finishLocalLoad(asset, frames) {
+  // Fetch the full template (with regions) from the API.
+  // The list endpoint /api/sprite-templates returns templates WITHOUT regions,
+  // so we must fetch the individual record to get the region data that drives
+  // section colours, tooltips, and the frame-grid labels.
+  let tpl = null;
+  try {
+    const res = await fetch('api/sprite-templates/' + asset.template_id);
+    if (res.ok) tpl = await res.json();
+  } catch (e) { /* API unreachable — fall back below */ }
+
+  // Fallback: use allTemplates stub + graft saved regions from the asset
+  if (!tpl) {
+    const stub = S.allTemplates.find(t => t.id === asset.template_id);
+    if (stub) {
+      tpl = Object.assign({}, stub, {
+        regions: asset.regions && asset.regions.length ? asset.regions : (stub.regions || [])
+      });
+    }
+  }
+
+  if (!tpl) {
+    alert('Template "' + asset.template_id + '" not found.\nMake sure the API is running.');
+    return;
+  }
+
+  // Apply template (allocates fresh frames and sets S.regions)
+  applyTemplate(tpl);
+  // Overwrite with saved frames
+  S.scale  = asset.scale || 1;
+  S.frameW = asset.frameW;
+  S.frameH = asset.frameH;
+  frames.forEach((f, i) => { if (i < S.frames.length && f) S.frames[i] = f; });
+  // Re-initialize undo stacks to match the loaded frame count
+  S.undoStacks = Array.from({ length: S.frames.length }, () => []);
+  S.currentAssetId = asset.id;
+  applyPixelScale(computeFitScale());
+  updateFrameList(); updateSheet(); renderEditor();
+  if (S.template) renderRegionOverview();
+  updateBiomeBadge();
+  setStatus('Loaded "' + asset.name + '" — 💾 Save will update this asset in place');
+}
+
+// ── Sheet Import ──────────────────────────────────────────────────────────────
+let _siImg = null;  // loaded source image for the modal
+
+function openSheetImport() {
+  _siImg = null;
+  const canvas = document.getElementById('si-canvas');
+  canvas.style.display = 'none';
+  document.getElementById('si-drop-hint').style.display = '';
+  document.getElementById('si-info').textContent = 'Load a sheet to continue.';
+  document.getElementById('si-info').className = 'si-info';
+  document.getElementById('si-btn-go').disabled = true;
+  document.getElementById('si-file').value = '';
+  document.getElementById('si-modal').classList.add('open');
+  // Drop area click → file picker
+  document.getElementById('si-drop-area').onclick = function(e) {
+    if (e.target.tagName !== 'BUTTON') document.getElementById('si-file').click();
+  };
+  // Drag-and-drop onto drop area
+  const da = document.getElementById('si-drop-area');
+  da.ondragover  = function(e) { e.preventDefault(); da.style.borderColor = 'var(--accent)'; };
+  da.ondragleave = function()  { da.style.borderColor = ''; };
+  da.ondrop      = function(e) {
+    e.preventDefault(); da.style.borderColor = '';
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('image/')) siLoadFile(f);
+  };
+}
+
+function closeSheetImport() {
+  document.getElementById('si-modal').classList.remove('open');
+  _siImg = null;
+}
+
+function siOnFile(e) {
+  const f = e.target.files[0];
+  if (f) siLoadFile(f);
+}
+
+function siLoadFile(file) {
+  const img = new Image();
+  img.onload = function() {
+    _siImg = img;
+    // Draw preview
+    const canvas = document.getElementById('si-canvas');
+    const maxW = 300, maxH = 130;
+    const scale = Math.min(1, maxW / img.naturalWidth, maxH / img.naturalHeight);
+    canvas.width  = Math.round(img.naturalWidth  * scale);
+    canvas.height = Math.round(img.naturalHeight * scale);
+    canvas.style.width  = canvas.width  + 'px';
+    canvas.style.height = canvas.height + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    canvas.style.display = '';
+    document.getElementById('si-drop-hint').style.display = 'none';
+    siUpdateInfo();
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+function siUpdateInfo() {
+  const infoEl = document.getElementById('si-info');
+  const btn    = document.getElementById('si-btn-go');
+  if (!_siImg) { infoEl.textContent = 'Load a sheet to continue.'; infoEl.className = 'si-info'; btn.disabled = true; return; }
+
+  const hasTpl = S.template && S.template.cols_per_row;
+  const cols = hasTpl ? S.template.cols_per_row : 8;
+  const rows = hasTpl ? (S.template.rows_per_sheet || Math.ceil(S.frames.length / cols)) : Math.ceil(S.frames.length / cols);
+  const totalFrames = S.frames.length || cols * rows;
+
+  // Determine source frame size
+  const rawSz = document.getElementById('si-src-size').value;
+  let srcFW, srcFH;
+  if (rawSz === 'auto') {
+    srcFW = Math.round(_siImg.naturalWidth  / cols);
+    srcFH = Math.round(_siImg.naturalHeight / rows);
+  } else {
+    srcFW = parseInt(rawSz); srcFH = srcFW;
+  }
+
+  const expectedW = srcFW * cols;
+  const expectedH = srcFH * rows;
+  const actualW   = _siImg.naturalWidth;
+  const actualH   = _siImg.naturalHeight;
+
+  if (actualW !== expectedW || actualH !== expectedH) {
+    infoEl.textContent = 'Sheet is ' + actualW + '×' + actualH + 'px · expected ' + expectedW + '×' + expectedH + ' for ' + cols + ' cols × ' + rows + ' rows at ' + srcFW + '×' + srcFH + 'px. Results may be misaligned.';
+    infoEl.className = 'si-info err';
+  } else {
+    const dstFW = S.frameW || srcFW, dstFH = S.frameH || srcFH;
+    const scaleNote = (srcFW !== dstFW || srcFH !== dstFH)
+      ? ' → scaled to ' + dstFW + '×' + dstFH : '';
+    infoEl.textContent = '✓ ' + actualW + '×' + actualH + 'px · ' + cols + ' cols × ' + rows + ' rows · ' + srcFW + '×' + srcFH + ' src' + scaleNote + ' · ' + totalFrames + ' frames';
+    infoEl.className = 'si-info ok';
+  }
+  btn.disabled = false;
+}
+
+function doSheetImport() {
+  if (!_siImg) return;
+  const cols      = S.template ? S.template.cols_per_row : 8;
+  const rows      = S.template ? (S.template.rows_per_sheet || Math.ceil(S.frames.length / cols)) : Math.ceil(S.frames.length / cols);
+  const rawSz     = document.getElementById('si-src-size').value;
+  let srcFW, srcFH;
+  if (rawSz === 'auto') {
+    srcFW = Math.round(_siImg.naturalWidth  / cols);
+    srcFH = Math.round(_siImg.naturalHeight / rows);
+  } else {
+    srcFW = parseInt(rawSz); srcFH = srcFW;
+  }
+  const dstFW  = S.frameW;
+  const dstFH  = S.frameH;
+  const smooth = document.getElementById('si-scale').value === 'smooth';
+  const total  = Math.min(S.frames.length, cols * rows);
+
+  // Slice each frame from the source sheet
+  const tmp = document.createElement('canvas');
+  tmp.width = dstFW; tmp.height = dstFH;
+  const tc  = tmp.getContext('2d');
+
+  for (let i = 0; i < total; i++) {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const sx  = col * srcFW;
+    const sy  = row * srcFH;
+
+    tc.clearRect(0, 0, dstFW, dstFH);
+    tc.imageSmoothingEnabled = smooth;
+    tc.imageSmoothingQuality = smooth ? 'high' : 'low';
+    tc.drawImage(_siImg, sx, sy, srcFW, srcFH, 0, 0, dstFW, dstFH);
+
+    const id = tc.getImageData(0, 0, dstFW, dstFH);
+    S.frames[i] = new Uint8ClampedArray(id.data);
+    S.undoStacks[i] = [];
+  }
+
+  closeSheetImport();
+  updateFrameList();
+  updateSheet();
+  renderEditor();
+  setStatus('Imported ' + total + ' frames from sheet ✓');
+}
+
+// ── Single Sprite Insertion ─────────────────────────────────────────────────
+function openSpriteInsert() {
+  const raw = prompt('Insert sprite — specify target frames:\n\nExamples:\n  0-3\n  0-3; 8-11\n  5\n\nLeave blank to insert at the current frame only.');
+  if (raw === null) return;
+
+  const frameStr = raw.trim();
+  let targetFrames;
+  if (!frameStr) {
+    targetFrames = [S.currentFrame];
+  } else {
+    targetFrames = parseFrameRanges(frameStr);
+  }
+
+  if (!targetFrames.length) { alert('No valid frames specified: ' + frameStr); return; }
+
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      const smooth = confirm('Use smooth scaling?\n\nOK = bicubic\nCancel = nearest-neighbor (pixel art)');
+      placeSprite(img, targetFrames, !smooth);
+    };
+    img.src = URL.createObjectURL(file);
+  };
+  input.click();
+}
+
+function placeSprite(img, targetFrames, nearest) {
+  const tmp = document.createElement('canvas');
+  tmp.width = img.naturalWidth;
+  tmp.height = img.naturalHeight;
+  const tc = tmp.getContext('2d');
+  tc.imageSmoothingEnabled = !nearest;
+  tc.imageSmoothingQuality = nearest ? 'low' : 'high';
+  tc.drawImage(img, 0, 0);
+
+  // Scale to fit S.frameW × S.frameH
+  const scaleCanvas = document.createElement('canvas');
+  scaleCanvas.width = S.frameW;
+  scaleCanvas.height = S.frameH;
+  const sc = scaleCanvas.getContext('2d');
+  sc.imageSmoothingEnabled = !nearest;
+  sc.imageSmoothingQuality = nearest ? 'low' : 'high';
+  sc.drawImage(tmp, 0, 0, S.frameW, S.frameH);
+
+  const id = sc.getImageData(0, 0, S.frameW, S.frameH);
+  const rgba = new Uint8ClampedArray(id.data);
+
+  let placed = 0;
+  for (const fi of targetFrames) {
+    if (fi >= 0 && fi < S.frames.length) {
+      S.frames[fi] = new Uint8ClampedArray(rgba);
+      S.undoStacks[fi] = [];
+      placed++;
+    }
+  }
+
+  updateFrameList();
+  updateSheet();
+  renderEditor();
+  if (targetFrames.length > 0) selectFrame(targetFrames[0]);
+  setStatus('Placed sprite on ' + placed + ' frame(s) ✓');
+}
+
+// ── Check for ?loadAsset=id on page load ────────────────────────────────────
+function checkAutoLoad() {
+  const params = new URLSearchParams(window.location.search);
+  const assetId   = params.get('loadAsset');
+  const templateId = params.get('template');
+  if (assetId)   window._autoLoadAssetId    = assetId;
+  if (templateId) window._autoLoadTemplateId = templateId;
+}
+
+function tryAutoTemplate() {
+  if (window._autoLoadTemplateId) {
+    const id  = window._autoLoadTemplateId;
+    window._autoLoadTemplateId = null;
+    const tpl = S.allTemplates.find(t => t.id === id);
+    if (tpl) {
+      // Pre-select the template in the dropdown and apply it
+      const sel = document.getElementById('tpl-select');
+      if (sel) {
+        sel.value = tpl.id;
+        if (!sel.value) {
+          // Option might be missing — trigger a category filter then retry
+          filterCat('tileset');
+          sel.value = tpl.id;
+        }
+      }
+      if (sel && sel.value) applyTemplate(tpl);
+    }
+  }
+}
+
+function tryAutoLoad() {
+  if (window._autoLoadAssetId) {
+    const id = window._autoLoadAssetId;
+    window._autoLoadAssetId = null;
+    loadLocalAsset(id);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════════════════
+function setupKeyboard() {
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    switch (e.key.toLowerCase()) {
+      case 'p': setTool('pencil');     break;
+      case 'e': setTool('eraser');     break;
+      case 'f': setTool('fill');       break;
+      case 'i': setTool('eyedropper'); break;
+      case 'z':
+        if (e.ctrlKey || e.metaKey) { e.preventDefault(); undo(); }
+        break;
+      case 'd':
+        if (e.ctrlKey || e.metaKey) { e.preventDefault(); duplicateFrame(); }
+        break;
+      case 'arrowleft':
+        if (S.currentFrame > 0) selectFrame(S.currentFrame - 1);
+        break;
+      case 'arrowright':
+        if (S.currentFrame < S.frames.length - 1) selectFrame(S.currentFrame + 1);
+        break;
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATUS BAR
+// ═══════════════════════════════════════════════════════════
+let statusTimer;
+function setStatus(msg) {
+  clearTimeout(statusTimer);
+  document.getElementById('status').textContent = msg;
+  statusTimer = setTimeout(() => document.getElementById('status').textContent = 'Ready', 4000);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GO
+// ═══════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>

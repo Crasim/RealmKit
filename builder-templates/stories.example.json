@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "story_abc123_001",
+    "title": "The Shattered Crown",
+    "description": "A kingdom fractured by war seeks a hero willing to reunite the shards of the ancient crown and restore peace — or claim the throne for themselves.",
+    "tags": "rpg, fantasy, political, open-world",
+    "is_published": false,
+    "created_at": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "_id": "story_abc123_002",
+    "title": "Echoes of the Deep",
+    "description": "Strange signals from beneath the ocean floor draw an unlikely crew into a mystery that predates human civilization.",
+    "tags": "sci-fi, mystery, underwater, horror",
+    "is_published": false,
+    "created_at": "2026-02-01T14:30:00.000Z"
+  }
+]

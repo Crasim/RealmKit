@@ -1,0 +1,11 @@
+{
+  "name": "@local/clippy",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./clippy-widget.js",
+  "exports": {
+    ".": "./clippy-widget.js",
+    "./style": "./clippy-widget.css"
+  }
+}

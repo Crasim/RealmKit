@@ -1,0 +1,49 @@
+[
+  {
+    "_id": "quests_abc5_001",
+    "title": "Into the Thornwood",
+    "description": "Twelve Aldenmoor scouts entered the Thornwood three nights ago and haven't returned. Captain Voss needs answers — and she needs them kept quiet.",
+    "giver_id": "chars_abc2_001",
+    "objectives": [
+      { "text": "Find the missing scouts in the Thornwood", "type": "explore", "target": "zone_thornwood", "count": 1 },
+      { "text": "Discover what attacked the scouts", "type": "investigate", "target": "clue_attack", "count": 1 },
+      { "text": "Return to Seraphina with your findings", "type": "talk", "target": "chars_abc2_001", "count": 1 }
+    ],
+    "rewards": {
+      "gold": 150,
+      "xp": 300,
+      "items": ["item_iron_shield"]
+    }
+  },
+  {
+    "_id": "quests_abc5_002",
+    "title": "Debt Collector",
+    "description": "The Ironveil Syndicate claims a local farmer owes back payments on a loan he never took. Rough up enough locals and someone might start asking questions.",
+    "giver_id": "chars_abc2_002",
+    "objectives": [
+      { "text": "Intercept the syndicate collector before he reaches the farm", "type": "kill", "target": "unit_enforcer_collector", "count": 1 },
+      { "text": "Find evidence of the forged loan documents", "type": "collect", "target": "item_forged_docs", "count": 1 }
+    ],
+    "rewards": {
+      "gold": 80,
+      "xp": 200,
+      "items": []
+    }
+  },
+  {
+    "_id": "quests_abc5_003",
+    "title": "The Root Remembers",
+    "description": "An ancient grove near the village is dying — but the Wandering Circle believes something is being deliberately poisoned into the soil. Mara suspects the Syndicate.",
+    "giver_id": "chars_abc2_003",
+    "objectives": [
+      { "text": "Collect soil samples from the dying grove", "type": "collect", "target": "item_soil_sample", "count": 3 },
+      { "text": "Defeat the corrupted root guardians", "type": "kill", "target": "monster_root_guardian", "count": 5 },
+      { "text": "Bring the samples to Mara for analysis", "type": "deliver", "target": "chars_abc2_003", "count": 1 }
+    ],
+    "rewards": {
+      "gold": 0,
+      "xp": 350,
+      "items": ["item_druid_charm", "item_regeneration_salve"]
+    }
+  }
+]

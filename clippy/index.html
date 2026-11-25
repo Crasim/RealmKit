@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clippy PoC — demo playground</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #fafafa;
+      --panel: #ffffff;
+      --ink: #1b1b1f;
+      --muted: #5a5a66;
+      --accent: #3062c8;
+      --border: #e5e5ea;
+    }
+    html.dark {
+      --bg: #121216;
+      --panel: #1c1c22;
+      --ink: #eee;
+      --muted: #9a9aa8;
+      --accent: #7aa2f7;
+      --border: #2a2a33;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    header {
+      padding: 24px 32px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    header h1 { margin: 0; font-size: 28px; }
+    header p  { margin: 6px 0 0; color: var(--muted); }
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 32px 120px;
+      display: grid;
+      gap: 20px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .card h2 { margin: 0 0 8px; font-size: 18px; }
+    .card p  { margin: 0 0 8px; color: var(--muted); }
+    a { color: var(--accent); }
+    button, input[type=text], input[type=email], textarea, select {
+      font: inherit;
+      color: inherit;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+    button { cursor: pointer; background: var(--accent); color: #fff; border: none; }
+    button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--border); }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    ul.tasks { padding-left: 20px; }
+    .counter-display { font-size: 28px; font-weight: 700; min-width: 60px; display: inline-block; }
+    .tips { font-size: 13px; color: var(--muted); }
+    code { background: rgba(0,0,0,.06); padding: 1px 5px; border-radius: 4px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+    html.dark code { background: rgba(255,255,255,.08); }
+    footer { color: var(--muted); font-size: 12px; text-align: center; padding: 20px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1 id="page-heading">Clippy — Proof of Concept</h1>
+  <p id="page-tagline">It looks like you're trying to automate a web page. Would you like help with that?</p>
+</header>
+
+<main>
+
+  <section class="card" id="card-intro">
+    <h2>About this demo</h2>
+    <p>
+      Click the paperclip in the bottom-right corner to open Clippy. Clippy is connected to a local
+      Ollama model and can <em>read and change</em> anything on this page. All actions that touch the page
+      are gated by per-capability permissions — you decide what Clippy may do.
+    </p>
+    <p class="tips">
+      Try asking things like:
+      <br>• <em>"Change the page heading to 'Hello, Jimmy!'"</em>
+      <br>• <em>"Add three more items to the task list."</em>
+      <br>• <em>"Make the counter reach 42."</em>
+      <br>• <em>"Switch the page to dark mode."</em>
+      <br>• <em>"Fill in the contact form with plausible fake values, then summarise what you put in each field."</em>
+      <br>• <em>"Go to the FAQ page, find the refund answer, and scroll me to it."</em>
+    </p>
+  </section>
+
+  <section class="card" id="card-navigation">
+    <h2>Navigation test</h2>
+    <p>
+      This card exists to test cross-page resume. Ask Clippy to open the FAQ, find an answer,
+      and bring it into view on the next page.
+    </p>
+    <div class="row">
+      <a id="faq-link" href="./faq.html">Open the FAQ demo page</a>
+      <span class="tips">Same-origin link for navigation persistence testing.</span>
+    </div>
+  </section>
+
+  <section class="card" id="card-tasks">
+    <h2>Task list</h2>
+    <p>A plain list for Clippy to extend, reorder, or strike through.</p>
+    <ul class="tasks" id="task-list">
+      <li>Install Ollama</li>
+      <li>Pull a small model</li>
+      <li>Open this page</li>
+    </ul>
+    <div class="row">
+      <input type="text" id="new-task" placeholder="New task…">
+      <button id="add-task-btn">Add</button>
+    </div>
+  </section>
+
+  <section class="card" id="card-counter">
+    <h2>Counter</h2>
+    <p>Current value: <span class="counter-display" id="counter">0</span></p>
+    <div class="row">
+      <button id="btn-dec">−</button>
+      <button id="btn-inc">+</button>
+      <button class="ghost" id="btn-reset">Reset</button>
+    </div>
+  </section>
+
+  <section class="card" id="card-form">
+    <h2>Contact form</h2>
+    <p>A tiny form Clippy can inspect and fill.</p>
+    <form id="demo-form" onsubmit="event.preventDefault(); document.getElementById('form-result').textContent='Submitted: '+JSON.stringify(Object.fromEntries(new FormData(this)));">
+      <div class="row"><label style="min-width:80px">Name</label>   <input type="text"  name="name"  id="f-name"></div>
+      <div class="row" style="margin-top:6px"><label style="min-width:80px">Email</label>  <input type="email" name="email" id="f-email"></div>
+      <div class="row" style="margin-top:6px"><label style="min-width:80px">Topic</label>
+        <select name="topic" id="f-topic">
+          <option value="">—</option>
+          <option>Bug report</option>
+          <option>Feature request</option>
+          <option>Compliment</option>
+        </select>
+      </div>
+      <div class="row" style="margin-top:6px;align-items:flex-start">
+        <label style="min-width:80px">Message</label>
+        <textarea name="message" id="f-message" rows="3" style="flex:1"></textarea>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button type="submit">Submit</button>
+        <span id="form-result" class="tips"></span>
+      </div>
+    </form>
+  </section>
+
+  <section class="card" id="card-theme">
+    <h2>Theme</h2>
+    <p>Clippy can toggle this by setting <code>document.documentElement.classList</code>.</p>
+    <button id="theme-toggle">Toggle dark mode</button>
+  </section>
+
+  <section class="card" id="card-playground">
+    <h2>Playground</h2>
+    <p>An empty container — ask Clippy to put something here.</p>
+    <div id="playground" style="min-height:60px;border:1px dashed var(--border);border-radius:8px;padding:10px"></div>
+  </section>
+
+</main>
+
+<footer>Clippy PoC · gemma via Ollama · v0.1</footer>
+
+<script>
+  // --- Demo-page interactivity (nothing Clippy-specific) ---
+  (function () {
+    const $ = (s) => document.querySelector(s);
+
+    // Counter
+    let count = 0;
+    const out = $("#counter");
+    const render = () => out.textContent = String(count);
+    $("#btn-inc").addEventListener("click", () => { count++; render(); });
+    $("#btn-dec").addEventListener("click", () => { count--; render(); });
+    $("#btn-reset").addEventListener("click", () => { count = 0; render(); });
+
+    // Tasks
+    $("#add-task-btn").addEventListener("click", () => {
+      const v = $("#new-task").value.trim();
+      if (!v) return;
+      const li = document.createElement("li");
+      li.textContent = v;
+      $("#task-list").appendChild(li);
+      $("#new-task").value = "";
+    });
+
+    // Theme
+    $("#theme-toggle").addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark");
+    });
+  })();
+</script>
+
+<script type="module">
+  import { mountClippy } from "./clippy-widget.js";
+
+  mountClippy();
+</script>
+</body>
+</html>

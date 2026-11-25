@@ -1,0 +1,461 @@
+/* ============================================
+   RealmKit UI - Centralized Styling
+   ============================================ */
+
+/* ───────────────────────────────────────
+   CSS Custom Properties (Theme Tokens)
+   ─────────────────────────────────────── */
+:root {
+    /* Backgrounds */
+    --rk-bg-darkest: #150c06;
+    --rk-bg-darker: #1a0c04;
+    --rk-bg-dark: #23150b;
+    --rk-bg-panel: #382010;
+    --rk-bg-light: #f0e8d8;
+    --rk-bg-lighter: #e8d8b8;
+
+    /* Borders */
+    --rk-border-darkest: #1a0800;
+    --rk-border-dark: #5a3818;
+    --rk-border-mid: #8a7060;
+    --rk-border-light: #b8a880;
+
+    /* Text */
+    --rk-text-gold: #c8a84b;
+    --rk-text-tan: #c8b890;
+    --rk-text-muted: #8a7060;
+    --rk-text-dark: #2a1408;
+
+    /* Accents */
+    --rk-accent-gold: #c8a84b;
+    --rk-accent-green: #3a5a38;
+    --rk-accent-red: #5a2020;
+    --rk-inner-inset: 5px;
+    --rk-inner-offset: 10px;
+}
+
+/* ───────────────────────────────────────
+   Panel Base Styles
+   ─────────────────────────────────────── */
+.rk-panel {
+    font-family: "Press Start 2P", monospace;
+    font-size: 7px;
+    background: repeating-linear-gradient(90deg,transparent 0px,transparent 5px,rgba(80,50,20,.28) 5px,rgba(80,50,20,.28) 6px),
+                repeating-linear-gradient(0deg,transparent 0px,transparent 12px,rgba(60,35,15,.2) 12px,rgba(60,35,15,.2) 18px),
+                linear-gradient(180deg,#4a2810 0%,#2a1408 50%,#1a0c04 100%);
+    border: 3px solid var(--rk-border-darkest);
+    box-shadow: inset 0 2px 0 rgba(255,200,150,.15),
+                inset 0 -4px 0 rgba(0,0,0,.45),
+                0 10px 18px rgba(0,0,0,.35);
+    border-radius: 4px;
+}
+
+.rk-panel-header {
+    background: linear-gradient(180deg,#3d3326 0%,#2a2218 50%,#17110c 100%);
+    border-bottom: 2px solid #1a1828;
+    color: var(--rk-text-gold);
+    font-size: 8px;
+    letter-spacing: 1px;
+    padding: 8px 10px;
+    text-transform: uppercase;
+}
+
+.rk-panel-title {
+    color: var(--rk-text-gold);
+    font-size: 8px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ───────────────────────────────────────
+   Inner Content Area
+   ─────────────────────────────────────── */
+.rk-inner {
+    background: repeating-linear-gradient(0deg,transparent 0px,transparent 2px,rgba(139,90,43,.04) 2px,rgba(139,90,43,.04) 3px),
+                repeating-linear-gradient(90deg,transparent 0px,transparent 5px,rgba(139,90,43,.03) 5px,rgba(139,90,43,.03) 6px),
+                linear-gradient(180deg,#e8d8b8 0%,#d4c4a0 40%,#c8b890 100%);
+    border: 2px solid var(--rk-border-mid);
+    box-shadow: inset 4px 4px 0 rgba(0,0,0,.08), inset -4px -4px 0 rgba(255,255,255,.18);
+    margin: var(--rk-inner-inset);
+    padding: 10px;
+}
+
+/* ───────────────────────────────────────
+   Buttons
+   ─────────────────────────────────────── */
+.rk-btn {
+    font-family: "Press Start 2P", monospace;
+    font-size: 7px;
+    padding: 5px 8px;
+    background: linear-gradient(180deg,#4a4a58 0%,#3a3a48 50%,#2a2a38 100%);
+    border: 1px solid var(--rk-border-darkest);
+    color: var(--rk-text-tan);
+    cursor: pointer;
+    box-shadow: 0 3px 0 0 #161620;
+    transition: background .1s;
+}
+
+.rk-btn:hover {
+    background: linear-gradient(180deg,#5a5a68 0%,#4a4a58 50%,#3a3a38 100%);
+    border-color: var(--rk-border-dark);
+    color: var(--rk-text-gold);
+}
+
+.rk-btn:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+.rk-btn-gold {
+    background: linear-gradient(180deg,#a87030 0%,#885020 50%,#683010 100%);
+    color: #ffe8b0;
+    box-shadow: 0 3px 0 0 #402008;
+}
+
+/* ───────────────────────────────────────
+   Input Fields
+   ─────────────────────────────────────── */
+.rk-input {
+    font-family: "Press Start 2P", monospace;
+    font-size: 7px;
+    background: #2a1408;
+    border: 2px solid var(--rk-border-dark);
+    color: var(--rk-text-tan);
+    padding: 4px 6px;
+}
+
+.rk-input:focus {
+    outline: none;
+    border-color: var(--rk-text-gold);
+}
+
+/* ───────────────────────────────────────
+   Status Badges
+   ─────────────────────────────────────── */
+.rk-badge {
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.rk-badge-on {
+    background: #3a2a18;
+    color: var(--rk-text-gold);
+}
+
+.rk-badge-off {
+    background: #4a2020;
+    color: #c86060;
+}
+
+/* ───────────────────────────────────────
+   Lists & Items
+   ─────────────────────────────────────── */
+.rk-list {
+    background: #1a0c04;
+    border: 2px inset var(--rk-border-dark);
+}
+
+.rk-list-item {
+    padding: 4px 6px;
+    border-bottom: 1px solid #3a2818;
+    color: var(--rk-text-muted);
+    cursor: pointer;
+}
+
+.rk-list-item:hover {
+    background: #2a1408;
+    color: var(--rk-text-tan);
+}
+
+.rk-list-item.selected {
+    background: #3a2a18;
+    color: var(--rk-text-gold);
+}
+
+/* ───────────────────────────────────────
+   Section Dividers
+   ─────────────────────────────────────── */
+.rk-section {
+    border-bottom: 1px solid rgba(90,56,24,.45);
+    padding: 6px 8px;
+}
+
+.rk-section-title {
+    color: var(--rk-border-dark);
+    font-size: 7px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.rk-section-title::before,
+.rk-section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg,transparent,var(--rk-border-dark));
+    vertical-align: middle;
+}
+
+.rk-section-title::after {
+    background: linear-gradient(90deg,var(--rk-border-dark),transparent);
+}
+
+/* ───────────────────────────────────────
+   Scrollbars
+   ─────────────────────────────────────── */
+.rk-panel::-webkit-scrollbar {
+    width: 10px;
+}
+
+.rk-panel::-webkit-scrollbar-track {
+    background: #b8a880;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.15);
+}
+
+.rk-panel::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6a5040 0%, #5a4030 50%, #4a3020 100%);
+    border: 2px solid #b8a880;
+    border-radius: 2px;
+}
+
+.rk-panel::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #7a6050 0%, #6a5040 50%, #5a4030 100%);
+}
+
+/* Dark scrollbar variant for dark panels */
+.rk-panel-dark::-webkit-scrollbar {
+    width: 8px;
+}
+
+.rk-panel-dark::-webkit-scrollbar-track {
+    background: #1a0c04;
+    box-shadow: none;
+}
+
+.rk-panel-dark::-webkit-scrollbar-thumb {
+    background: #5a3818;
+    border: 1px solid #3a2818;
+    border-radius: 2px;
+}
+
+.rk-panel-dark::-webkit-scrollbar-thumb:hover {
+    background: #7a4e1e;
+}
+
+/* ───────────────────────────────────────
+   Tooltips / Hints
+   ─────────────────────────────────────── */
+.rk-hint {
+    background: repeating-linear-gradient(90deg,transparent 0px,transparent 5px,rgba(80,50,20,.28) 5px,rgba(80,50,20,.28) 6px),
+                linear-gradient(180deg,#4a2810 0%,#2a1408 50%,#1a0c04 100%);
+    border: 3px solid var(--rk-border-darkest);
+    color: var(--rk-text-tan);
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+    padding: 4px 8px;
+    box-shadow: inset 0 2px 0 rgba(255,200,150,.15),
+                inset 0 -4px 0 rgba(0,0,0,.45),
+                0 10px 18px rgba(0,0,0,.35);
+}
+
+/* ───────────────────────────────────────
+   Progress Bars
+   ─────────────────────────────────────── */
+.rk-bar-wrap {
+    background: #1a0c04;
+    border: 1px solid var(--rk-border-dark);
+    height: 7px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.rk-bar {
+    height: 100%;
+    transition: width .15s;
+}
+
+.rk-bar-hp {
+    background: linear-gradient(90deg,#a04030,#c06030 55%,#6a8a30);
+}
+
+.rk-bar-mp {
+    background: linear-gradient(90deg,#3050a0,#4080c0);
+}
+
+.rk-bar-xp {
+    background: linear-gradient(90deg,#907030,#c8a840);
+}
+
+/* ───────────────────────────────────────
+   Status Row
+   ─────────────────────────────────────── */
+.rk-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1.7;
+    color: var(--rk-text-tan);
+}
+
+.rk-row-label {
+    color: var(--rk-text-muted);
+    font-size: 6px;
+}
+
+.rk-row-value {
+    color: var(--rk-text-gold);
+    font-size: 6px;
+}
+
+/* ───────────────────────────────────────
+   Compact/Utility Text
+   ─────────────────────────────────────── */
+.rk-small {
+    font-size: 6px;
+    color: var(--rk-text-muted);
+}
+
+.rk-tiny {
+    font-size: 5px;
+    color: var(--rk-text-muted);
+}
+
+/* ───────────────────────────────────────
+   Card Styles (Character Cards, etc)
+   ─────────────────────────────────────── */
+.rk-card {
+    background: repeating-linear-gradient(90deg,transparent 0px,transparent 5px,rgba(80,50,20,.22) 5px,rgba(80,50,20,.22) 6px),
+                linear-gradient(180deg,#3b220f 0%,#23140b 100%);
+    border: 2px solid var(--rk-border-darkest);
+    box-shadow: inset 0 1px 0 rgba(255,210,160,.12),
+                inset 0 -3px 0 rgba(0,0,0,.28);
+    padding: 6px;
+}
+
+.rk-card-inner {
+    background: linear-gradient(180deg,#efe3c7 0%,#ddcfb0 100%);
+    border: 1px solid var(--rk-border-mid);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+    margin: var(--rk-inner-inset);
+    padding: 6px 7px;
+}
+
+/* ───────────────────────────────────────
+   Party Card (Hotbar Character Display)
+   ─────────────────────────────────────── */
+.rk-party-card {
+    position: relative;
+    min-width: 0;
+    width: 128px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    background: repeating-linear-gradient(90deg,transparent 0px,transparent 5px,rgba(80,50,20,.22) 5px,rgba(80,50,20,.22) 6px),
+                linear-gradient(180deg,#3b220f 0%,#23140b 100%);
+    border: 2px solid #1d1007;
+    box-shadow: inset 0 1px 0 rgba(255,210,160,.12),
+                inset 0 -3px 0 rgba(0,0,0,.28);
+    pointer-events: auto;
+}
+
+.rk-party-card::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(116,84,46,.45);
+    pointer-events: none;
+}
+
+.rk-party-card-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    row-gap: 3px;
+    align-items: start;
+    height: calc(100% - var(--rk-inner-offset));
+    box-sizing: border-box;
+    margin: var(--rk-inner-inset);
+    padding: 6px 7px 7px;
+    background: linear-gradient(180deg,#efe3c7 0%,#ddcfb0 100%);
+    border: 1px solid var(--rk-border-mid);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+}
+
+.rgui-window-inner,
+.rgui-hud-inner,
+.rgui-party-card-inner {
+    margin: var(--rk-inner-inset);
+}
+
+.rk-party-portrait {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--rk-border-mid);
+    background: linear-gradient(180deg,#6a5040 0%,#4a3020 100%);
+    color: #f4e7c4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.rk-party-name {
+    font-size: 7px;
+    color: var(--rk-text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 1px;
+}
+
+.rk-party-sub {
+    font-size: 6px;
+    color: var(--rk-text-muted);
+    white-space: normal;
+    overflow: hidden;
+    line-height: 1.2;
+    min-height: 11px;
+}
+
+.rk-party-bar {
+    height: 6px;
+    margin-top: 0;
+    background: rgba(0,0,0,.14);
+    border: 1px solid var(--rk-border-mid);
+}
+
+.rk-party-barlabel,
+.rk-party-barvalue {
+    font-size: 6px;
+    color: #5f4526;
+}
+
+.rk-party-barvalue {
+    text-align: right;
+}
+
+.rk-party-fill {
+    height: 100%;
+    background: linear-gradient(90deg,#a04030 0%,#c06030 55%,#6a8a30 100%);
+}
+
+/* ───────────────────────────────────────
+   Decorative Corners
+   ─────────────────────────────────────── */
+.rk-corner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #4a2808;
+    box-shadow: inset 0 0 0 2px #6b461d,
+                inset 0 0 0 4px #3b2108;
+    pointer-events: none;
+    z-index: 3;
+}

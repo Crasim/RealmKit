@@ -1,0 +1,104 @@
+{
+  "bpm": 108,
+  "bars": 2,
+  "tracks": [
+    {
+      "id": 1,
+      "name": "Lead Melody",
+      "type": "melodic",
+      "instrument": "lead",
+      "volume": 0.75,
+      "muted": false,
+      "solo": false,
+      "color": "#c8a840",
+      "notes": [
+        { "step": 0,  "pitch": 69, "duration": 2, "velocity": 0.85 },
+        { "step": 2,  "pitch": 72, "duration": 2, "velocity": 0.80 },
+        { "step": 4,  "pitch": 76, "duration": 4, "velocity": 0.90 },
+        { "step": 8,  "pitch": 74, "duration": 2, "velocity": 0.80 },
+        { "step": 10, "pitch": 72, "duration": 2, "velocity": 0.75 },
+        { "step": 12, "pitch": 71, "duration": 4, "velocity": 0.85 },
+        { "step": 16, "pitch": 69, "duration": 2, "velocity": 0.80 },
+        { "step": 18, "pitch": 67, "duration": 2, "velocity": 0.75 },
+        { "step": 20, "pitch": 64, "duration": 4, "velocity": 0.85 },
+        { "step": 24, "pitch": 69, "duration": 6, "velocity": 0.90 },
+        { "step": 30, "pitch": 71, "duration": 2, "velocity": 0.70 }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Strings Pad",
+      "type": "melodic",
+      "instrument": "strings",
+      "volume": 0.55,
+      "muted": false,
+      "solo": false,
+      "color": "#4090c8",
+      "notes": [
+        { "step": 0,  "pitch": 57, "duration": 16, "velocity": 0.60 },
+        { "step": 0,  "pitch": 60, "duration": 16, "velocity": 0.55 },
+        { "step": 0,  "pitch": 64, "duration": 16, "velocity": 0.50 },
+        { "step": 16, "pitch": 53, "duration": 16, "velocity": 0.60 },
+        { "step": 16, "pitch": 57, "duration": 16, "velocity": 0.55 },
+        { "step": 16, "pitch": 60, "duration": 16, "velocity": 0.50 }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Bass Line",
+      "type": "melodic",
+      "instrument": "bass",
+      "volume": 0.80,
+      "muted": false,
+      "solo": false,
+      "color": "#40c870",
+      "notes": [
+        { "step": 0,  "pitch": 45, "duration": 8, "velocity": 0.90 },
+        { "step": 8,  "pitch": 43, "duration": 4, "velocity": 0.80 },
+        { "step": 12, "pitch": 45, "duration": 4, "velocity": 0.75 },
+        { "step": 16, "pitch": 41, "duration": 8, "velocity": 0.90 },
+        { "step": 24, "pitch": 40, "duration": 6, "velocity": 0.85 },
+        { "step": 30, "pitch": 43, "duration": 2, "velocity": 0.70 }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Drum Kit",
+      "type": "drums",
+      "instrument": "drums",
+      "volume": 0.85,
+      "muted": false,
+      "solo": false,
+      "color": "#c84060",
+      "notes": [
+        { "step": 0,  "drum": "crash",  "velocity": 0.70 },
+        { "step": 0,  "drum": "kick",   "velocity": 0.95 },
+        { "step": 2,  "drum": "hihatC", "velocity": 0.55 },
+        { "step": 4,  "drum": "hihatC", "velocity": 0.65 },
+        { "step": 4,  "drum": "snare",  "velocity": 0.85 },
+        { "step": 6,  "drum": "hihatC", "velocity": 0.50 },
+        { "step": 8,  "drum": "kick",   "velocity": 0.90 },
+        { "step": 8,  "drum": "hihatC", "velocity": 0.65 },
+        { "step": 10, "drum": "hihatC", "velocity": 0.55 },
+        { "step": 11, "drum": "kick",   "velocity": 0.70 },
+        { "step": 12, "drum": "hihatC", "velocity": 0.65 },
+        { "step": 12, "drum": "snare",  "velocity": 0.85 },
+        { "step": 14, "drum": "hihatC", "velocity": 0.50 },
+        { "step": 16, "drum": "kick",   "velocity": 0.95 },
+        { "step": 16, "drum": "hihatC", "velocity": 0.65 },
+        { "step": 18, "drum": "hihatC", "velocity": 0.55 },
+        { "step": 20, "drum": "hihatC", "velocity": 0.65 },
+        { "step": 20, "drum": "snare",  "velocity": 0.85 },
+        { "step": 22, "drum": "hihatC", "velocity": 0.50 },
+        { "step": 24, "drum": "kick",   "velocity": 0.90 },
+        { "step": 24, "drum": "hihatC", "velocity": 0.65 },
+        { "step": 26, "drum": "hihatC", "velocity": 0.55 },
+        { "step": 27, "drum": "kick",   "velocity": 0.65 },
+        { "step": 28, "drum": "hihatC", "velocity": 0.65 },
+        { "step": 28, "drum": "snare",  "velocity": 0.90 },
+        { "step": 30, "drum": "hihatC", "velocity": 0.50 },
+        { "step": 31, "drum": "hihatC", "velocity": 0.45 }
+      ]
+    }
+  ]
+}
